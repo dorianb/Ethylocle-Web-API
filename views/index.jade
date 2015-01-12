@@ -1,0 +1,206 @@
+doctype html
+html
+  head
+    if username
+      title Accueil
+    else
+      title Authentification
+
+    meta(charset='utf-8')
+    meta(content='IE=edge', http-equiv='X-UA-Compatible')
+    meta(content='width=device-width, initial-scale=1', name='viewport')
+    meta(content='Dorian BAGUR', name='author')
+
+    link(rel='stylesheet', href='bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='resources/signin.css')
+    link(rel='stylesheet', href='resources/webapp.css')
+
+    script(src='jquery/jquery-1.11.1.min.js')
+    script
+      :coffee
+        $().ready ->
+          console.log 'ready'
+
+          $('#signup').hide()
+          $('#signinButton').hide()
+
+          if document.title == 'Authentification'
+            $('#logout').hide()
+            $('#login').show()
+          if document.title == 'Accueil'
+            $('#login').hide()
+            $('#signupButton').hide()
+
+          $('#logout').click (e) ->
+            e.preventDefault()
+            $.post "/Deconnexion", (data) ->
+              console.log 'data', data, 'json'
+              if data.message is "Déconnexion"
+                document.title = 'Authentification'
+                $('#login').show()
+                $('#signupButton').show()
+                $('#logout').hide()
+                $('#welcome').text('')
+                $('#comment').text('')
+                $('#lastname').text('')
+                $('#firstname').text('')
+                $('#email').text('')
+
+          $('#signupButton').click (e) ->
+            document.title = 'Inscription'
+            $('#login').hide()
+            $('#signupButton').hide()
+            $('#signinButton').show()
+            $('#signup').show()
+
+          $('#signinButton').click (e) ->
+            document.title = 'Authentification'
+            $('#login').show()
+            $('#signupButton').show()
+            $('#signinButton').hide()
+            $('#signup').hide()
+
+          $('#login').submit (e) ->
+            user =
+              login: $('#login-username').val()
+              password: $('#login-password').val()
+              rememberMe: $('#remember-me').is(":checked")
+            console.log 'user', user
+            e.preventDefault()
+            $.post "/Connexion", user, (data) ->
+              console.log 'data', data, 'json'
+              if data.user is undefined
+                $('#login-message').text(data.message)
+              else
+                document.title = 'Accueil'
+                $('#login').hide()
+                $('#signupButton').hide()
+                $('#logout').show()
+                $('#welcome').text('Bienvenue ' + data.user.username)
+                $('#comment').text('Vos informations personnelles')
+                $('#lastname').text(data.user.lastname)
+                $('#firstname').text(data.user.firstname)
+                $('#email').text(data.user.email)
+                $('#login-message').text('')
+
+          $('#signup').submit (e) ->
+            e.preventDefault()
+            if $('#signup-password-1').val() == $('#signup-password-2').val()
+              user =
+                username: $('#signup-username').val()
+                lastname: $('#signup-lastname').val()
+                firstname: $('#signup-firstname').val()
+                email: $('#signup-email').val()
+                password: $('#signup-password-1').val()
+              console.log 'user', user
+              $.post "/Inscription", user, (data) ->
+                console.log 'data', data, 'json'
+                if data.user is undefined
+                  $('#signup-message').text(data.message)
+                else
+                  document.title = 'Accueil'
+                  $('#signup').hide()
+                  $('#signinButton').hide()
+                  $('#logout').show()
+                  $('#welcome').text('Bienvenue ' + data.user.username)
+                  $('#comment').text('Vos informations personnelles')
+                  $('#lastname').text(data.user.lastname)
+                  $('#firstname').text(data.user.firstname)
+                  $('#email').text(data.user.email)
+                  $('#signup-message').text('')
+            else
+              $('#signup-message').text('Confirmation du mot de passe incorrecte')
+  body
+    div(class='container')
+      div#account
+
+        if username
+          h1#welcome Bienvenue #{username}
+          h2#comment Vos informations personnelles
+          p#lastname #{lastname}
+          p#firstname #{firstname}
+          p#email #{email}
+        else
+          h1#welcome
+          h1#welcome
+          h2#comment
+          p#lastname
+          p#firstname
+          p#email
+
+        button#logout(class='btn btn-lg btn-primary btn-block') Se déconnecter
+
+        form#login.form-signin
+          h2.form-signin-heading Authentifiez-vous
+          label.sr-only(for='login-username') Identifiant ou email
+          input#login-username.form-control(
+            type='text'
+            name='username'
+            placeholder='Identifiant ou email'
+            required
+            autofocus
+          )
+          label.sr-only(for='login-password') Mot de passe
+          input#login-password.form-control(
+            type='password'
+            name='password'
+            placeholder='Mot de passe'
+            required
+          )
+          div#login-message
+          div(class='checkbox')
+            label.checkbox
+              input#remember-me(type='checkbox', name='rememberMe')
+              | Se souvenir de moi
+          button(class='btn btn-lg btn-primary btn-block', type='submit') Se connecter
+
+        button#signupButton(class='btn btn-lg btn-primary btn-block') S'inscrire
+
+        form#signup.form-signin
+          h2.form-signin-heading Inscrivez-vous
+          label.sr-only(for='signup-username') Identifiant
+          input#signup-username.form-control(
+            type='text'
+            name='username'
+            placeholder='Identifiant'
+            required
+          )
+          label.sr-only(for='signup-lastname') Nom
+          input#signup-lastname.form-control(
+            type='text'
+            name='lastname'
+            placeholder='Nom'
+            required
+          )
+          label.sr-only(for='signup-firstname') Prénom
+          input#signup-firstname.form-control(
+            type='text'
+            name='firstname'
+            placeholder='Prénom'
+            required
+          )
+          label.sr-only(for='signup-email') Email
+          input#signup-email.form-control(
+            type='email'
+            name='email'
+            placeholder='Email'
+            required
+          )
+          label.sr-only(for='signup-password-1') Mot de passe
+          input#signup-password-1.form-control(
+            type='password'
+            name='password'
+            placeholder='Mot de passe'
+            required
+          )
+          label.sr-only(for='signup-password-2') Resaisissez votre mot de passe
+          input#signup-password-2.form-control(
+            type='password'
+            name='password'
+            placeholder='Confirmez votre mot de passe'
+            required
+          )
+          div#signup-message
+          button#signupButton(class='btn btn-lg btn-primary btn-block', type='submit') S'inscrire
+
+        button#signinButton(class='btn btn-lg btn-primary btn-block') Se connecter

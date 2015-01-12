@@ -1,0 +1,39 @@
+#login {
+  position: relative;
+  width: 300px;
+  margin: 100px auto;
+}
+#login td {
+  padding: 5px;
+}
+#login button {
+  margin-right: 10px;
+}
+#account {
+  position: relative;
+  width: 600px;
+  margin: 100px auto;
+}
+#signupButton {
+  background: #fe2e64;
+}
+#signupButton:hover {
+  background: #ff0040;
+}
+#signup {
+  position: relative;
+  width: 300px;
+  margin: 0 auto;
+}
+#signup td {
+  padding: 5px;
+}
+#signup button {
+  margin-right: 10px;
+}
+#logout {
+  background: #c4581a;
+}
+#logout:hover {
+  background: #974211;
+}
