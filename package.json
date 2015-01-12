@@ -24,7 +24,9 @@
     "stylus": "latest",
     "nib": "latest",
     "minimist": "latest",
-    "csv-parse": "latest"
+    "csv-parse": "latest",
+    "forever": "latest",
+    "abstract-leveldown": "latest"
   },
   "devDependencies": {
     "mocha": "latest",

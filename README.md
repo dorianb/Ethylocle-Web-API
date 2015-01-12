@@ -1,16 +1,20 @@
-# Node.js project using express Framework
+# Ethyloclé backend web server using Express framework for Node.js
 
-This is the GROUP3 project (Dorian BAGUR, Najlaa SEDKI and Maoqiao ZHOU).
-We used coffeeScript as programmation language and MarkDown to document our code.
+I used CoffeeScript as programmation language and MarkDown to document our code.
 
 ## Functionalities
-* provide a login formular accepting: username and email
-* provide a sign up formular requiring: username, email, password, re-password, firstname, lastname
-* validation server and client
-* import in csv and json
+* Manage account profile: sign in, sign up, update and delete
+* Get taxi, metro and bus at proximity
+* Import in csv and json
 * Export has not been implemented yet
 
-There is only one url for all screens.
+### Login request
+Paramètres: { email, password }
+Retour: {result: bool, error: string}
+
+### SignUp request
+Paramètres: { email, password }
+Retour: {result: bool, error: string}
 
 ## Layout
 
