@@ -9,19 +9,21 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 * Export has not been implemented yet
 
 ### Login request
+url: 195.154.9.74:3000/Connexion
 Paramètres: { email, password }
-Retour: {result: bool, error: string}
+Retour: {result: bool, message: string}
 
 ### SignUp request
+url: 195.154.9.74:3000/Inscription
 Paramètres: { email, password }
-Retour: {result: bool, error: string}
+Retour: {result: bool, message: string}
 
 ## Layout
 
 /.git /.gitignore /bin/start /bin/import /bin/export /lib/app.coffee.md /lib/db.coffee.md, /lib/import.coffee.md, /lib/export.coffee.md /package.json (name, version, dependencies, ...) /public /LICENSE /README.md /tests/db.coffee /tests/app.coffee /tests/import.coffee /views /routes
 
 ## LevelDB schema
-User namespace key: "users:#{username}:#{property}:" properties: "lastname", "firstname", "email" and "password"
+User namespace key: "users:#{email}:#{property}:" properties: "email" and "password"
 
 ## Install
 Use this command to install locally all the dependencies needed:

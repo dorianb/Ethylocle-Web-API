@@ -4,7 +4,7 @@ fs = require 'fs'
 exportStream = require '../lib/export'
 db = require '../lib/db'
 
-describe 'export', ->
+###describe 'export', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp", next
@@ -40,7 +40,7 @@ describe 'export', ->
             .pipe fs.createWriteStream "#{__dirname}/../exportation.csv"
 
   it 'Export to sample.json', (next) ->
-    ###client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp"
     fs
     .createReadStream "#{__dirname}/../sample.json"
     .on 'end', () ->
@@ -60,5 +60,5 @@ describe 'export', ->
           user.password.should.eql '1234'
           client.close()
           next()
-    .pipe importStream client, format: 'json'###
-    next()
+    .pipe importStream client, format: 'json'
+    next()###

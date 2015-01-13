@@ -4,7 +4,7 @@ fs = require 'fs'
 importStream = require '../lib/import'
 db = require '../lib/db'
 
-describe 'import', ->
+###describe 'import', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp", next
@@ -61,4 +61,4 @@ describe 'import', ->
               assertion.should.eql true
               client.close()
               next()
-    .pipe importStream client, format: 'json', objectMode: true
+    .pipe importStream client, format: 'json', objectMode: true###

@@ -2,7 +2,6 @@
 
     express = require 'express'
     path = require 'path'
-    favicon = require 'serve-favicon'
     bodyParser = require 'body-parser'
     cookieParser = require 'cookie-parser'
     methodOverride = require 'method-override'
@@ -10,15 +9,9 @@
     serveStatic = require 'serve-static'
     serveIndex = require 'serve-index'
     errorHandler = require 'errorhandler'
-    stylus = require 'stylus'
-    nib = require 'nib'
 
     app = express()
 
-    app.set 'views', "#{__dirname}/../views"
-    app.set 'view engine', 'jade'
-
-    app.use favicon("#{__dirname}/../public/favicon.ico")
     app.use bodyParser.json()
     app.use bodyParser.urlencoded( extended: false )
     app.use cookieParser('123456789')
@@ -35,15 +28,6 @@
       sess.cookie.secure = true
 
     app.use expressSession(sess)
-
-    app.use stylus.middleware
-      src: "#{__dirname}/../views"
-      dest: "#{__dirname}/../public"
-      compile: (str, path) ->
-        stylus(str)
-        .set('filename', path)
-        .set('compress', config?.css?.compress)
-        .use nib()
 
     app.use serveStatic("#{__dirname}/../public")
 
