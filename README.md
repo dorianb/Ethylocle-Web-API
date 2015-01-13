@@ -36,6 +36,10 @@ Several tests are provided, execute them using the following command:
 ```
 npm test
 ```
+You can test a request from a client using the following command on windows:
+```
+curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/connexion -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
+```
 
 ## Launch server
 Execute the following command for launching server:

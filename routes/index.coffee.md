@@ -13,12 +13,12 @@
         if user.email is req.body.email and user.password is req.body.password
           setSessionCookie req, user
           res.json
-            result: true
-            message: null
+            result: "true"
+            message: "null"
           client.close()
         else
           res.json
-            result: false
+            result: "false"
             message: "Email ou mot de passe incorrect"
         client.close()
 
@@ -35,7 +35,7 @@
         return next err if err
         if user.email is req.body.email
           res.json
-            result: false
+            result: "false"
             message: "L'email n'est pas disponible"
           client.close()
         else
@@ -49,12 +49,12 @@
               if user.email is req.body.email and user.password is req.body.password
                 setSessionCookie req, user
                 res.json
-                  result: true
-                  message: null
+                  result: "true"
+                  message: "null"
                 client.close()
               else
                 res.json
-                  result: false
+                  result: "false"
                   message: "Une erreur inattendue est survenue"
                 client.close()
 
@@ -64,7 +64,7 @@
       req.session.email = null
       req.session.cookie.maxAge = 0
       res.json
-        result: true
-        message: null
+        result: "true"
+        message: "null"
 
     module.exports = router
