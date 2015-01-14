@@ -39,6 +39,7 @@
           res.json
             result: false
             data: "Une erreur inattendue est survenue"
+          client.close()
         else
           if user.email is req.body.email
             res.json
@@ -53,6 +54,7 @@
                 res.json
                   result: false
                   data: "Une erreur inattendue est survenue"
+                client.close()
               else
                 client.users.get req.body.email, (err, user) ->
                   if err
@@ -69,7 +71,7 @@
                       res.json
                         result: false
                         data: "Une erreur inattendue est survenue"
-        client.close()
+                  client.close()
 
 ## Update user information
 
@@ -81,44 +83,30 @@
       else
         client = db "#{__dirname}/../db"
         client.users.set req.session.email,
-        email: req.session.email
-        picture: "null"
-        lastname: "Zhou"
-        firstname: "Maoqiao"
-        age: "22"
-        gender: "M"
-        weight: "75.5"
-        address: "162 Boulevard du Général de Gaulle"
-        zipCode: "78700"
-        city: "Conflans-Sainte-Honorine"
-        country: "France"
-        phone: "+330619768399"
-        vehicul: "Renault mégane"
-        password : "1234"
+          email: req.session.email
+          image: req.body.image unless req.body.image is undefined
+          lastname: req.body.lastname unless req.body.lastname is undefined
+          firstname: req.body.firstname unless req.body.firstname is undefined
+          age: req.body.age unless req.body.age is undefined
+          gender: req.body.gender unless req.body.gender is undefined
+          weight: req.body.weight unless req.body.weight is undefined
+          address: req.body.address unless req.body.address is undefined
+          zipCode: req.body.zipCode unless req.body.zipCode is undefined
+          city: req.body.city unless req.body.city is undefined
+          country: req.body.country unless req.body.country is undefined
+          phone: req.body.phone unless req.body.phone is undefined
+          vehicul: req.body.vehicul unless req.body.vehicul is undefined
+          password: req.body.password unless req.body.password is undefined
         , (err) ->
-        return next err if err
-        client.users.get "dorian@ethylocle.com", (err, user) ->
-          return next err if err
-          user.email.should.eql "dorian@ethylocle.com"
-          user.picture.should.eql "null"
-          user.lastname.should.eql "Zhou"
-          user.firstname.should.eql "Maoqiao"
-          user.age.should.eql "22"
-          user.gender.should.eql "M"
-          user.weight.should.eql "75.5"
-          user.address.should.eql "162 Boulevard du Général de Gaulle"
-          user.zipCode.should.eql "78700"
-          user.city.should.eql "Conflans-Sainte-Honorine"
-          user.country.should.eql "France"
-          user.phone.should.eql "+330619768399"
-          user.vehicul.should.eql "Renault mégane"
-          user.password.should.eql "1234"
+          if err
+            res.json
+              result: false
+              data: "Une erreur inattendue est survenue"
+          else
+            res.json
+              result: true
+              data: null
           client.close()
-          next()
-
-        res.json
-          result: true
-          data: null
 
 ## Get user information
 
@@ -128,9 +116,16 @@
           result: false
           data: "Authentification requise"
       else
-        res.json
-          result: true
-          data: null
+        client = db "#{__dirname}/../db"
+        client.users.get req.session.email, (err, user) ->
+          if err
+            res.json
+              result: false
+              data: "Une erreur inattendue est survenue"
+          else
+            res.json
+              result: true
+              data: user
 
 ## Delete
 
@@ -142,17 +137,22 @@
       else
         client = db "#{__dirname}/../db"
         client.users.get req.session.email, (err, user) ->
-          return next err if err
-          client.users.del req.session.email, user, (err) ->
-            if err
-              res.json
-                result: false
-                data: "Une erreur inattendue est survenue"
-            else
-              res.json
-                result: true
-                data: null
+          if err
+            res.json
+              result: false
+              data: "Une erreur inattendue est survenue"
             client.close()
+          else
+            client.users.del req.session.email, user, (err) ->
+              if err
+                res.json
+                  result: false
+                  data: "Une erreur inattendue est survenue"
+              else
+                res.json
+                  result: true
+                  data: null
+              client.close()
 
 ## Sign out
 

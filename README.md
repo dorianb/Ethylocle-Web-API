@@ -23,13 +23,22 @@ url: 195.154.9.74:3000/Deconnexion
 Paramètres: { }
 Retour: {result: bool, data: null}
 
+### Update user information
+url: 195.154.9.74:3000/Update
+Paramètres: {}
+
 ### Get user information request
 url: 195.154.74:3000/Utilisateur
 Paramètres: {}
 Retour: {result: bool, data: userObject}
 
+### Delete request
+url: 195.154.74.3000/Delete
+Paramètres: {}
+Retour: {result: bool, data: null}
+
 ## LevelDB schema
-User namespace key: "users:#{email}:#{property}:" properties: "email", "picture", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul" et "password"
+User namespace key: "users:#{email}:#{property}:" properties: "email", "image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul" et "password"
 
 ## Install
 Use this command to install locally all the dependencies needed:
