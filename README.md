@@ -18,10 +18,6 @@ url: 195.154.9.74:3000/Inscription
 Paramètres: { email, password }
 Retour: {result: bool, message: string}
 
-## Layout
-
-/.git /.gitignore /bin/start /bin/import /bin/export /lib/app.coffee.md /lib/db.coffee.md, /lib/import.coffee.md, /lib/export.coffee.md /package.json (name, version, dependencies, ...) /public /LICENSE /README.md /tests/db.coffee /tests/app.coffee /tests/import.coffee /views /routes
-
 ## LevelDB schema
 User namespace key: "users:#{email}:#{property}:" properties: "email" and "password"
 
@@ -36,15 +32,23 @@ Several tests are provided, execute them using the following command:
 ```
 npm test
 ```
-You can test a request from a client using the following command on windows:
+You can test the sign in request from a client using the following command on windows:
 ```
 curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/connexion -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
+```
+You can test the sign up request from a client using the following command on windows:
+```
+curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/inscription -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
 ```
 
 ## Launch server
 Execute the following command for launching server:
 ```
 npm start
+```
+If you want to launch server in production mode, run the following command:
+```
+forever start ./bin/start.js
 ```
 
 ## Import script
