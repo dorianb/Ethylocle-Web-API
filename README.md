@@ -25,7 +25,8 @@ Retour: {result: bool, data: null}
 
 ### Update user information
 url: 195.154.9.74:3000/Update
-Paramètres: {}
+Paramètres: {"image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul" et "password"}
+Retour: {result: bool, data: null}
 
 ### Get user information request
 url: 195.154.74:3000/Utilisateur
