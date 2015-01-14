@@ -32,6 +32,7 @@
     app.use serveStatic("#{__dirname}/../public")
 
     app.use '/', require('../routes/index');
+    app.use '/user', require('../routes/user');
 
     app.use serveIndex("#{__dirname}/../public")
     app.use errorHandler() if process.env.NODE_ENV is "development"

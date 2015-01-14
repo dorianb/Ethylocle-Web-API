@@ -9,32 +9,32 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 * Export has not been implemented yet
 
 ### Sign in request
-url: 195.154.9.74:3000/Connexion
+url: 195.154.9.74:3000/usr/signin
 Paramètres: {email, password}
 Retour: {result: bool, data: string}
 
 ### Sign up request
-url: 195.154.9.74:3000/Inscription
+url: 195.154.9.74:3000/usr/signup
 Paramètres: {email, password}
 Retour: {result: bool, data: string}
 
 ### Sign out request
-url: 195.154.9.74:3000/Deconnexion
+url: 195.154.9.74:3000/usr/signout
 Paramètres: { }
 Retour: {result: bool, data: null}
 
 ### Update user information
-url: 195.154.9.74:3000/Update
-Paramètres: {"image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul" et "password"}
+url: 195.154.9.74:3000/usr/update
+Paramètres: {"image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate" }
 Retour: {result: bool, data: null}
 
 ### Get user information request
-url: 195.154.74:3000/Utilisateur
+url: 195.154.74:3000/usr/get
 Paramètres: {}
 Retour: {result: bool, data: userObject}
 
 ### Delete request
-url: 195.154.74.3000/Delete
+url: 195.154.74.3000/usr/delete
 Paramètres: {}
 Retour: {result: bool, data: null}
 

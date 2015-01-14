@@ -16,7 +16,6 @@
             [_, email, key] = data.key.split ':'
             user.email = email
             user[key] = data.value
-            #console.log "User: " + email + " key: " + key + " value: " + data.value
           .on 'error', (err) ->
             callback err
           .on 'end', ->
@@ -33,9 +32,8 @@
           ops = for k, v of user
             continue if k is 'email'
             type: 'del'
-            key: "users:#{email}:"
+            key: "users:#{email}:#{k}"
           db.batch ops, (err) ->
             callback err
-
 
     module.exports = database
