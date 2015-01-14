@@ -10,12 +10,13 @@
         get: (email, callback) ->
           user = {}
           db.createReadStream
-            gt: "users:#{email}:"
+            gte: "users:#{email}:"
+            lte: "users:#{email}:\xff"
           .on 'data', (data) ->
             [_, email, key] = data.key.split ':'
-            user.email ?= email
-            user[key] ?= data.value if user.email is email
-            #console.log "User: " + user.email + " key: " + key + " value: " + user[key]
+            user.email = email
+            user[key] = data.value
+            #console.log "User: " + email + " key: " + key + " value: " + data.value
           .on 'error', (err) ->
             callback err
           .on 'end', ->
@@ -28,7 +29,13 @@
             value: v
           db.batch ops, (err) ->
             callback err
-        del: (username, callback) ->
-          # TODO
+        del: (email, user, callback) ->
+          ops = for k, v of user
+            continue if k is 'email'
+            type: 'del'
+            key: "users:#{email}:"
+          db.batch ops, (err) ->
+            callback err
+
 
     module.exports = database

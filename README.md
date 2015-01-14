@@ -8,18 +8,28 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 * Import in csv and json
 * Export has not been implemented yet
 
-### Login request
+### Sign in request
 url: 195.154.9.74:3000/Connexion
-Paramètres: { email, password }
-Retour: {result: bool, message: string}
+Paramètres: {email, password}
+Retour: {result: bool, data: string}
 
-### SignUp request
+### Sign up request
 url: 195.154.9.74:3000/Inscription
-Paramètres: { email, password }
-Retour: {result: bool, message: string}
+Paramètres: {email, password}
+Retour: {result: bool, data: string}
+
+### Sign out request
+url: 195.154.9.74:3000/Deconnexion
+Paramètres: { }
+Retour: {result: bool, data: null}
+
+### Get user information request
+url: 195.154.74:3000/Utilisateur
+Paramètres: {}
+Retour: {result: bool, data: userObject}
 
 ## LevelDB schema
-User namespace key: "users:#{email}:#{property}:" properties: "email" and "password"
+User namespace key: "users:#{email}:#{property}:" properties: "email", "picture", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul" et "password"
 
 ## Install
 Use this command to install locally all the dependencies needed:
