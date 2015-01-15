@@ -33,6 +33,7 @@
 
     app.use '/', require('../routes/index');
     app.use '/usr', require('../routes/user');
+    app.use '/stp', require('../routes/stop');
 
     app.use serveIndex("#{__dirname}/../public")
     app.use errorHandler() if process.env.NODE_ENV is "development"

@@ -23,23 +23,28 @@ url: 195.154.9.74:3000/usr/signout
 Paramètres: { }
 Retour: {result: bool, data: null}
 
-### Update user information
+### Update user data request
 url: 195.154.9.74:3000/usr/update
 Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate" }
 Retour: {result: bool, data: null}
 
-### Get user information request
+### Get user data request
 url: 195.154.74:3000/usr/get
 Paramètres: {}
 Retour: {result: bool, data: userObject}
 
-### Delete request
+### Delete user request
 url: 195.154.74.3000/usr/delete
 Paramètres: {}
 Retour: {result: bool, data: null}
 
 ## LevelDB schema
-User namespace key: "users:#{email}:#{property}:" properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password" "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate"
+User namespace key: "users:#{email}:#{property}:"
+Properties: "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password" "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate"
+
+Stop namespace key: "stops:#{id}:#{property}:"
+Properties: "name", "desc", "lat", "lon", "lineType" and "lineName"
+Stop namespace index: "stops:#{lineType}:#{id}"
 
 ## Install
 Use this command to install locally all the dependencies needed:

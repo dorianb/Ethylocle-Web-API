@@ -49,7 +49,6 @@
             client.close()
           else
             client.users.set req.body.email,
-              email: req.body.email
               password: req.body.password
             , (err) ->
               if err
@@ -75,7 +74,6 @@
       if req.session.email
         client = db "#{__dirname}/../db"
         client.users.set req.session.email,
-          email: req.session.email
           image: req.body.image if req.body.image
           lastname: req.body.lastname if req.body.lastname
           firstname: req.body.firstname if req.body.firstname
@@ -118,7 +116,10 @@
           else
             res.json
               result: true
-              data: user
+              data: for k, v of user
+                continue if k is 'password'
+                key: k
+                value: v
           client.close()
       else
         res.json
