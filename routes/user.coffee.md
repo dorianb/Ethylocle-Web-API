@@ -4,15 +4,23 @@
     router = express.Router()
     db = require '../lib/db'
 
+    setSessionCookie = (req, user) ->
+      req.session.email = user.email
+      req.session.cookie.maxAge = null
+      console.log "Cookie: " + req.session.email + " " + req.session.cookie.maxAge/1000 + "s"
+
+    errorMessage = (res, err) ->
+      res.json
+        result: false
+        data: "Une erreur inattendue est survenue: " + err
+
 ## Sign in
 
-    router.post '/usr/signin', (req, res) ->
+    router.post '/signin', (req, res) ->
       client = db "#{__dirname}/../db"
       client.users.get req.body.email, (err, user) ->
         if err
-          res.json
-            result: false
-            data: "Une erreur inattendue est survenue"
+          errorMessage(res, err)
         else
           if user.email is req.body.email and user.password is req.body.password
             setSessionCookie req, user
@@ -25,42 +33,32 @@
               data: "Email ou mot de passe incorrect"
         client.close()
 
-    setSessionCookie = (req, user) ->
-      req.session.email = user.email
-      req.session.cookie.maxAge = null
-      console.log "Cookie: " + req.session.email + " " + req.session.cookie.maxAge/1000 + "s"
-
 ## Sign up
 
-    router.post '/usr/signup', (req, res) ->
+    router.post '/signup', (req, res) ->
       client = db "#{__dirname}/../db"
       client.users.get req.body.email, (err, user) ->
         if err
-          res.json
-            result: false
-            data: "Une erreur inattendue est survenue"
+          errorMessage(res, err)
           client.close()
         else
           if user.email is req.body.email
             res.json
               result: false
               data: "L'email n'est pas disponible"
+            client.close()
           else
             client.users.set req.body.email,
               email: req.body.email
               password: req.body.password
             , (err) ->
               if err
-                res.json
-                  result: false
-                  data: "Une erreur inattendue est survenue"
+                errorMessage(res, err)
                 client.close()
               else
                 client.users.get req.body.email, (err, user) ->
                   if err
-                    res.json
-                      result: false
-                      data: "Une erreur inattendue est survenue"
+                    errorMessage(res, err)
                   else
                     if user.email is req.body.email and user.password is req.body.password
                       setSessionCookie req, user
@@ -68,109 +66,100 @@
                         result: true
                         data: null
                     else
-                      res.json
-                        result: false
-                        data: "Une erreur inattendue est survenue"
+                      errorMessage(res, err)
                   client.close()
 
 ## Update user data
 
-    router.post '/usr/update', (req, res) ->
-      if req.session.email is undefined
-        res.json
-          result: false
-          data: "Authentification requise"
-      else
+    router.post '/update', (req, res) ->
+      if req.session.email
         client = db "#{__dirname}/../db"
         client.users.set req.session.email,
           email: req.session.email
-          image: req.body.image unless req.body.image is undefined
-          lastname: req.body.lastname unless req.body.lastname is undefined
-          firstname: req.body.firstname unless req.body.firstname is undefined
-          age: req.body.age unless req.body.age is undefined
-          gender: req.body.gender unless req.body.gender is undefined
-          weight: req.body.weight unless req.body.weight is undefined
-          address: req.body.address unless req.body.address is undefined
-          zipCode: req.body.zipCode unless req.body.zipCode is undefined
-          city: req.body.city unless req.body.city is undefined
-          country: req.body.country unless req.body.country is undefined
-          phone: req.body.phone unless req.body.phone is undefined
-          vehicul: req.body.vehicul unless req.body.vehicul is undefined
-          password: req.body.password unless req.body.password is undefined
-          latitude: req.body.latitude unless req.body.latitude is undefined
-          longitude: req.body.longitude unless req.body.longitude is undefined
-          lastknownPositionDate: req.body.lastKnownPositionDate unless req.body.lastKnownPositionDate is undefined
-          bac: req.body.bac unless req.body.bac is undefined
-          lastBacKnownDate: req.body.lastBacKnownDate unless req.body.lastBacKnownDate is undefined
+          image: req.body.image if req.body.image
+          lastname: req.body.lastname if req.body.lastname
+          firstname: req.body.firstname if req.body.firstname
+          age: req.body.age if req.body.age
+          gender: req.body.gender if req.body.gender
+          weight: req.body.weight if req.body.weight
+          address: req.body.address if req.body.address
+          zipCode: req.body.zipCode if req.body.zipCode
+          city: req.body.city if req.body.city
+          country: req.body.country if req.body.country
+          phone: req.body.phone if req.body.phone
+          vehicul: req.body.vehicul if req.body.vehicul
+          password: req.body.password if req.body.password
+          latitude: req.body.latitude if req.body.latitude
+          longitude: req.body.longitude if req.body.longitude
+          lastknownPositionDate: req.body.lastKnownPositionDate if req.body.lastKnownPositionDate
+          bac: req.body.bac if req.body.bac
+          lastBacKnownDate: req.body.lastBacKnownDate if req.body.lastBacKnownDate
         , (err) ->
           if err
-            res.json
-              result: false
-              data: "Une erreur inattendue est survenue"
+            errorMessage(res, err)
           else
             res.json
               result: true
               data: null
           client.close()
-
-## Get user data
-
-    router.post '/usr/get', (req, res) ->
-      if req.session.email is undefined
+      else
         res.json
           result: false
           data: "Authentification requise"
-      else
+
+## Get user data
+
+    router.post '/get', (req, res) ->
+      if req.session.email
         client = db "#{__dirname}/../db"
         client.users.get req.session.email, (err, user) ->
           if err
-            res.json
-              result: false
-              data: "Une erreur inattendue est survenue"
+            errorMessage(res, err)
           else
             res.json
               result: true
               data: user
-
-## Delete
-
-    router.post '/usr/delete', (req, res) ->
-      if req.session.email is undefined
+          client.close()
+      else
         res.json
           result: false
           data: "Authentification requise"
-      else
+
+## Delete
+
+    router.post '/delete', (req, res) ->
+      if req.session.email
         client = db "#{__dirname}/../db"
         client.users.get req.session.email, (err, user) ->
           if err
-            res.json
-              result: false
-              data: "Une erreur inattendue est survenue"
+            errorMessage(res, err)
             client.close()
           else
             client.users.del req.session.email, user, (err) ->
               if err
-                res.json
-                  result: false
-                  data: "Une erreur inattendue est survenue"
+                errorMessage(res, err)
               else
                 res.json
                   result: true
                   data: null
               client.close()
-
-## Sign out
-
-    router.post '/usr/signout', (req, res) ->
-      if req.session.email is undefined
+      else
         res.json
           result: false
           data: "Authentification requise"
-      else
+
+## Sign out
+
+    router.post '/signout', (req, res) ->
+      if req.session.email
         req.session.email = undefined
         req.session.cookie.maxAge = 0
         res.json
           result: true
           data: null
+      else
+        res.json
+          result: false
+          data: "Authentification requise"
 
     module.exports = router

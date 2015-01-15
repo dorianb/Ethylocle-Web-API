@@ -39,12 +39,16 @@ Paramètres: {}
 Retour: {result: bool, data: null}
 
 ## LevelDB schema
-User namespace key: "users:#{email}:#{property}:" properties: "email", "image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul" et "password"
+User namespace key: "users:#{email}:#{property}:" properties: "email", "image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password" "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate"
 
 ## Install
 Use this command to install locally all the dependencies needed:
 ```
 npm install
+```
+Use this command to install globally forever module:
+```
+npm install forever -g
 ```
 
 ## Test
@@ -54,11 +58,11 @@ npm test
 ```
 You can test the sign in request from a client using the following command on windows:
 ```
-curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/connexion -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
+curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/usr/signin -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
 ```
 You can test the sign up request from a client using the following command on windows:
 ```
-curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/inscription -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
+curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/usr/signup -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
 ```
 
 ## Launch server

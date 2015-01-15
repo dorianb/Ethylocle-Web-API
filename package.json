@@ -21,8 +21,6 @@
     "rimraf": "latest",
     "minimist": "latest",
     "csv-parse": "latest",
-    "forever": "latest",
-    "forever-monitor": "latest",
     "abstract-leveldown": "latest"
   },
   "devDependencies": {
