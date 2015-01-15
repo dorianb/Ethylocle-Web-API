@@ -79,7 +79,7 @@
           image: req.body.image if req.body.image
           lastname: req.body.lastname if req.body.lastname
           firstname: req.body.firstname if req.body.firstname
-          age: req.body.age if req.body.age
+          age: req.body.birthDate if req.body.birthDate
           gender: req.body.gender if req.body.gender
           weight: req.body.weight if req.body.weight
           address: req.body.address if req.body.address

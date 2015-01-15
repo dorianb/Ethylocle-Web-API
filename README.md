@@ -25,7 +25,7 @@ Retour: {result: bool, data: null}
 
 ### Update user information
 url: 195.154.9.74:3000/usr/update
-Paramètres: {"image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate" }
+Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate" }
 Retour: {result: bool, data: null}
 
 ### Get user information request
@@ -39,7 +39,7 @@ Paramètres: {}
 Retour: {result: bool, data: null}
 
 ## LevelDB schema
-User namespace key: "users:#{email}:#{property}:" properties: "email", "image", "lastname", "firstname", "age", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password" "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate"
+User namespace key: "users:#{email}:#{property}:" properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password" "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate"
 
 ## Install
 Use this command to install locally all the dependencies needed:
