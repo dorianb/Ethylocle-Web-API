@@ -71,28 +71,14 @@
 ## Update user data
 
     router.post '/update', (req, res) ->
+      console.log "Update user data: " + req.session.email
       if req.session.email
         client = db "#{__dirname}/../db"
-        client.users.set req.session.email,
-          image: req.body.image if req.body.image
-          lastname: req.body.lastname if req.body.lastname
-          firstname: req.body.firstname if req.body.firstname
-          age: req.body.birthDate if req.body.birthDate
-          gender: req.body.gender if req.body.gender
-          weight: req.body.weight if req.body.weight
-          address: req.body.address if req.body.address
-          zipCode: req.body.zipCode if req.body.zipCode
-          city: req.body.city if req.body.city
-          country: req.body.country if req.body.country
-          phone: req.body.phone if req.body.phone
-          vehicul: req.body.vehicul if req.body.vehicul
-          password: req.body.password if req.body.password
-          latitude: req.body.latitude if req.body.latitude
-          longitude: req.body.longitude if req.body.longitude
-          lastknownPositionDate: req.body.lastKnownPositionDate if req.body.lastKnownPositionDate
-          bac: req.body.bac if req.body.bac
-          lastBacKnownDate: req.body.lastBacKnownDate if req.body.lastBacKnownDate
-        , (err) ->
+        data = {}
+        for k, v of req.body
+          continue unless v
+          data[k] = v
+        client.users.set req.session.email, data, (err) ->
           if err
             errorMessage(res, err)
           else
@@ -108,18 +94,20 @@
 ## Get user data
 
     router.post '/get', (req, res) ->
+      console.log "Get user data: " + req.session.email
       if req.session.email
         client = db "#{__dirname}/../db"
         client.users.get req.session.email, (err, user) ->
           if err
             errorMessage(res, err)
           else
+            data = {}
+            for k, v of user
+              continue if k is 'password'
+              data[k] = v
             res.json
               result: true
-              data: for k, v of user
-                continue if k is 'password'
-                key: k
-                value: v
+              data: data
           client.close()
       else
         res.json

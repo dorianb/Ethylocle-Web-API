@@ -25,7 +25,7 @@ Retour: {result: bool, data: null}
 
 ### Update user data request
 url: 195.154.9.74:3000/usr/update
-Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate" }
+Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
 Retour: {result: bool, data: null}
 
 ### Get user data request
@@ -40,7 +40,7 @@ Retour: {result: bool, data: null}
 
 ## LevelDB schema
 User namespace key: "users:#{email}:#{property}:"
-Properties: "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password" "latitude", "longitude", "lastknownPositionDate", "bac", "lastBacKnownDate"
+Properties: "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate"
 
 Stop namespace key: "stops:#{id}:#{property}:"
 Properties: "name", "desc", "lat", "lon", "lineType" and "lineName"

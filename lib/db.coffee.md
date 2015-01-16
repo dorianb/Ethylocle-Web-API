@@ -44,7 +44,7 @@
           .on 'data', (data) ->
             [_, id, key] = data.key.split ':'
             stop.id = id
-            user[key] = data.value
+            stop[key] = data.value
           .on 'error', (err) ->
             callback err
           .on 'end', ->
@@ -60,8 +60,8 @@
         getByLineType: (lineType, callback) ->
           stops = []
           db.createReadStream
-            gte: "stopsByLineType:#{lineType}:"
-            lte: "stopsByLineType:#{lineType}:\xff"
+            gte: "stops:#{lineType}:"
+            lte: "stops:#{lineType}:\xff"
           .on 'data', (data) ->
             [_, lineType, id] = data.key.split ':'
             stop = {}
@@ -73,9 +73,11 @@
           .on 'end', ->
             callback null, stops
         setByLineType: (lineType, id, callback) ->
-          op =
+          op = [
             type: 'put'
-            key: "stopsByLineType:#{lineType}:#{id}"
+            key: "stops:#{lineType}:#{id}"
+            value: id
+          ]
           db.batch op, (err) ->
             callback err
 
