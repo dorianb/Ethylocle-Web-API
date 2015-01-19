@@ -84,6 +84,8 @@ forever start ./bin/start.js
 A script is provided to import json and csv data in database. Use the following commands to import data:
 
 ```
-node ./bin/import --format csv sample.csv
-node ./bin/import --format json sample.json
+node ./bin/import --format csv --type users "user sample.csv"
+node ./bin/import --format json --type users "user sample.json"
+
+node ./bin/import --format csv --type stops "ratp_stops_with_routes.csv"
 ```

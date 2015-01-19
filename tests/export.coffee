@@ -4,42 +4,27 @@ fs = require 'fs'
 exportStream = require '../lib/export'
 db = require '../lib/db'
 
-###describe 'export', ->
+describe 'export', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp", next
 
-  it 'Export to sample.csv', (next) ->
+###  it 'Export to sample.csv', (next) ->
     client = db "#{__dirname}/../db/tmp"
-    client.users.set 'dorianb',
+    client.users.set 'dorian@ethylocle.com',
       lastname: 'Bagur'
       firstname: 'Dorian'
       password: '1234'
-      email: 'alfred@ethylocle.com'
     , (err) ->
-      return next err if err
-      client.users.setByEmail 'alfred@ethylocle.com',
-        username: 'dorianb'
-      , (err) ->
         return next err if err
-        client.users.set 'maoqiaoz',
-          lastname: 'Zhou'
-          firstname: 'Maoqiao'
-          password: '4321'
-          email: 'gilbert@ethylocle.com'
-        , (err) ->
-          return next err if err
-          client.users.setByEmail 'gilbert@ethylocle.com',
-            username: 'maoqiaoz'
-          , (err) ->
-            return next err if err
-            exportStream client, format: 'csv', objectMode: true
-            .on 'end', () ->
-              client.close()
-              next()
-            .pipe fs.createWriteStream "#{__dirname}/../exportation.csv"
+        exportStream client, format: 'csv', objectMode: true
+        .on 'end', () ->
+          console.log "End"
+          client.close()
+          next()
+        .pipe fs.createWriteStream "#{__dirname}/../exportation.csv"###
 
-  it 'Export to sample.json', (next) ->
+###  it 'Export to sample.json', (next) ->
     client = db "#{__dirname}/../db/tmp"
     fs
     .createReadStream "#{__dirname}/../sample.json"

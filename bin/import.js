@@ -7,7 +7,7 @@ var db = require('../lib/db');
 
 if(argv['help'])
 {
-  console.log('import [--help] [--format {name}] input\nIntroduction message\n--help          Print this message\n--format {name} One of csv(default) or json\ninput           Imported file');
+  console.log('import [--help] [--format {name}] input\nIntroduction message\n--help          Print this message\n--format {name} One of csv(default) or json\n--type {name}    Type of data to import {users, stops}\ninput           Imported file');
 }
 else if(argv['format'])
 {
@@ -21,7 +21,7 @@ else if(argv['format'])
       .on('end', function(){
         console.log('Importation terminée');
       })
-      .pipe(importStream(client, {format: argv['format']}, {objectMode: true}));
+      .pipe(importStream(client, argv['format'], argv['type'], {objectMode: true}));
     }
   }
   else
@@ -39,6 +39,6 @@ else
     .on('end', function(){
       console.log('Importation terminée');
     })
-    .pipe(importStream(client, {format: 'csv'}, {objectMode: true}));
+    .pipe(importStream(client, 'csv', argv['type'], {objectMode: true}));
   }
 }

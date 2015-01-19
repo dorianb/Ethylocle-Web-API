@@ -52,6 +52,7 @@
         set: (id, stop, callback) ->
           ops = for k, v of stop
             continue if k is 'id'
+            v = 'null' unless v
             type: 'put'
             key: "stops:#{id}:#{k}"
             value: v

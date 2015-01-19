@@ -82,7 +82,7 @@
         #from there on, just provide the data to our consumer.
         #careful not to push(null), since that would indicate EOF.
         #chunk = this._source.read()
-        this.source.users.getAll (err, users) ->
+        this.source.users.get "\x00", (err, users) ->
           console.log "Chunk: " + users.user
         console.log "Chunk: " + chunk
 
