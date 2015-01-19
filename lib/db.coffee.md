@@ -7,6 +7,29 @@
       close: (callback) ->
         db.close callback
       users:
+        getAll: (callback) ->
+          users = []
+          user = {}
+          db.createReadStream
+            gte: "users:"
+            lte: "users:\xff"
+          .on 'data', (data) ->
+            [_, email, key] = data.key.split ':'
+            if user.email
+              unless user.email is email
+                userData = {}
+                for k, v of user
+                  userData[k] = v
+                  delete user[k]
+                users.push userData
+            user.email = email
+            user[key] = data.value
+            console.log user.email + " " + user[key] + " " + data.value
+          .on 'error', (err) ->
+            callback err
+          .on 'end', ->
+            users.push user
+            callback null, users
         get: (email, callback) ->
           user = {}
           db.createReadStream

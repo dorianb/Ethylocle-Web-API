@@ -15,13 +15,11 @@ else if(argv['format'])
   {
     if(argv['_'][0] != null)
     {
-      var client = db("#{__dirname}/../db");
-      fs
-      .createReadStream(argv['_'][0])
+      exportStream("#{__dirname}/../db", argv['format'], {objectMode: true})
       .on('end', function(){
         console.log('Exportation terminée');
       })
-      .pipe(importStream(client, {format: argv['format']}));
+      .pipe(fs.createWriteStream(argv['_'][0]));
     }
   }
   else
@@ -33,12 +31,10 @@ else
 {
   if(argv['_'][0] != null)
   {
-    var client = db("#{__dirname}/../db");
-    fs
-    .createReadStream(argv['_'][0])
+    exportStream("#{__dirname}/../db", 'csv', {objectMode: true})
     .on('end', function(){
       console.log('Exportation terminée');
     })
-    .pipe(importStream(client, {format: 'csv'}));
+    .pipe(fs.createWriteStream(argv['_'][0]));
   }
 }

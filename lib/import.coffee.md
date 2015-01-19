@@ -16,7 +16,7 @@
       that = this
       if this.format is 'csv'
         if this.type is 'users'
-          parse chunk.toString(), (err, users) ->
+          parse chunk.toString(), {delimiter: ';'}, (err, users) ->
             for k, v of users
               do (v) ->
                 that.destination.users.set v[0],
