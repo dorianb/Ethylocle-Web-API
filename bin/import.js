@@ -15,7 +15,7 @@ else if(argv['format'])
   {
     if(argv['_'][0] != null)
     {
-      var client = db("#{__dirname}/../db");
+      var client = db(__dirname + "/../db");
       fs
       .createReadStream(argv['_'][0])
       .on('end', function(){
@@ -33,7 +33,7 @@ else
 {
   if(argv['_'][0] != null)
   {
-    var client = db("#{__dirname}/../db");
+    var client = db(__dirname + "/../db");
     fs
     .createReadStream(argv['_'][0])
     .on('end', function(){
