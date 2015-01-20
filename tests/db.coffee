@@ -92,6 +92,68 @@ describe 'Database', ->
              client.close()
              next()
 
+  it 'Update email', (next) ->
+    client = db "#{__dirname}/../db"
+    client.users.set 'dorian@ethylocle.com',
+      email: 'dorian@ethylocle.com'
+      picture: "null"
+      lastname: "Bagur"
+      firstname: "Dorian"
+      age: "22"
+      gender: "M"
+      weight: "75.5"
+      address: "162 Boulevard du Général de Gaulle"
+      zipCode: "78700"
+      city: "Conflans-Sainte-Honorine"
+      country: "France"
+      phone: "+330619768399"
+      vehicul: "Renault mégane"
+      password: '1234'
+    , (err) ->
+        return next err if err
+        client.users.get "dorian@ethylocle.com", (err, user) ->
+          return next err if err
+          user.email.should.eql "dorian@ethylocle.com"
+          user.picture.should.eql "null"
+          user.lastname.should.eql "Bagur"
+          user.firstname.should.eql "Dorian"
+          user.age.should.eql "22"
+          user.gender.should.eql "M"
+          user.weight.should.eql "75.5"
+          user.address.should.eql "162 Boulevard du Général de Gaulle"
+          user.zipCode.should.eql "78700"
+          user.city.should.eql "Conflans-Sainte-Honorine"
+          user.country.should.eql "France"
+          user.phone.should.eql "+330619768399"
+          user.vehicul.should.eql "Renault mégane"
+          user.password.should.eql "1234"
+          client.users.del 'dorian@ethylocle.com', user, (err) ->
+            return next err if err
+            user.email = 'alfred@ethylocle.com'
+            client.users.set 'alfred@ethylocle.com', user, (err) ->
+              return next err if err
+              client.users.get "alfred@ethylocle.com", (err, user) ->
+                return next err if err
+                user.email.should.eql "alfred@ethylocle.com"
+                user.picture.should.eql "null"
+                user.lastname.should.eql "Bagur"
+                user.firstname.should.eql "Dorian"
+                user.age.should.eql "22"
+                user.gender.should.eql "M"
+                user.weight.should.eql "75.5"
+                user.address.should.eql "162 Boulevard du Général de Gaulle"
+                user.zipCode.should.eql "78700"
+                user.city.should.eql "Conflans-Sainte-Honorine"
+                user.country.should.eql "France"
+                user.phone.should.eql "+330619768399"
+                user.vehicul.should.eql "Renault mégane"
+                user.password.should.eql "1234"
+                client.users.get "dorian@ethylocle.com", (err, user) ->
+                  return next err if err
+                  user.should.eql {}
+                  client.close()
+                  next()
+
   it 'Update user data', (next) ->
     client = db "#{__dirname}/../db/tmp"
     firstname = ""

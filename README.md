@@ -11,16 +11,26 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 ### Sign in request
 url: 195.154.9.74:3000/usr/signin
 Paramètres: {email, password}
-Retour: {result: bool, data: string}
+Retour: {result: bool, data: null}
+
+### Check password request
+url: 195.154.9.74:3000/usr/checkpassword
+Paramètres: {password}
+Retour: {result: bool, data: null}
 
 ### Sign up request
 url: 195.154.9.74:3000/usr/signup
 Paramètres: {email, password}
-Retour: {result: bool, data: string}
+Retour: {result: bool, data: null}
 
 ### Sign out request
 url: 195.154.9.74:3000/usr/signout
-Paramètres: { }
+Paramètres: {}
+Retour: {result: bool, data: null}
+
+### Update email request
+url: 195.154.9.74:3000/usr/updateemail
+Paramètres: {email}
 Retour: {result: bool, data: null}
 
 ### Update user data request

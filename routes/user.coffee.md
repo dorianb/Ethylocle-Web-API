@@ -12,7 +12,7 @@
     errorMessage = (res, err) ->
       res.json
         result: false
-        data: "Une erreur inattendue est survenue: " + err
+        data: "Une erreur inattendue est survenue: " + err.message
 
 ## Sign in
 
@@ -32,6 +32,29 @@
               result: false
               data: "Email ou mot de passe incorrect"
         client.close()
+
+## Check password
+
+    router.post '/checkpassword', (req, res) ->
+      if req.session.email
+        client = db "#{__dirname}/../db"
+        client.users.get req.session.email, (err, user) ->
+          if err
+            errorMessage(res, err)
+          else
+            if user.email is req.session.email and user.password is req.body.password
+              res.json
+                result: true
+                data: null
+            else
+              res.json
+                result: false
+                data: null
+          client.close()
+      else
+        res.json
+          result: false
+          data: "Authentification requise"
 
 ## Sign up
 
@@ -68,10 +91,46 @@
                       errorMessage(res, err)
                   client.close()
 
+## Update email
+
+    router.post '/updateemail', (req, res) ->
+      if req.session.email
+        if req.body.email
+          client = db "#{__dirname}/../db"
+          client.users.get req.session.email, (err, user) ->
+            if err
+              errorMessage(res, err)
+              client.close()
+            else
+              client.users.del req.session.email, user, (err) ->
+                if err
+                  errorMessage(res, err)
+                  client.close()
+                else
+                  req.session.email = undefined
+                  req.session.cookie.maxAge = 0
+                  user.email = req.body.email
+                  client.users.set req.body.email, user, (err) ->
+                    if err
+                      errorMessage(res, err)
+                    else
+                      setSessionCookie req, user
+                      res.json
+                        result: true
+                        data: null
+                    client.close()
+        else
+          res.json
+            result: false
+            data: "La requête ne comporte pas d'email"
+      else
+        res.json
+          result: false
+          data: "Authentification requise"
+
 ## Update user data
 
     router.post '/update', (req, res) ->
-      console.log "Update user data: " + req.session.email
       if req.session.email
         client = db "#{__dirname}/../db"
         data = {}
@@ -94,7 +153,6 @@
 ## Get user data
 
     router.post '/get', (req, res) ->
-      console.log "Get user data: " + req.session.email
       if req.session.email
         client = db "#{__dirname}/../db"
         client.users.get req.session.email, (err, user) ->
@@ -128,6 +186,8 @@
               if err
                 errorMessage(res, err)
               else
+                req.session.email = undefined
+                req.session.cookie.maxAge = 0
                 res.json
                   result: true
                   data: null
