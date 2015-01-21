@@ -159,6 +159,7 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
     .on 'end', () ->
+      #console.log "End"
       client.stops.get '4035172', (err, stop) ->
         return next err if err
         stop.name.should.eql 'REPUBLIQUE - DEFORGES'

@@ -42,6 +42,31 @@
                     console.log err.message if err
         else if this.type is 'stops'
           parse chunk.toString(), {delimiter: ';'}, (err, stops) ->
+            ###storeData = (i) ->
+              if i < stops.length
+                data = {}
+                for k, v of stops[i]
+                  if v
+                    data[k] = v
+                  else
+                    data[k] = 'null'
+                that.destination.stops.set data[0],
+                  name: data[1]
+                  desc: data[2]
+                  lat: data[3]
+                  lon: data[4]
+                  lineType: data[11]
+                  lineName: data[12]
+                , (err) ->
+                    console.log "Error setting data: " + err.message if err
+                    that.destination.stops.setByLineType data[11], data[0], (err) ->
+                      console.log "Error indexing by line type: " + err.message if err
+                      console.log "Iterate " + i
+                      storeData i+1
+              else
+                #that.destination.close()
+                done()
+            storeData 0###
             for k, v of stops
               do (v) ->
                 data = {}
@@ -58,9 +83,9 @@
                   lineType: data[11]
                   lineName: data[12]
                 , (err) ->
-                  console.log err.message if err
-                  that.destination.stops.setByLineType data[11], data[0], (err) ->
-                    console.log err.message if err
+                    console.log "Error setting data: " + err.message if err
+                    that.destination.stops.setByLineType data[11], data[0], (err) ->
+                      console.log "Error indexing by line type: " + err.message if err
       if this.format is 'json'
         if this.type is 'users'
           users = JSON.parse chunk.toString()
@@ -87,6 +112,7 @@
                 lastBacKnownDate: v.lastBacKnownDate
               , (err) ->
                   console.log err.message if err
+      #console.log "Leaving"
       done()
 
     importStream.prototype.end = () ->

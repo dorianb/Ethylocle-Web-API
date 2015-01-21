@@ -88,9 +88,9 @@ describe 'Database', ->
             email: email
             password: password
            , (err) ->
-             return next err if err
-             client.close()
-             next()
+              return next err if err
+              client.close()
+              next()
 
   it 'Update email', (next) ->
     client = db "#{__dirname}/../db"

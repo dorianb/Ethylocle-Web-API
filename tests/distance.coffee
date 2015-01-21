@@ -3,6 +3,8 @@ db = require '../lib/db'
 fs = require 'fs'
 importStream = require '../lib/import'
 
+client = undefined
+
 describe 'Distance', ->
 
   before (next) ->
@@ -11,34 +13,31 @@ describe 'Distance', ->
     fs
     .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
     .on 'end', () ->
-      console.log 'Import finished'
-      client.close()
+      #console.log 'Import finished'
       next()
     .pipe importStream client, 'csv', 'stops', objectMode: true
 
-  it 'Get stops by line type', (next) ->
-    client = db "#{__dirname}/../db/tmp"
-    client.stops.getByLineType 'BUS', (err, stops) ->
-      return next err if err
-      console.log stops.length
-      client.close()
-      next()
+  describe 'After importing stops', ->
 
-      ###client.stops.get stops[0].id, (err, stop) ->
+    it 'Get the 10th closest stops', (next) ->
+      client.stops.getByLineType 'RER', (err, stops) ->
         return next err if err
-        stop.name.should.eql 'REPUBLIQUE - DEFORGES'
-        stop.desc.should.eql 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
-        stop.lat.should.eql '48.80383802353411'
-        stop.lon.should.eql '2.2978373453843948'
-        stop.lineType.should.eql 'BUS'
-        stop.lineName.should.eql 'BUS N63'
-        client.stops.get stops[1].id, (err, stop) ->
-          return next err if err
-          stop.name.should.eql 'CHATILLON - MONTROUGE-METRO'
-          stop.desc.should.eql 'PISTE GARE ROUTIERE - 92020'
-          stop.lat.should.eql '48.81008571048087'
-          stop.lon.should.eql '2.301547557964941'
-          stop.lineType.should.eql 'BUS'
-          stop.lineName.should.eql 'BUS N63'
-          client.close()
-          next()###
+        console.log stops.length
+        #48.853661, 2.288933
+        logStop = (i) ->
+          if i < stops.length
+            client.stops.get stops[i].id, (err, stop) ->
+              return next err if err
+              ###console.log stop.id
+              console.log stop.name
+              console.log stop.desc
+              console.log stop.lat
+              console.log stop.lon
+              console.log stop.lineType
+              console.log stop.lineName###
+              logStop i+1
+          else
+            client.close()
+            next()
+
+        logStop 0
