@@ -35,6 +35,35 @@
             key: "users:#{email}:#{k}"
           db.batch ops, (err) ->
             callback err
+      trips:
+        get: (owner, callback) ->
+          trip = {}
+          db.createReadStream
+            gte: "trips:#{owner}:"
+            lte: "trips:#{owner}:\xff"
+          .on 'data', (data) ->
+            [_, owner, key] = data.key.split ':'
+            trip.owner = owner
+            trip[key] = data.value
+          .on 'error', (err) ->
+            callback err
+          .on 'end', ->
+            callback null, trip
+        set: (owner, trip, callback) ->
+          ops = for k, v of trip
+            continue if k is 'owner'
+            type: 'put'
+            key: "trips:#{owner}:#{k}"
+            value: v
+          db.batch ops, (err) ->
+            callback err
+        del: (owner, trip, callback) ->
+          ops = for k, v of trip
+            continue if k is 'owner'
+            type: 'del'
+            key: "trips:#{owner}:#{k}"
+          db.batch ops, (err) ->
+            callback err
       stops:
         get: (id, callback) ->
           stop = {}
