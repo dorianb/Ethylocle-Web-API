@@ -4,55 +4,82 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 
 ## Functionalities
 * Manage account profile: sign in, sign up, update and delete
-* Get taxi, metro and bus at proximity
-* Import in csv and json
-* Export has not been implemented yet
+* Manage trip: create trip, get trips, join trip, get trip data
+* Import users data from csv and json files
+* Export users data to csv file
 
-### Sign in request
+## User request
+
+### Sign in
 url: 195.154.9.74:3000/usr/signin
 Paramètres: {email, password}
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null }
 
-### Check password request
+### Check password
 url: 195.154.9.74:3000/usr/checkpassword
 Paramètres: {password}
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null }
 
-### Sign up request
+### Sign up
 url: 195.154.9.74:3000/usr/signup
 Paramètres: {email, password}
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null }
 
-### Sign out request
+### Sign out
 url: 195.154.9.74:3000/usr/signout
 Paramètres: {}
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null }
 
-### Update email request
+### Update email
 url: 195.154.9.74:3000/usr/updateemail
 Paramètres: {email}
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null }
 
-### Update user data request
+### Update user data
 url: 195.154.9.74:3000/usr/update
 Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null}
 
-### Get user data request
+### Get user data
 url: 195.154.74:3000/usr/get
 Paramètres: {}
-Retour: {result: bool, data: userObject}
+Retour: { "result": bool, "data": userObject }
 
-### Delete user request
-url: 195.154.74.3000/usr/delete
+### Delete user
+url: 195.154.9.74:3000/usr/delete
 Paramètres: {}
-Retour: {result: bool, data: null}
+Retour: { "result": bool, "data": null }
+
+## Trip request
+
+### Get trips
+url: 195.154.9.74:3000/trp/gettrips
+Paramètres: { "start":{"lat", "long"}, "end":{"lat", "lon"}, "datetime", "numberOfPeople" }
+Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "datetime", "numberOfPeople", "maxprice" }, ... ] }
+
+### Join trip
+url: 195.154.9.74:3000/trp/jointrip
+Paramètres: { "id", "numberOfPeople" }
+Retour: { "result": bool, "data": null }
+
+### Create trip
+url: 195.154.9.74:3000/trp/createtrip
+Paramètres: { "start":{"lat", "long"}, "end":{"lat", "lon"}, "datetime", "numberOfPeople" }
+Retour: { "result": bool, "data": null }
+
+### Get trip data
+url: 195.154.9.74:3000/trp/gettripdata
+Paramètres: { "id" }
+Retour: { "result": bool, "data": { "start":{"lat", "long"}, "end":{"lat", "lon"}, "datetime", "numberOfPeople", "price" } }
 
 ## LevelDB schema
-User namespace key: "users:#{email}:#{property}:"
-Properties: "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate"
+User namespace key: "users:#{email}:#{property}"
+Properties: "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "trip", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate"
 
-Stop namespace key: "stops:#{id}:#{property}:"
+Trip namespace key: "trips:#{id}:#{property}"
+Properties: "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "priceEstimated", "owner", "passenger_2", "passenger_3", "passenger_4"
+
+Stop namespace key: "stops:#{id}:#{property}"
 Properties: "name", "desc", "lat", "lon", "lineType" and "lineName"
 Stop namespace index: "stops:#{lineType}:#{id}"
 
