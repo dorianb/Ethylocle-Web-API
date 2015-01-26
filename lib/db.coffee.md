@@ -7,11 +7,51 @@
       close: (callback) ->
         db.close callback
       users:
-        get: (email, callback) ->
+        getMaxId: (callback) ->
+          maxId = '-1'
+          db.createReadStream
+            gte: "users:"
+            lte: "users:\xff"
+          .on 'data', (data) ->
+            [_, id, key] = data.key.split ':'
+            maxId = id if id > maxId
+          .on 'error', (err) ->
+            callback err
+          .on 'end', ->
+            callback null, maxId
+        get: (id, callback) ->
           user = {}
           db.createReadStream
-            gte: "users:#{email}:"
-            lte: "users:#{email}:\xff"
+            gte: "users:#{id}:"
+            lte: "users:#{id}:\xff"
+          .on 'data', (data) ->
+            [_, id, key] = data.key.split ':'
+            user.id = id
+            user[key] = data.value
+          .on 'error', (err) ->
+            callback err
+          .on 'end', ->
+            callback null, user
+        set: (id, user, callback) ->
+          ops = for k, v of user
+            continue if k is 'id'
+            type: 'put'
+            key: "users:#{id}:#{k}"
+            value: v
+          db.batch ops, (err) ->
+            callback err
+        del: (id, user, callback) ->
+          ops = for k, v of user
+            continue if k is 'id'
+            type: 'del'
+            key: "users:#{id}:#{k}"
+          db.batch ops, (err) ->
+            callback err
+        getByEmail: (email, callback) ->
+          user = {}
+          db.createReadStream
+            gte: "usersEmailIndex:#{email}:"
+            lte: "usersEmailIndex:#{email}:\xff"
           .on 'data', (data) ->
             [_, email, key] = data.key.split ':'
             user.email = email
@@ -20,48 +60,60 @@
             callback err
           .on 'end', ->
             callback null, user
-        set: (email, user, callback) ->
+        setByEmail: (email, user, callback) ->
           ops = for k, v of user
-            continue if k is 'email'
-            type: 'put'
-            key: "users:#{email}:#{k}"
-            value: v
+              continue unless k is 'id'
+              type: 'put'
+              key: "usersEmailIndex:#{email}:#{k}"
+              value: v
           db.batch ops, (err) ->
             callback err
-        del: (email, user, callback) ->
+        delByEmail: (email, user, callback) ->
           ops = for k, v of user
-            continue if k is 'email'
+            continue unless k is 'id'
             type: 'del'
-            key: "users:#{email}:#{k}"
+            key: "usersEmailIndex:#{email}:#{k}"
           db.batch ops, (err) ->
             callback err
       trips:
-        get: (owner, callback) ->
+        getMaxId: (callback) ->
+          maxId = '-1'
+          db.createReadStream
+            gte: "trips:"
+            lte: "trips:\xff"
+          .on 'data', (data) ->
+            [_, id, key] = data.key.split ':'
+            maxId = id if id > maxId
+          .on 'error', (err) ->
+            callback err
+          .on 'end', ->
+            callback null, maxId
+        get: (id, callback) ->
           trip = {}
           db.createReadStream
-            gte: "trips:#{owner}:"
-            lte: "trips:#{owner}:\xff"
+            gte: "trips:#{id}:"
+            lte: "trips:#{id}:\xff"
           .on 'data', (data) ->
-            [_, owner, key] = data.key.split ':'
-            trip.owner = owner
+            [_, id, key] = data.key.split ':'
+            trip.id = id
             trip[key] = data.value
           .on 'error', (err) ->
             callback err
           .on 'end', ->
             callback null, trip
-        set: (owner, trip, callback) ->
+        set: (id, trip, callback) ->
           ops = for k, v of trip
-            continue if k is 'owner'
+            continue if k is 'id'
             type: 'put'
-            key: "trips:#{owner}:#{k}"
+            key: "trips:#{id}:#{k}"
             value: v
           db.batch ops, (err) ->
             callback err
-        del: (owner, trip, callback) ->
+        del: (id, trip, callback) ->
           ops = for k, v of trip
-            continue if k is 'owner'
+            continue if k is 'id'
             type: 'del'
-            key: "trips:#{owner}:#{k}"
+            key: "trips:#{id}:#{k}"
           db.batch ops, (err) ->
             callback err
       stops:

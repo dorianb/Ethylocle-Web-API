@@ -14,71 +14,78 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../user sample.csv"
     .on 'end', () ->
-      client.users.get "dorian@ethylocle.com", (err, user) ->
+      console.log "End"
+      #client.close()
+      console.log "Closed"
+      next()
+      ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
         return next err if err
-        user.email.should.eql "dorian@ethylocle.com"
-        user.picture.should.eql "null"
-        user.lastname.should.eql "Bagur"
-        user.firstname.should.eql "Dorian"
-        user.birthDate.should.eql "22"
-        user.gender.should.eql "M"
-        user.weight.should.eql "75.5"
-        user.address.should.eql "162 Boulevard du Général de Gaulle"
-        user.zipCode.should.eql "78700"
-        user.city.should.eql "Conflans-Sainte-Honorine"
-        user.country.should.eql "France"
-        user.phone.should.eql "+330619768399"
-        user.vehicul.should.eql "Renault mégane"
-        user.password.should.eql "1234"
-        user.latitude.should.eql "48.888"
-        user.longitude.should.eql "70.55"
-        user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
-        user.bac.should.eql "0.56"
-        user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-        client.users.get "maoqiao@ethylocle.com", (err, user) ->
+        client.users.get user.id, (err, user) ->
           return next err if err
-          user.email.should.eql "maoqiao@ethylocle.com"
+          user.email.should.eql "dorian@ethylocle.com"
           user.picture.should.eql "null"
-          user.lastname.should.eql "Zhou"
-          user.firstname.should.eql "Maoqiao"
-          user.birthDate.should.eql "22"
+          user.lastname.should.eql "Bagur"
+          user.firstname.should.eql "Dorian"
+          user.birthDate.should.eql "07-08-1992"
           user.gender.should.eql "M"
           user.weight.should.eql "75.5"
-          user.address.should.eql "null"
-          user.zipCode.should.eql "75000"
-          user.city.should.eql "Paris"
+          user.address.should.eql "162 Boulevard du Général de Gaulle"
+          user.zipCode.should.eql "78700"
+          user.city.should.eql "Conflans-Sainte-Honorine"
           user.country.should.eql "France"
           user.phone.should.eql "+330619768399"
-          user.vehicul.should.eql "Toyota Prius"
           user.password.should.eql "1234"
           user.latitude.should.eql "48.888"
           user.longitude.should.eql "70.55"
           user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
           user.bac.should.eql "0.56"
           user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-          client.users.get "robin@ethylocle.com", (err, user) ->
+          client.users.getByEmail "maoqiao@ethylocle.com", (err, user) ->
             return next err if err
-            user.email.should.eql "robin@ethylocle.com"
-            user.picture.should.eql "null"
-            user.lastname.should.eql "Biondi"
-            user.firstname.should.eql "Robin"
-            user.birthDate.should.eql "22"
-            user.gender.should.eql "M"
-            user.weight.should.eql "75.5"
-            user.address.should.eql "null"
-            user.zipCode.should.eql "75000"
-            user.city.should.eql "Paris"
-            user.country.should.eql "France"
-            user.phone.should.eql "+330619768399"
-            user.vehicul.should.eql "Audi R8"
-            user.password.should.eql "1234"
-            user.latitude.should.eql "48.888"
-            user.longitude.should.eql "70.55"
-            user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
-            user.bac.should.eql "0.56"
-            user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-            client.close()
-            next()
+            client.users.get user.id, (err, user) ->
+              return next err if err
+              user.email.should.eql "maoqiao@ethylocle.com"
+              user.picture.should.eql "null"
+              user.lastname.should.eql "Zhou"
+              user.firstname.should.eql "Maoqiao"
+              user.birthDate.should.eql "07-08-1992"
+              user.gender.should.eql "M"
+              user.weight.should.eql "75.5"
+              user.address.should.eql "null"
+              user.zipCode.should.eql "75000"
+              user.city.should.eql "Paris"
+              user.country.should.eql "France"
+              user.phone.should.eql "+330619768399"
+              user.password.should.eql "1234"
+              user.latitude.should.eql "48.888"
+              user.longitude.should.eql "70.55"
+              user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
+              user.bac.should.eql "0.56"
+              user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
+              client.users.getByEmail "robin@ethylocle.com", (err, user) ->
+                return next err if err
+                client.users.get user.id, (err, user) ->
+                  return next err if err
+                  user.email.should.eql "robin@ethylocle.com"
+                  user.picture.should.eql "null"
+                  user.lastname.should.eql "Biondi"
+                  user.firstname.should.eql "Robin"
+                  user.birthDate.should.eql "07-08-1992"
+                  user.gender.should.eql "M"
+                  user.weight.should.eql "75.5"
+                  user.address.should.eql "null"
+                  user.zipCode.should.eql "75000"
+                  user.city.should.eql "Paris"
+                  user.country.should.eql "France"
+                  user.phone.should.eql "+330619768399"
+                  user.password.should.eql "1234"
+                  user.latitude.should.eql "48.888"
+                  user.longitude.should.eql "70.55"
+                  user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
+                  user.bac.should.eql "0.56"
+                  user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
+                  client.close()
+                  next()###
     .pipe importStream client, 'csv', 'users', objectMode: true
 
   it 'Import users from json', (next) ->
@@ -86,71 +93,77 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../user sample.json"
     .on 'end', () ->
-      client.users.get "dorian@ethylocle.com", (err, user) ->
+      console.log "End"
+      client.close()
+      next()
+      ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
         return next err if err
-        user.email.should.eql "dorian@ethylocle.com"
-        user.picture.should.eql "null"
-        user.lastname.should.eql "Bagur"
-        user.firstname.should.eql "Dorian"
-        user.birthDate.should.eql "22"
-        user.gender.should.eql "M"
-        user.weight.should.eql "75.5"
-        user.address.should.eql "162 Boulevard du Général de Gaulle"
-        user.zipCode.should.eql "78700"
-        user.city.should.eql "Conflans-Sainte-Honorine"
-        user.country.should.eql "France"
-        user.phone.should.eql "+330619768399"
-        user.vehicul.should.eql "Renault mégane"
-        user.password.should.eql "1234"
-        user.latitude.should.eql "48.888"
-        user.longitude.should.eql "70.55"
-        user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
-        user.bac.should.eql "0.56"
-        user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-        client.users.get "maoqiao@ethylocle.com", (err, user) ->
+        client.users.get user.id, (err, user) ->
           return next err if err
-          user.email.should.eql "maoqiao@ethylocle.com"
+          user.email.should.eql "dorian@ethylocle.com"
           user.picture.should.eql "null"
-          user.lastname.should.eql "Zhou"
-          user.firstname.should.eql "Maoqiao"
-          user.birthDate.should.eql "22"
+          user.lastname.should.eql "Bagur"
+          user.firstname.should.eql "Dorian"
+          user.birthDate.should.eql "07-08-1992"
           user.gender.should.eql "M"
           user.weight.should.eql "75.5"
-          user.address.should.eql "null"
-          user.zipCode.should.eql "75000"
-          user.city.should.eql "Paris"
+          user.address.should.eql "162 Boulevard du Général de Gaulle"
+          user.zipCode.should.eql "78700"
+          user.city.should.eql "Conflans-Sainte-Honorine"
           user.country.should.eql "France"
           user.phone.should.eql "+330619768399"
-          user.vehicul.should.eql "Toyota Prius"
           user.password.should.eql "1234"
           user.latitude.should.eql "48.888"
           user.longitude.should.eql "70.55"
           user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
           user.bac.should.eql "0.56"
           user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-          client.users.get "robin@ethylocle.com", (err, user) ->
+          client.users.getByEmail "maoqiao@ethylocle.com", (err, user) ->
             return next err if err
-            user.email.should.eql "robin@ethylocle.com"
-            user.picture.should.eql "null"
-            user.lastname.should.eql "Biondi"
-            user.firstname.should.eql "Robin"
-            user.birthDate.should.eql "22"
-            user.gender.should.eql "M"
-            user.weight.should.eql "75.5"
-            user.address.should.eql "null"
-            user.zipCode.should.eql "75000"
-            user.city.should.eql "Paris"
-            user.country.should.eql "France"
-            user.phone.should.eql "+330619768399"
-            user.vehicul.should.eql "Audi R8"
-            user.password.should.eql "1234"
-            user.latitude.should.eql "48.888"
-            user.longitude.should.eql "70.55"
-            user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
-            user.bac.should.eql "0.56"
-            user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-            client.close()
-            next()
+            client.users.get user.id, (err, user) ->
+              return next err if err
+              user.email.should.eql "maoqiao@ethylocle.com"
+              user.picture.should.eql "null"
+              user.lastname.should.eql "Zhou"
+              user.firstname.should.eql "Maoqiao"
+              user.birthDate.should.eql "07-08-1992"
+              user.gender.should.eql "M"
+              user.weight.should.eql "75.5"
+              user.address.should.eql "null"
+              user.zipCode.should.eql "75000"
+              user.city.should.eql "Paris"
+              user.country.should.eql "France"
+              user.phone.should.eql "+330619768399"
+              user.password.should.eql "1234"
+              user.latitude.should.eql "48.888"
+              user.longitude.should.eql "70.55"
+              user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
+              user.bac.should.eql "0.56"
+              user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
+              client.users.getByEmail "robin@ethylocle.com", (err, user) ->
+                return next err if err
+                client.users.get user.id, (err, user) ->
+                  return next err if err
+                  user.email.should.eql "robin@ethylocle.com"
+                  user.picture.should.eql "null"
+                  user.lastname.should.eql "Biondi"
+                  user.firstname.should.eql "Robin"
+                  user.birthDate.should.eql "07-08-1992"
+                  user.gender.should.eql "M"
+                  user.weight.should.eql "75.5"
+                  user.address.should.eql "null"
+                  user.zipCode.should.eql "75000"
+                  user.city.should.eql "Paris"
+                  user.country.should.eql "France"
+                  user.phone.should.eql "+330619768399"
+                  user.password.should.eql "1234"
+                  user.latitude.should.eql "48.888"
+                  user.longitude.should.eql "70.55"
+                  user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
+                  user.bac.should.eql "0.56"
+                  user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
+                  client.close()
+                  next()###
     .pipe importStream client, 'json', 'users', objectMode: true
 
   it 'Import stops from csv', (next) ->
@@ -159,8 +172,10 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
     .on 'end', () ->
-      #console.log "End"
-      client.stops.get '4035172', (err, stop) ->
+      console.log "End"
+      client.close()
+      next()
+      ###client.stops.get '4035172', (err, stop) ->
         return next err if err
         stop.name.should.eql 'REPUBLIQUE - DEFORGES'
         stop.desc.should.eql 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -169,5 +184,5 @@ describe 'import', ->
         stop.lineType.should.eql 'BUS'
         stop.lineName.should.eql 'BUS N63'
         client.close()
-        next()
+        next()###
     .pipe importStream client, 'csv', 'stops', objectMode: true

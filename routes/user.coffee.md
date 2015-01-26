@@ -6,7 +6,7 @@
 
     setSessionCookie = (req, user) ->
       req.session.email = user.email
-      req.session.cookie.maxAge = null
+      req.session.cookie.maxAge = 3600000
       console.log "Cookie: " + req.session.email + " " + req.session.cookie.maxAge/1000 + "s"
 
     errorMessage = (res, err) ->
@@ -68,7 +68,7 @@
           if user.email is req.body.email
             res.json
               result: false
-              data: "L'email n'est pas disponible"
+              data: "L'email est déjà utilisé pour un autre compte"
             client.close()
           else
             client.users.set req.body.email,
@@ -97,32 +97,42 @@
       if req.session.email
         if req.body.email
           client = db "#{__dirname}/../db"
-          client.users.get req.session.email, (err, user) ->
+          client.users.get req.body.email, (err, user) ->
             if err
               errorMessage(res, err)
               client.close()
+            else if user.email is req.body.email
+              res.json
+                result: false
+                data: "L'email est déjà utilisé pour un autre compte"
+              client.close()
             else
-              client.users.del req.session.email, user, (err) ->
+              client.users.get req.session.email, (err, user) ->
                 if err
                   errorMessage(res, err)
                   client.close()
                 else
-                  req.session.email = undefined
-                  req.session.cookie.maxAge = 0
-                  user.email = req.body.email
-                  client.users.set req.body.email, user, (err) ->
+                  client.users.del req.session.email, user, (err) ->
                     if err
                       errorMessage(res, err)
+                      client.close()
                     else
-                      setSessionCookie req, user
-                      res.json
-                        result: true
-                        data: null
-                    client.close()
+                      req.session.email = undefined
+                      req.session.cookie.maxAge = 0
+                      user.email = req.body.email
+                      client.users.set req.body.email, user, (err) ->
+                        if err
+                          errorMessage(res, err)
+                        else
+                          setSessionCookie req, user
+                          res.json
+                            result: true
+                            data: null
+                        client.close()
         else
           res.json
             result: false
-            data: "La requête ne comporte pas d'email"
+            data: "Veuillez saisir un email"
       else
         res.json
           result: false

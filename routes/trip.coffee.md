@@ -33,18 +33,23 @@
             if k is 'numberOfPeople'
               i = 1
               while i < v
-                data["passenger" + ++i] = req.session.email
+                data["passenger_" + ++i] = req.session.email
             else
               data[k] = v
           data.price = '15' #A déterminer à l'aide de l'api taxi G7
-          client.trips.set req.session.email, data, (err) ->
+          client.trips.getMaxId (err, maxId) ->
             if err
               errorMessage(res, err)
+              client.close()
             else
-              res.json
-                result: true
-                data: null
-            client.close()
+              client.trips.set ++maxId, data, (err) ->
+                if err
+                  errorMessage(res, err)
+                else
+                  res.json
+                    result: true
+                    data: null
+                client.close()
       else
         res.json
           result: false
