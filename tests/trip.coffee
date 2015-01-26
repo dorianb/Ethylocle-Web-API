@@ -5,10 +5,10 @@ db = require '../lib/db'
 describe 'Trip test', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp", next
+    rimraf "#{__dirname}/../db/tmp/trip", next
 
   it 'Insert and get a trip', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/trip"
     client.users.set 'dorian@ethylocle.com',
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -19,7 +19,7 @@ describe 'Trip test', ->
         lonStart: '2.287546'
         latEnd: '48.860359'
         lonEnd: '2.352949'
-        dateTime: '22-01-2015 16:30:19'
+        dateTime: '22-01-2015 16:30'
         price: '30'
         passenger_1: 'dorian@ethylocle.com'
         passenger_2: 'dorian@ethylocle.com'
@@ -31,7 +31,7 @@ describe 'Trip test', ->
           trip.lonStart.should.eql '2.287546'
           trip.latEnd.should.eql '48.860359'
           trip.lonEnd.should.eql '2.352949'
-          trip.dateTime.should.eql '22-01-2015 16:30:19'
+          trip.dateTime.should.eql '22-01-2015 16:30'
           trip.price.should.eql '30'
           trip.passenger_1.should.eql 'dorian@ethylocle.com'
           trip.passenger_2.should.eql 'dorian@ethylocle.com'
@@ -41,7 +41,7 @@ describe 'Trip test', ->
           next()
 
   it 'Insert two trips and get a single one', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/trip"
     client.users.set 'dorian@ethylocle.com',
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -57,7 +57,7 @@ describe 'Trip test', ->
           lonStart: '2.287546'
           latEnd: '48.860359'
           lonEnd: '2.352949'
-          dateTime: '22-01-2015 16:02:29'
+          dateTime: '22-01-2015 16:02'
           price: '30'
           passenger_1: 'dorian@ethylocle.com'
           passenger_2: 'dorian@ethylocle.com'
@@ -68,7 +68,7 @@ describe 'Trip test', ->
             lonStart: '2.286001'
             latEnd: '48.865314'
             lonEnd: '2.321514'
-            dateTime: '22-01-2015 16:30:19'
+            dateTime: '22-01-2015 16:30'
             price: '17'
             passenger_1: 'maoqiao@ethylocle.com'
           , (err) ->
@@ -79,7 +79,7 @@ describe 'Trip test', ->
               trip.lonStart.should.eql '2.287546'
               trip.latEnd.should.eql '48.860359'
               trip.lonEnd.should.eql '2.352949'
-              trip.dateTime.should.eql '22-01-2015 16:02:29'
+              trip.dateTime.should.eql '22-01-2015 16:02'
               trip.price.should.eql '30'
               trip.passenger_1.should.eql 'dorian@ethylocle.com'
               trip.passenger_2.should.eql 'dorian@ethylocle.com'
@@ -91,7 +91,7 @@ describe 'Trip test', ->
                 trip.lonStart.should.eql '2.286001'
                 trip.latEnd.should.eql '48.865314'
                 trip.lonEnd.should.eql '2.321514'
-                trip.dateTime.should.eql '22-01-2015 16:30:19'
+                trip.dateTime.should.eql '22-01-2015 16:30'
                 trip.price.should.eql '17'
                 trip.passenger_1.should.eql 'maoqiao@ethylocle.com'
                 should.not.exists trip.passenger_2
@@ -101,13 +101,13 @@ describe 'Trip test', ->
                 next()
 
   it 'Get last trip id', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/trip"
     client.trips.set '0',
       latStart: '48.853611'
       lonStart: '2.287546'
       latEnd: '48.860359'
       lonEnd: '2.352949'
-      dateTime: '22-01-2015 16:02:29'
+      dateTime: '22-01-2015 16:02'
       price: '30'
       passenger_1: 'dorian@ethylocle.com'
       passenger_2: 'dorian@ethylocle.com'
@@ -118,7 +118,7 @@ describe 'Trip test', ->
         lonStart: '2.286001'
         latEnd: '48.865314'
         lonEnd: '2.321514'
-        dateTime: '22-01-2015 16:30:19'
+        dateTime: '22-01-2015 16:30'
         price: '17'
         passenger_1: 'maoqiao@ethylocle.com'
       , (err) ->
@@ -130,7 +130,7 @@ describe 'Trip test', ->
           next()
 
   it 'Insert two trips without knowing last id', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/trip"
     client.users.set 'dorian@ethylocle.com',
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -149,7 +149,7 @@ describe 'Trip test', ->
             lonStart: '2.287546'
             latEnd: '48.860359'
             lonEnd: '2.352949'
-            dateTime: '22-01-2015 16:02:29'
+            dateTime: '22-01-2015 16:02'
             price: '30'
             passenger_1: 'dorian@ethylocle.com'
             passenger_2: 'dorian@ethylocle.com'
@@ -163,7 +163,7 @@ describe 'Trip test', ->
                 lonStart: '2.286001'
                 latEnd: '48.865314'
                 lonEnd: '2.321514'
-                dateTime: '22-01-2015 16:30:19'
+                dateTime: '22-01-2015 16:30'
                 price: '17'
                 passenger_1: 'maoqiao@ethylocle.com'
               , (err) ->
@@ -174,7 +174,7 @@ describe 'Trip test', ->
                   trip.lonStart.should.eql '2.287546'
                   trip.latEnd.should.eql '48.860359'
                   trip.lonEnd.should.eql '2.352949'
-                  trip.dateTime.should.eql '22-01-2015 16:02:29'
+                  trip.dateTime.should.eql '22-01-2015 16:02'
                   trip.price.should.eql '30'
                   trip.passenger_1.should.eql 'dorian@ethylocle.com'
                   trip.passenger_2.should.eql 'dorian@ethylocle.com'
@@ -186,7 +186,7 @@ describe 'Trip test', ->
                     trip.lonStart.should.eql '2.286001'
                     trip.latEnd.should.eql '48.865314'
                     trip.lonEnd.should.eql '2.321514'
-                    trip.dateTime.should.eql '22-01-2015 16:30:19'
+                    trip.dateTime.should.eql '22-01-2015 16:30'
                     trip.price.should.eql '17'
                     trip.passenger_1.should.eql 'maoqiao@ethylocle.com'
                     should.not.exists trip.passenger_2
@@ -202,12 +202,12 @@ describe 'Trip test', ->
       lonStart: '2.286001'
       latEnd: '48.865314'
       lonEnd: '2.321514'
-      dateTime: '22-01-2015 16:30:19'
+      dateTime: '22-01-2015 16:30'
       numberOfPeople: '1'
     if body.numberOfPeople > 2
       console.log "Impossible de créer un trajet pour plus de 2 personnes"
     else
-      client = db "#{__dirname}/../db/tmp"
+      client = db "#{__dirname}/../db/tmp/trip"
       data = {}
       for k, v of body
         continue unless v
@@ -228,7 +228,7 @@ describe 'Trip test', ->
             trip.lonStart.should.eql '2.286001'
             trip.latEnd.should.eql '48.865314'
             trip.lonEnd.should.eql '2.321514'
-            trip.dateTime.should.eql '22-01-2015 16:30:19'
+            trip.dateTime.should.eql '22-01-2015 16:30'
             trip.price.should.eql '15'
             trip.passenger_1.should.eql session
             should.not.exists trip.passenger_2
@@ -244,12 +244,12 @@ describe 'Trip test', ->
       lonStart: '2.286001'
       latEnd: '48.865314'
       lonEnd: '2.321514'
-      dateTime: '22-01-2015 16:30:19'
+      dateTime: '22-01-2015 16:30'
       numberOfPeople: '2'
     if body.numberOfPeople > 2
       console.log "Impossible de créer un trajet pour plus de 2 personnes"
     else
-      client = db "#{__dirname}/../db/tmp"
+      client = db "#{__dirname}/../db/tmp/trip"
       data = {}
       for k, v of body
         continue unless v
@@ -270,7 +270,7 @@ describe 'Trip test', ->
             trip.lonStart.should.eql '2.286001'
             trip.latEnd.should.eql '48.865314'
             trip.lonEnd.should.eql '2.321514'
-            trip.dateTime.should.eql '22-01-2015 16:30:19'
+            trip.dateTime.should.eql '22-01-2015 16:30'
             trip.price.should.eql '15'
             trip.passenger_1.should.eql session
             trip.passenger_2.should.eql session
@@ -286,7 +286,7 @@ describe 'Trip test', ->
       lonStart: '2.286001'
       latEnd: '48.865314'
       lonEnd: '2.321514'
-      dateTime: '22-01-2015 16:30:19'
+      dateTime: '22-01-2015 16:30'
       numberOfPeople: '3'
     assertion = body.numberOfPeople > 2
     assertion.should.eql true

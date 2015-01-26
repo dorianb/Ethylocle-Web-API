@@ -14,7 +14,7 @@
     util.inherits importStream, stream.Writable
     importStream.prototype._write = (chunk, encoding, done) ->
       that = this
-      console.log "Writing"
+      #console.log "Writing"
       if this.format is 'csv'
         if this.type is 'users'
           parse chunk.toString(), {delimiter: ';'}, (err, users) ->
@@ -49,7 +49,7 @@
                           console.log err.message if err
                           storeCSVUser i+1
               else
-                console.log "done"
+                that.destination.close()
                 done()
             storeCSVUser 0
         else if this.type is 'stops'
@@ -70,10 +70,9 @@
                   lineType: data[11]
                   lineName: data[12]
                 , (err) ->
-                    #console.log "Error setting data: " + err.message if err
+                    console.log "Error setting data: " + err.message if err
                     that.destination.stops.setByLineType data[11], data[0], (err) ->
-                      #console.log "Error indexing by line type: " + err.message if err
-                      #console.log i if i%10 is 0
+                      console.log "Error indexing by line type: " + err.message if err
                       storeCSVStop i+1
               else
                 done()
@@ -86,24 +85,24 @@
               that.destination.users.getMaxId (err, maxId) ->
                 console.log err.message if err
                 that.destination.users.set ++maxId,
-                  email: v.email
-                  picture: v.picture
-                  lastname: v.lastname
-                  firstname: v.firstname
-                  birthDate: v.birthDate
-                  gender: v.gender
-                  weight: v.weight
-                  address: v.address
-                  zipCode: v.zipCode
-                  city: v.city
-                  country: v.country
-                  phone: v.phone
-                  password: v.password
-                  latitude: v.latitude
-                  longitude: v.longitude
-                  lastKnownPositionDate: v.lastKnownPositionDate
-                  bac: v.bac
-                  lastBacKnownDate: v.lastBacKnownDate
+                  email: users[i].email
+                  picture: users[i].picture
+                  lastname: users[i].lastname
+                  firstname: users[i].firstname
+                  birthDate: users[i].birthDate
+                  gender: users[i].gender
+                  weight: users[i].weight
+                  address: users[i].address
+                  zipCode: users[i].zipCode
+                  city: users[i].city
+                  country: users[i].country
+                  phone: users[i].phone
+                  password: users[i].password
+                  latitude: users[i].latitude
+                  longitude: users[i].longitude
+                  lastKnownPositionDate: users[i].lastKnownPositionDate
+                  bac: users[i].bac
+                  lastBacKnownDate: users[i].lastBacKnownDate
                 , (err) ->
                     console.log err.message if err
                     that.destination.users.setByEmail v.email,
@@ -112,10 +111,11 @@
                         console.log err.message if err
                         storeJSONUser i+1
             else
+              that.destination.close()
               done()
           storeJSONUser 0
 
     importStream.prototype.end = () ->
-      console.log 'ImportStream ended'
+      #console.log 'ImportStream ended'
 
     module.exports = importStream

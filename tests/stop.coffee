@@ -9,10 +9,10 @@ client = undefined
 describe 'Stop test', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp", next
+    rimraf "#{__dirname}/../db/tmp/stop", next
 
   it 'Insert and get a stop', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -34,7 +34,7 @@ describe 'Stop test', ->
         next()
 
   it 'Insert and get a single stop', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -65,7 +65,7 @@ describe 'Stop test', ->
           next()
 
   it 'Insert and get a stop by line type', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -94,7 +94,7 @@ describe 'Stop test', ->
               next()
 
   it 'Insert and get stops by line type', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -154,11 +154,11 @@ describe 'Stop test', ->
                       client.close()
                       next()
 
-describe 'Find nearest stop test', ->
+###describe 'Find nearest stop test', ->
 
   before (next) ->
     this.timeout 10000
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/stop"
     fs
     .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
     .on 'end', () ->
@@ -176,16 +176,16 @@ describe 'Find nearest stop test', ->
           if i < stops.length
             client.stops.get stops[i].id, (err, stop) ->
               return next err if err
-              ###console.log stop.id
+              console.log stop.id
               console.log stop.name
               console.log stop.desc
               console.log stop.lat
               console.log stop.lon
               console.log stop.lineType
-              console.log stop.lineName###
+              console.log stop.lineName
               logStop i+1
           else
             client.close()
             next()
 
-        logStop 0
+        logStop 0###

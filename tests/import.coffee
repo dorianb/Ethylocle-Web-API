@@ -14,9 +14,8 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../user sample.csv"
     .on 'end', () ->
-      console.log "End"
+      #console.log "End"
       #client.close()
-      console.log "Closed"
       next()
       ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
         return next err if err
@@ -93,8 +92,8 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../user sample.json"
     .on 'end', () ->
-      console.log "End"
-      client.close()
+      #console.log "End"
+      #client.close()
       next()
       ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
         return next err if err
@@ -166,7 +165,7 @@ describe 'import', ->
                   next()###
     .pipe importStream client, 'json', 'users', objectMode: true
 
-  it 'Import stops from csv', (next) ->
+  ###it 'Import stops from csv', (next) ->
     this.timeout 10000
     client = db "#{__dirname}/../db/tmp"
     fs
@@ -175,7 +174,7 @@ describe 'import', ->
       console.log "End"
       client.close()
       next()
-      ###client.stops.get '4035172', (err, stop) ->
+      client.stops.get '4035172', (err, stop) ->
         return next err if err
         stop.name.should.eql 'REPUBLIQUE - DEFORGES'
         stop.desc.should.eql 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -184,5 +183,5 @@ describe 'import', ->
         stop.lineType.should.eql 'BUS'
         stop.lineName.should.eql 'BUS N63'
         client.close()
-        next()###
-    .pipe importStream client, 'csv', 'stops', objectMode: true
+        next()
+    .pipe importStream client, 'csv', 'stops', objectMode: true###

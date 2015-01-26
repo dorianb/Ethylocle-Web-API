@@ -5,13 +5,13 @@ db = require '../lib/db'
 describe 'User test', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp", next
+    rimraf "#{__dirname}/../db/tmp/user", next
 
   it 'Insert and get user', (next) ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -29,7 +29,7 @@ describe 'User test', ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -54,7 +54,7 @@ describe 'User test', ->
     user2 =
       email: 'maoqiao@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -93,7 +93,7 @@ describe 'User test', ->
     user2 =
       email: 'maoqiao@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -124,7 +124,7 @@ describe 'User test', ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -185,7 +185,7 @@ describe 'User test', ->
       country: "France"
       phone: "+330619768399"
       password: "1234"
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -227,7 +227,7 @@ describe 'User test', ->
     user1 =
       email: "dorian@ethylocle.com"
       password: "1234"
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -282,7 +282,7 @@ describe 'User test', ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -306,3 +306,33 @@ describe 'User test', ->
                     user.should.eql {}
                     client.close()
                     next()
+
+  it 'Collection', (next) ->
+    user =
+      email: 'dorian@ethylocle.com'
+      lastname: 'Bagur'
+      birthDate: '29-01-1992'
+      firstname: ""
+    data = {}
+    for k, v of user
+      continue unless v and k in ["image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate"]
+      data[k] = v
+    data.lastname.should.eql user.lastname
+    should.not.exists data.email
+    should.not.exists data.image
+    should.not.exists data.firstname
+    data.birthDate.should.eql user.birthDate
+    should.not.exists data.gender
+    should.not.exists data.weight
+    should.not.exists data.address
+    should.not.exists data.zipCode
+    should.not.exists data.city
+    should.not.exists data.country
+    should.not.exists data.phone
+    should.not.exists data.password
+    should.not.exists data.latitude
+    should.not.exists data.longitude
+    should.not.exists data.lastKnownPositionDate
+    should.not.exists data.bac
+    should.not.exists data.lastBacKnownDate
+    next()

@@ -14,14 +14,14 @@
 
     app.use bodyParser.json()
     app.use bodyParser.urlencoded( extended: false )
-    app.use cookieParser('123456789')
+    app.use cookieParser('A8g8o7Zf-c0d8-e0V<-QVe2')
     app.use methodOverride '_method'
 
     sess =
-      secret: '123456789'
+      secret: 'A8g8o7Zf-c0d8-e0V<-QVe2'
       resave: false
       saveUninitialized: true
-      cookie: maxAge: 60000
+      cookie: maxAge: 3600000
 
     if process.env.NODE_ENV is "production"
       app.set "trust proxy", 1
