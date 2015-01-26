@@ -11,70 +11,95 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 ## User request
 
 ### Sign in
+```
 url: 195.154.9.74:3000/usr/signin
 Paramètres: {email, password}
 Retour: { "result": bool, "data": null }
+```
 
 ### Check password
+```
 url: 195.154.9.74:3000/usr/checkpassword
 Paramètres: {password}
 Retour: { "result": bool, "data": null }
+```
 
 ### Sign up
+```
 url: 195.154.9.74:3000/usr/signup
 Paramètres: {email, password}
 Retour: { "result": bool, "data": null }
+```
 
 ### Sign out
+```
 url: 195.154.9.74:3000/usr/signout
 Paramètres: {}
 Retour: { "result": bool, "data": null }
+```
 
 ### Update email
+```
 url: 195.154.9.74:3000/usr/updateemail
 Paramètres: {email}
 Retour: { "result": bool, "data": null }
+```
 
 ### Update user data
+```
 url: 195.154.9.74:3000/usr/update
 Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
 Retour: { "result": bool, "data": null}
+```
 
 ### Get user data
+```
 url: 195.154.74:3000/usr/get
 Paramètres: {}
 Retour: { "result": bool, "data": userObject }
+```
 
 ### Delete user
+```
 url: 195.154.9.74:3000/usr/delete
 Paramètres: {}
 Retour: { "result": bool, "data": null }
+```
 
 ## Trip request
 
 ### Get trips
+```
 url: 195.154.9.74:3000/trp/gettrips
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPeople", "maxprice" }, ... ] }
+```
 
 ### Join trip
+```
 url: 195.154.9.74:3000/trp/jointrip
 Paramètres: { "id", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
+```
 
 ### Create trip
+```
 url: 195.154.9.74:3000/trp/createtrip
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
+```
 
 ### Get trip data
+```
 url: 195.154.9.74:3000/trp/gettripdata
 Paramètres: { "id" }
 Retour: { "result": bool, "data": { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople", "price" } }
+```
 
 ## LevelDB schema
+```
 User namespace key: "users:#{id}:#{property}"
-Properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "trip", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
+Properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
 User namespace index: "users:#{email}:#{property}"
 properties: "id"
 
@@ -84,6 +109,7 @@ Properties: "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "price", "pa
 Stop namespace key: "stops:#{id}:#{property}"
 Properties: "name", "desc", "lat", "lon", "lineType" and "lineName"
 Stop namespace index: "stops:#{lineType}:#{id}"
+```
 
 ## Install
 Use this command to install locally all the dependencies needed:
