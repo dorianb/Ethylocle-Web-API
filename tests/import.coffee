@@ -10,11 +10,11 @@ describe 'import', ->
     rimraf "#{__dirname}/../db/tmp", next
 
   it 'Import users from csv', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     fs
     .createReadStream "#{__dirname}/../user sample.csv"
-    .on 'end', () ->
-      #console.log "End"
+    .on 'end', ->
+      console.log "End"
       #client.close()
       next()
       ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
@@ -85,13 +85,13 @@ describe 'import', ->
                   user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
                   client.close()
                   next()###
-    .pipe importStream client, 'csv', 'users', objectMode: true
+    .pipe importStream client, 'csv', 'user', objectMode: true
 
   it 'Import users from json', (next) ->
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     fs
     .createReadStream "#{__dirname}/../user sample.json"
-    .on 'end', () ->
+    .on 'end', ->
       #console.log "End"
       #client.close()
       next()
@@ -163,11 +163,11 @@ describe 'import', ->
                   user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
                   client.close()
                   next()###
-    .pipe importStream client, 'json', 'users', objectMode: true
+    .pipe importStream client, 'json', 'user', objectMode: true
 
   ###it 'Import stops from csv', (next) ->
     this.timeout 10000
-    client = db "#{__dirname}/../db/tmp"
+    client = db "#{__dirname}/../db/tmp/user"
     fs
     .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
     .on 'end', () ->
@@ -184,4 +184,4 @@ describe 'import', ->
         stop.lineName.should.eql 'BUS N63'
         client.close()
         next()
-    .pipe importStream client, 'csv', 'stops', objectMode: true###
+    .pipe importStream client, 'csv', 'stop', objectMode: true###

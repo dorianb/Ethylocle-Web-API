@@ -7,15 +7,16 @@ var db = require('../lib/db');
 
 if(argv['help'])
 {
-  console.log('import [--help] [--format {name}] input\nIntroduction message\n--help          Print this message\n--format {name} One of csv(default) or json\n--type {name}    Type of data to import {users, stops}\ninput           Imported file');
+  console.log('import [--help] [--format {name}] [--type {name}] input\nIntroduction message\n--help          Print this message\n--format {name} One of csv(default) or json\n--type {name}    Type of data to import {user, stop}\ninput           Imported file');
 }
 else if(argv['format'])
 {
+  var path = __dirname + "/../db/" + argv['type']
   if((argv['format'] == 'csv') || (argv['format'] == 'json'))
   {
     if(argv['_'][0] != null)
     {
-      var client = db(__dirname + "/../db");
+      var client = db(path);
       fs
       .createReadStream(argv['_'][0])
       .on('end', function(){
@@ -31,9 +32,10 @@ else if(argv['format'])
 }
 else
 {
+  var path = __dirname + "/../db/" + argv['type']
   if(argv['_'][0] != null)
   {
-    var client = db(__dirname + "/../db");
+    var client = db(path);
     fs
     .createReadStream(argv['_'][0])
     .on('end', function(){

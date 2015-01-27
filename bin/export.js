@@ -15,7 +15,7 @@ else if(argv['format'])
   {
     if(argv['_'][0] != null)
     {
-      exportStream(__dirname + "/../db", argv['format'], {objectMode: true})
+      exportStream(__dirname + "/../db/user", argv['format'], {objectMode: true})
       .on('end', function(){
         console.log('Exportation terminée');
       })
@@ -31,7 +31,7 @@ else
 {
   if(argv['_'][0] != null)
   {
-    exportStream(__dirname + "/../db", 'csv', {objectMode: true})
+    exportStream(__dirname + "/../db/user", 'csv', {objectMode: true})
     .on('end', function(){
       console.log('Exportation terminée');
     })

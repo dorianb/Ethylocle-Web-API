@@ -19,9 +19,9 @@
         gte: "users:"
         lte: "users:\xff"
       .on 'data', (data) ->
-        [_, email, key] = data.key.split ':'
-        if user.email
-          unless user.email is email
+        [_, id, key] = data.key.split ':'
+        if user.id
+          unless user.id is id
             counter = 1
             length = Object.keys(user).length
             for k, v of user
@@ -30,7 +30,7 @@
               chunk += '\n' if length is counter
               delete user[k]
               counter++
-        user.email = email
+        user.id = id
         user[key] = data.value
       .on 'error', (err) ->
         console.log err.message

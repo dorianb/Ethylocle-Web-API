@@ -145,13 +145,22 @@ If you want to launch server in production mode, run the following command:
 forever start ./bin/start.js
 ```
 
-## Import script
-A script is provided to import json and csv data in database. Use the following commands to import data:
+## Manage database
+Several scripts are provided for managing database
 
+### Import data
 ```
 node ./bin/import --format csv --type users "user sample.csv"
 node ./bin/import --format json --type users "user sample.json"
 node ./bin/import --format csv --type stops "ratp_stops_with_routes.csv"
+```
 
-node ./bin/export --format csv "users.csv"
+### Export data
+```
+node ./bin/export --format csv users.csv
+```
+
+### Delete data
+```
+node ./bin/delete --type user 0
 ```
