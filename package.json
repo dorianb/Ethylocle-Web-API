@@ -21,7 +21,10 @@
     "rimraf": "latest",
     "minimist": "latest",
     "csv-parse": "latest",
-    "abstract-leveldown": "latest"
+    "abstract-leveldown": "latest",
+    "geolib": "latest",
+    "moment": "latest",
+    "lexinum": "latest"
   },
   "devDependencies": {
     "mocha": "latest",

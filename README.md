@@ -105,8 +105,11 @@ User namespace index: "users:#{email}:#{property}"
 properties: "id"
 
 Trip namespace key: "trips:#{id}:#{property}"
-Properties: "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "price", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
+Properties: "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPeople", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
 dateTime format: 'dd-MM-yyyy hh:mm'
+
+Tripsearch namespace key: "tripsearch:#{userId}:#{tripId}:#{distance}"
+Properties: ""
 
 Stop namespace key: "stops:#{id}:#{property}"
 Properties: "name", "desc", "lat", "lon", "lineType" and "lineName"

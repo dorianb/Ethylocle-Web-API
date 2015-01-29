@@ -1,6 +1,7 @@
 rimraf = require 'rimraf'
 should = require 'should'
 db = require '../lib/db'
+geolib = require 'geolib'
 
 describe 'Trip test', ->
 
@@ -401,10 +402,38 @@ describe 'Trip test', ->
                             should.not.exists trip.passenger_4
                             body =
                               latStart: '48.856470'
-                              lonstart: '2.286001'
+                              lonStart: '2.286001'
                               latEnd: '48.865314'
                               lonEnd: '2.321514'
                               dateTime: '22-01-2015 16:30'
                               numberOfPeople: 2
-                            client2.close()
-                            next()
+
+                            # Lire la table des trajets
+                              # Si dateTime > now()
+                                # Calculer le nombre de passagers
+                                # Si numberOfPeople <= 4 - nombre de passagers
+                                  # Calculer les deux distances
+                                  # Additionner les deux distances
+                                  # Ecrire ces distances dans une table "temporaire"
+                                    # namespace: "tripsearch:#{idUser}:#{idTrip}:#{property}"
+                                    # property: "distance"
+
+                            # Sélectionner 10 trajets par ordre croissant sur l'addition de ces distances
+
+                            # Supprimer le contenu de la table tripsearch alimentée par la recherche précedente de cet utilisateur
+
+                            client2.trips.get '1', (err, trip) ->
+                              return next err if err
+                              distanceStart = geolib.getDistance {latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
+                              distanceEnd = geolib.getDistance {latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
+                              distanceStart.should.eql 0
+                              distanceEnd.should.eql 0
+                              client2.trips.get '0', (err, trip) ->
+                                return next err if err
+                                distanceStart = geolib.getDistance {latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
+                                distanceEnd = geolib.getDistance {latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
+                                distanceStart.should.eql 338
+                                distanceEnd.should.eql 2371
+                                # Retour "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPeople", "maxprice"
+                                client2.close()
+                                next()

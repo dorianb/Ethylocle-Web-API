@@ -29,13 +29,12 @@
           client = db "#{__dirname}/../db/trip"
           data = {}
           for k, v of req.body
-            continue unless v
+            continue unless v and k in ["latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople"]
+            data[k] = v
             if k is 'numberOfPeople'
               i = 1
               while i < v
                 data["passenger_" + ++i] = req.session.userId
-            else
-              data[k] = v
           data.price = '15' #A déterminer à l'aide de l'api taxi G7
           client.trips.getMaxId (err, maxId) ->
             if err

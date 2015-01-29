@@ -16,7 +16,7 @@
             [_, id, key] = data.key.split ':'
             maxId = id if id > maxId
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, maxId
         get: (id, callback) ->
@@ -29,7 +29,7 @@
             user.id = id
             user[key] = data.value
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, user
         set: (id, user, callback) ->
@@ -57,7 +57,7 @@
             user.email = email
             user[key] = data.value
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, user
         setByEmail: (email, user, callback) ->
@@ -85,7 +85,7 @@
             [_, id, key] = data.key.split ':'
             maxId = id if id > maxId
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, maxId
         get: (id, callback) ->
@@ -98,7 +98,7 @@
             trip.id = id
             trip[key] = data.value
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, trip
         set: (id, trip, callback) ->
@@ -116,6 +116,36 @@
             key: "trips:#{id}:#{k}"
           db.batch ops, (err) ->
             callback err
+      tripsearch:
+        get: (userId, distance, tripId, callback) ->
+          result = {}
+          db.createReadStream
+            gte: "tripsearch:#{userId}:#{distance}:#{tripId}"
+            lte: "tripsearch:#{userId}:#{distance}:#{tripId}"
+          .on 'data', (data) ->
+            [_, userId, distance, tripId, key] = data.key.split ':'
+            result.userId = userId
+            result.distance = distance
+            result.tripId = tripId
+          .on 'error', (err) ->
+            callback err, null
+          .on 'end', ->
+            callback null, result
+        set: (userId, distance, tripId, callback) ->
+          ops = [
+            type: 'put'
+            key: "tripsearch:#{userId}:#{distance}:#{tripId}"
+            value: tripId
+          ]
+          db.batch ops, (err) ->
+            callback err
+        del: (userId, distance, tripId, callback) ->
+          op = [
+            type: 'del'
+            key: "tripsearch:#{userId}:#{distance}:#{tripId}"
+          ]
+          db.batch ops, (err) ->
+            callback err
       stops:
         get: (id, callback) ->
           stop = {}
@@ -127,7 +157,7 @@
             stop.id = id
             stop[key] = data.value
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, stop
         set: (id, stop, callback) ->
@@ -151,7 +181,7 @@
             stop.id = id
             stops[stops.length] = stop
           .on 'error', (err) ->
-            callback err
+            callback err, null
           .on 'end', ->
             callback null, stops
         setByLineType: (lineType, id, callback) ->

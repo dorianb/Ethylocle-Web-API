@@ -14,7 +14,7 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../user sample.csv"
     .on 'end', ->
-      console.log "End"
+      #console.log "End"
       #client.close()
       next()
       ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
