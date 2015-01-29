@@ -1,7 +1,7 @@
 rimraf = require 'rimraf'
 should = require 'should'
 db = require '../lib/db'
-searchEngine = require '../lib/tripsearch'
+tripSearch = require '../lib/tripsearch'
 geolib = require 'geolib'
 
 describe 'Trip search test', ->
@@ -136,8 +136,7 @@ describe 'Trip search test', ->
                                               client3.close()
                                               next()
 
-  it 'Get the two best trip', (next) ->
-    this.timeout 10000
+  it 'Get the best trip', (next) ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -270,8 +269,8 @@ describe 'Trip search test', ->
                                                 latEnd: '48.865314'
                                                 lonEnd: '2.321514'
                                                 dateTime: '29-01-2015 16:30'
-                                                numberOfPeople: 2
-                                              searchEngine "#{__dirname}/../db/tmp", 2, body, (err, trips) ->
+                                                numberOfPeople: '2'
+                                              tripSearch "#{__dirname}/../db/tmp", 2, body, (err, trips) ->
                                                 should.not.exists err
                                                 trips.length.should.eql 3
                                                 ###for k, v of trips

@@ -7,7 +7,7 @@
     lexi = require 'lexinum'
     database = require '../lib/db'
 
-    searchEngine = (db="#{__dirname}../db", userId, criteria, callback) ->
+    tripSearch = (db="#{__dirname}../db", userId, criteria, callback) ->
       trip = {}
       now = new moment()
       limit = now.add 20, 'm'
@@ -24,7 +24,7 @@
           #console.log "Trip: " + id + " data: " + data.value
           if trip.id
             unless trip.id is id
-              date = moment trip.dateTime, "DD-MM-YYYY h:mm"
+              date = moment trip.dateTime, "DD-MM-YYYY hh:mm"
               if date.toDate() > limit.toDate() and criteria.numberOfPeople <= 4-trip.numberOfPeople
                 distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
                 distanceEnd = geolib.getDistance {latitude: criteria.latEnd, longitude: criteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
@@ -36,7 +36,7 @@
         .on 'error', (err) ->
           callback err, null
         .on 'end', ->
-          date = moment trip.dateTime, "DD-MM-YYYY h:mm"
+          date = moment trip.dateTime, "DD-MM-YYYY hh:mm"
           if date.toDate() > limit.toDate() and criteria.numberOfPeople <= 4-trip.numberOfPeople
             distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
             distanceEnd = geolib.getDistance {latitude: criteria.latEnd, longitude: criteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
@@ -59,4 +59,4 @@
               .on 'end', ->
                 callback null, trips
 
-    module.exports = searchEngine
+    module.exports = tripSearch

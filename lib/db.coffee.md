@@ -132,19 +132,19 @@
           .on 'end', ->
             callback null, result
         set: (userId, distance, tripId, callback) ->
-          ops = [
+          op = [
             type: 'put'
             key: "tripsearch:#{userId}:#{distance}:#{tripId}"
             value: tripId
           ]
-          db.batch ops, (err) ->
+          db.batch op, (err) ->
             callback err
         del: (userId, distance, tripId, callback) ->
           op = [
             type: 'del'
             key: "tripsearch:#{userId}:#{distance}:#{tripId}"
           ]
-          db.batch ops, (err) ->
+          db.batch op, (err) ->
             callback err
       stops:
         get: (id, callback) ->
