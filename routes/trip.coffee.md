@@ -21,7 +21,6 @@
           body[k] = v
         tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
           data = []
-          datum = {}
           client = db "#{__dirname}/../db/trip"
           getTripDetails = (i) ->
             if i < trips.length
@@ -29,6 +28,7 @@
                 if err
                   errorMessage res, err
                 else
+                  datum = {}
                   datum.id = trip.id
                   datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
                   datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
@@ -37,6 +37,7 @@
                   # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
                   datum.maxPrice = trip.price
                   data.push datum
+                  getTripDetails i+1
             else
               client.close()
               res.json

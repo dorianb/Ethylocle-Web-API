@@ -7,8 +7,9 @@ geolib = require 'geolib'
 describe 'Trip test', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp/trip", ->
-      rimraf "#{__dirname}/../db/tmp/user", next
+    rimraf "#{__dirname}/../db/tmp/tripsearch", ->
+      rimraf "#{__dirname}/../db/tmp/trip", ->
+        rimraf "#{__dirname}/../db/tmp/user", next
 
   it 'Insert and get a trip', (next) ->
     client1 = db "#{__dirname}/../db/tmp/user"
@@ -327,6 +328,7 @@ describe 'Trip test', ->
     next()
 
   it 'Get trips', (next) ->
+    this.timeout 10000
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -462,26 +464,25 @@ describe 'Trip test', ->
                                                 numberOfPeople: '2'
                                               tripSearch "#{__dirname}/../db/tmp", user3.id, body, (err, trips) ->
                                                 data = []
-                                                datum = {}
                                                 client3 = db "#{__dirname}/../db/tmp/trip"
                                                 getTripDetails = (i) ->
                                                   if i < trips.length
                                                     client3.trips.get trips[i], (err, trip) ->
-                                                      if err
-                                                        errorMessage res, err
-                                                      else
-                                                        datum.id = trip.id
-                                                        datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
-                                                        datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
-                                                        datum.dateTime = trip.dateTime
-                                                        datum.numberOfPeople = trip.numberOfPeople
-                                                        # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
-                                                        datum.maxPrice = trip.price
-                                                        data.push datum
+                                                      return next err if err
+                                                      datum = {}
+                                                      datum.id = trip.id
+                                                      datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
+                                                      datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
+                                                      datum.dateTime = trip.dateTime
+                                                      datum.numberOfPeople = trip.numberOfPeople
+                                                      # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
+                                                      datum.maxPrice = trip.price
+                                                      data.push datum
+                                                      getTripDetails i+1
                                                   else
                                                     client3.close()
-                                                    for k, datum of data
-                                                      for c, d of datum
-                                                        console.log "Trip " + k + ": type: " + c + " valeur: " + d
+                                                    ###for k, v of data
+                                                      for c, d of v
+                                                        console.log "Trip " + k + ": type: " + c + " valeur: " + d###
                                                     next()
                                                 getTripDetails 0

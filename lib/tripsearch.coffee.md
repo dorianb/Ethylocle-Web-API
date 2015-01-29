@@ -16,7 +16,7 @@
       if typeof db is 'string'
         tripsearchClient = database db + "/tripsearch"
         tripClient = level db + "/trip"
-        .createReadStream
+        tripClient.createReadStream
           gte: "trips:"
           lte: "trips:\xff"
         .on 'data', (data) ->
@@ -36,6 +36,7 @@
         .on 'error', (err) ->
           callback err, null
         .on 'end', ->
+          tripClient.close()
           date = moment trip.dateTime, "DD-MM-YYYY hh:mm"
           if date.toDate() > limit.toDate() and criteria.numberOfPeople <= 4-trip.numberOfPeople
             distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
@@ -46,7 +47,7 @@
               tripsearchClient.close()
               trips = []
               tripsearchClient = level db + "/tripsearch"
-              .createReadStream
+              tripsearchClient.createReadStream
                 gte: "tripsearch:#{userId}:"
                 lte: "tripsearch:#{userId}:\xff"
                 limit: 10
@@ -57,6 +58,7 @@
               .on 'error', (err) ->
                 callback err, null
               .on 'end', ->
+                tripsearchClient.close()
                 callback null, trips
 
     module.exports = tripSearch
