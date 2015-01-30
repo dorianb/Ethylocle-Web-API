@@ -68,11 +68,18 @@ Retour: { "result": bool, "data": null }
 
 ## Trip request
 
+### Has trip
+```
+url: 195.154.9.74:3000/trp/hastrip
+Paramètres: {}
+Retour: { "result": bool, "data": "id" }
+```
+
 ### Get trips
 ```
 url: 195.154.9.74:3000/trp/gettrips
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
-Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPeople", "maxprice" }, ... ] }
+Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
 ```
 
 ### Join trip
@@ -85,15 +92,15 @@ Retour: { "result": bool, "data": null }
 ### Create trip
 ```
 url: 195.154.9.74:3000/trp/createtrip
-Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
-Retour: { "result": bool, "data": null }
+Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
+Retour: { "result": bool, "data": "id" }
 ```
 
 ### Get trip data
 ```
 url: 195.154.9.74:3000/trp/gettripdata
-Paramètres: { "id" }
-Retour: { "result": bool, "data": { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople", "price" } }
+Paramètres: {}
+Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPassenger" } }
 ```
 
 ## LevelDB schema
@@ -105,8 +112,10 @@ User namespace index: "users:#{email}:#{property}"
 properties: "id"
 
 Trip namespace key: "trips:#{id}:#{property}"
-Properties: "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPeople", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
+Properties: "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
 dateTime format: 'dd-MM-yyyy hh:mm'
+Trip namespace index: "tripsPassengerIndex:#{userId}:#{trip.id}:#{property}"
+properties: "dateTime"
 
 Tripsearch namespace key: "tripsearch:#{userId}:#{distance}:#{tripId}"
 

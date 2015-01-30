@@ -7,7 +7,10 @@ db = require '../lib/db'
 describe 'import', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp", next
+    console.log "Before Each"
+    rimraf "#{__dirname}/../db/tmp/user", ->
+      console.log "User delete"
+      rimraf "#{__dirname}/../db/tmp/stop", next
 
   it 'Import users from csv', (next) ->
     client = db "#{__dirname}/../db/tmp/user"
@@ -167,7 +170,7 @@ describe 'import', ->
 
   ###it 'Import stops from csv', (next) ->
     this.timeout 10000
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../db/tmp/stop"
     fs
     .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
     .on 'end', () ->

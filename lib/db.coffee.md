@@ -1,6 +1,7 @@
 # Database with level up
 
     level = require 'level'
+    moment = require 'moment'
 
     database = (db="#{__dirname}../db") ->
       db = level db if typeof db is 'string'
@@ -114,6 +115,50 @@
             continue if k is 'id'
             type: 'del'
             key: "trips:#{id}:#{k}"
+          db.batch ops, (err) ->
+            callback err
+        getByPassengerTripInProgress: (userId, now, callback) ->
+          trip = {}
+          db.createReadStream
+            gte: "tripsPassengerIndex:#{userId}:"
+            lte: "tripsPassengerIndex:#{userId}:\xff"
+          .on 'data', (data) ->
+            [_, userId, tripId, key] = data.key.split ':'
+            if moment(data.value, "DD-MM-YYYY H:mm") > now
+              trip.id = tripId
+              trip[key] = data.value
+          .on 'error', (err) ->
+            callback err, null
+          .on 'end', ->
+            callback null, trip
+        getByPassenger: (userId, callback) ->
+          trips = []
+          db.createReadStream
+            gte: "tripsPassengerIndex:#{userId}:"
+            lte: "tripsPassengerIndex:#{userId}:\xff"
+          .on 'data', (data) ->
+            [_, userId, tripId, key] = data.key.split ':'
+            trip = {}
+            trip.id = tripId
+            trip[key] = data.value
+            trips.push trip
+          .on 'error', (err) ->
+            callback err, null
+          .on 'end', ->
+            callback null, trips
+        setByPassenger: (userId, trip, callback) ->
+          ops = for k, v of trip
+              continue unless k is 'dateTime'
+              type: 'put'
+              key: "tripsPassengerIndex:#{userId}:#{trip.id}:#{k}"
+              value: v
+          db.batch ops, (err) ->
+            callback err
+        delByPassenger: (userId, trip, callback) ->
+          ops = for k, v of trip
+            continue unless k is 'dateTime'
+            type: 'del'
+            key: "tripsPassengerIndex:#{userId}:#{trip.id}:#{k}"
           db.batch ops, (err) ->
             callback err
       tripsearch:
