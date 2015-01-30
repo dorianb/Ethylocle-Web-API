@@ -96,9 +96,9 @@
                 if err
                   errorMessage res, err
                   client.close()
-                else if req.body.numberOfPeople <= 4-trip.numberOfPassenger
+                else if req.body.numberOfPeople <= 4 - +trip.numberOfPassenger
                   data = {}
-                  data.numberOfPassenger = trip.numberOfPassenger+req.body.numberOfPeople
+                  data.numberOfPassenger = +trip.numberOfPassenger + +req.body.numberOfPeople
                   i = trip.numberOfPassenger
                   while i < data.numberOfPassenger
                     data["passenger_" + ++i] = req.session.userId

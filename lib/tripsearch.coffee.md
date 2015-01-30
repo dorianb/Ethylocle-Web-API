@@ -26,7 +26,7 @@
           if trip.id
             unless trip.id is id
               date = moment trip.dateTime, "DD-MM-YYYY H:mm"
-              if date > limit and criteria.numberOfPeople <= 4-trip.numberOfPassenger
+              if date > limit and criteria.numberOfPeople <= 4 - +trip.numberOfPassenger
                 distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
                 distanceEnd = geolib.getDistance {latitude: criteria.latEnd, longitude: criteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
                 tripsearchClient.tripsearch.set userId, lexi(distanceStart + distanceEnd), trip.id, (err) ->
@@ -39,7 +39,7 @@
         .on 'end', ->
           tripClient.close()
           date = moment trip.dateTime, "DD-MM-YYYY H:mm"
-          if date > limit and criteria.numberOfPeople <= 4-trip.numberOfPassenger
+          if date > limit and criteria.numberOfPeople <= 4 - +trip.numberOfPassenger
             distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
             distanceEnd = geolib.getDistance {latitude: criteria.latEnd, longitude: criteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
             tripsearchClient.tripsearch.set userId, lexi(distanceStart + distanceEnd), trip.id, (err) ->
