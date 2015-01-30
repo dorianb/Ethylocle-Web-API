@@ -96,31 +96,37 @@
                 if err
                   errorMessage res, err
                   client.close()
-                else if req.body.numberOfPeople <= 4 - +trip.numberOfPassenger
-                  data = {}
-                  data.numberOfPassenger = +trip.numberOfPassenger + +req.body.numberOfPeople
-                  i = trip.numberOfPassenger
-                  while i < data.numberOfPassenger
-                    data["passenger_" + ++i] = req.session.userId
-                  client.trips.set req.body.id, data, (err) ->
-                    if err
-                      errorMessage res, err
-                      client.close()
-                    else
-                      client.trips.get req.body.id, (err, trip) ->
-                        if err
-                          errorMessage res, err
-                          client.close()
-                        else
-                          client.trips.setByPassenger req.session.userId, trip, (err) ->
-                            res.json
-                              result: true
-                              data: trip.id
+                else if trip.id
+                  if req.body.numberOfPeople <= 4 - +trip.numberOfPassenger
+                    data = {}
+                    data.numberOfPassenger = +trip.numberOfPassenger + +req.body.numberOfPeople
+                    i = trip.numberOfPassenger
+                    while i < data.numberOfPassenger
+                      data["passenger_" + ++i] = req.session.userId
+                    client.trips.set req.body.id, data, (err) ->
+                      if err
+                        errorMessage res, err
+                        client.close()
+                      else
+                        client.trips.get req.body.id, (err, trip) ->
+                          if err
+                            errorMessage res, err
                             client.close()
+                          else
+                            client.trips.setByPassenger req.session.userId, trip, (err) ->
+                              res.json
+                                result: true
+                                data: trip.id
+                              client.close()
+                  else
+                    res.json
+                      result: false
+                      data: "Il n'y a plus assez de places disponibles pour ce trajet"
+                    client.close()
                 else
                   res.json
                     result: false
-                    data: "Il n'y a plus assez de places disponibles pour ce trajet"
+                    data: "Le trajet n'existe plus"
                   client.close()
       else
         res.json
@@ -146,8 +152,10 @@
                 data: "Vous avez déjà un trajet en cours"
             else
               data = {}
+              counter = 0
               for k, v of req.body
                 continue unless v and k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople"]
+                counter++
                 if k is 'numberOfPeople'
                   data.numberOfPassenger = v
                   i = 1
@@ -155,27 +163,33 @@
                     data["passenger_" + ++i] = req.session.userId
                 else
                   data[k] = v
-              data.price = '30' # A déterminer à partir du prix de la course via l'API G7
-              client.trips.getMaxId (err, maxId) ->
-                if err
-                  errorMessage res, err
-                  client.close()
-                else
-                  client.trips.set ++maxId, data, (err) ->
-                    if err
-                      errorMessage res, err
-                      client.close()
-                    else
-                      client.trips.get maxId, (err, trip) ->
-                        if err
-                          errorMessage res, err
-                          client.close()
-                        else
-                          client.trips.setByPassenger req.session.userId, trip, (err) ->
-                            res.json
-                              result: true
-                              data: trip.id
+              if counter == 8
+                data.price = '30' # A déterminer à partir du prix de la course via l'API G7
+                client.trips.getMaxId (err, maxId) ->
+                  if err
+                    errorMessage res, err
+                    client.close()
+                  else
+                    client.trips.set ++maxId, data, (err) ->
+                      if err
+                        errorMessage res, err
+                        client.close()
+                      else
+                        client.trips.get maxId, (err, trip) ->
+                          if err
+                            errorMessage res, err
                             client.close()
+                          else
+                            client.trips.setByPassenger req.session.userId, trip, (err) ->
+                              res.json
+                                result: true
+                                data: trip.id
+                              client.close()
+              else
+                res.json
+                  result: false
+                  data: "Le nombre d'arguments est insuffisant"
+                client.close()
       else
         res.json
           result: false

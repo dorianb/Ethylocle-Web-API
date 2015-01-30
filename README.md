@@ -11,6 +11,7 @@ I used CoffeeScript as programmation language and MarkDown to document our code.
 ## User request
 
 ### Sign in
+If the email and password are correct, a session cookie is returned to the client
 ```
 url: 195.154.9.74:3000/usr/signin
 Paramètres: {email, password}
@@ -18,6 +19,7 @@ Retour: { "result": bool, "data": null }
 ```
 
 ### Check password
+Allows client to check password before allowing client user to reset critical information
 ```
 url: 195.154.9.74:3000/usr/checkpassword
 Paramètres: {password}
@@ -25,6 +27,7 @@ Retour: { "result": bool, "data": null }
 ```
 
 ### Sign up
+Client user can sign up with an email and password if the email is not already used
 ```
 url: 195.154.9.74:3000/usr/signup
 Paramètres: {email, password}
@@ -32,6 +35,7 @@ Retour: { "result": bool, "data": null }
 ```
 
 ### Sign out
+Just destroying the cookie session
 ```
 url: 195.154.9.74:3000/usr/signout
 Paramètres: {}
@@ -39,6 +43,7 @@ Retour: { "result": bool, "data": null }
 ```
 
 ### Update email
+As the email is set as index in user database, it needs special treatments
 ```
 url: 195.154.9.74:3000/usr/updateemail
 Paramètres: {email}
@@ -46,6 +51,7 @@ Retour: { "result": bool, "data": null }
 ```
 
 ### Update user data
+This request allows client to update user data as password but not email and id
 ```
 url: 195.154.9.74:3000/usr/update
 Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
@@ -53,6 +59,7 @@ Retour: { "result": bool, "data": null}
 ```
 
 ### Get user data
+Client will get user data without password
 ```
 url: 195.154.74:3000/usr/get
 Paramètres: {}
@@ -60,6 +67,7 @@ Retour: { "result": bool, "data": userObject }
 ```
 
 ### Delete user
+Delete all user data in user database
 ```
 url: 195.154.9.74:3000/usr/delete
 Paramètres: {}
@@ -69,6 +77,7 @@ Retour: { "result": bool, "data": null }
 ## Trip request
 
 ### Has trip
+Allows client to know if the user has a trip in progress and get its id
 ```
 url: 195.154.9.74:3000/trp/hastrip
 Paramètres: {}
@@ -76,6 +85,7 @@ Retour: { "result": bool, "data": "id" }
 ```
 
 ### Get trips
+Client can get all the trips available based on user's search preference
 ```
 url: 195.154.9.74:3000/trp/gettrips
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
@@ -83,6 +93,7 @@ Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", 
 ```
 
 ### Join trip
+User can join an exiting trip by providing its id and the numberOfPeople. If the trip is no longer available, the user will be notified in this way.
 ```
 url: 195.154.9.74:3000/trp/jointrip
 Paramètres: { "id", "numberOfPeople" }
@@ -90,6 +101,7 @@ Retour: { "result": bool, "data": null }
 ```
 
 ### Create trip
+If the user doesn't want to join an existing trip, he can create his own one by providing the essential data requested
 ```
 url: 195.154.9.74:3000/trp/createtrip
 Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
@@ -97,6 +109,7 @@ Retour: { "result": bool, "data": "id" }
 ```
 
 ### Get trip data
+Once a user has joined or created a trip, he can access a part of the trip data
 ```
 url: 195.154.9.74:3000/trp/gettripdata
 Paramètres: {}
