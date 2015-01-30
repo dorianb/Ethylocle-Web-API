@@ -108,7 +108,7 @@ Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart"
 User namespace key: "users:#{id}:#{property}"
 Properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
 birthDate format: 'DD-MM-YYYY'
-User namespace index: "users:#{email}:#{property}"
+User namespace index: "usersEmailIndex:#{email}:#{property}"
 properties: "id"
 
 Trip namespace key: "trips:#{id}:#{property}"
