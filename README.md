@@ -107,13 +107,13 @@ Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart"
 ```
 User namespace key: "users:#{id}:#{property}"
 Properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
-birthDate format: 'dd-MM-yyyy'
+birthDate format: 'DD-MM-YYYY'
 User namespace index: "users:#{email}:#{property}"
 properties: "id"
 
 Trip namespace key: "trips:#{id}:#{property}"
 Properties: "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
-dateTime format: 'dd-MM-yyyy hh:mm'
+dateTime format: 'DD-MM-YYYY H:mm'
 Trip namespace index: "tripsPassengerIndex:#{userId}:#{trip.id}:#{property}"
 properties: "dateTime"
 
