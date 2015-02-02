@@ -17,7 +17,7 @@ describe 'import', ->
     fs
     .createReadStream "#{__dirname}/../user sample.csv"
     .on 'end', ->
-      #console.log "End"
+      console.log "End"
       #client.close()
       next()
       ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
@@ -88,7 +88,8 @@ describe 'import', ->
                   user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
                   client.close()
                   next()###
-    .pipe importStream client, 'csv', 'user', objectMode: true
+    .pipe importStream(client, 'csv', 'user', objectMode: true).on 'finish', ->
+      console.log "C'est vraiment finis !"
 
   it 'Import users from json', (next) ->
     client = db "#{__dirname}/../db/tmp/user"

@@ -81,7 +81,7 @@ Allows client to know if the user has a trip in progress and get its id
 ```
 url: 195.154.9.74:3000/trp/hastrip
 Paramètres: {}
-Retour: { "result": bool, "data": "id" }
+Retour: { "result": bool, "data": null }
 ```
 
 ### Get trips
@@ -93,7 +93,7 @@ Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", 
 ```
 
 ### Join trip
-User can join an exiting trip by providing its id and the numberOfPeople. If the trip is no longer available, the user will be notified in this way.
+User can join an existing trip by providing its id and the numberOfPeople. If the trip is no longer available, the user will be notified in this way.
 ```
 url: 195.154.9.74:3000/trp/jointrip
 Paramètres: { "id", "numberOfPeople" }
@@ -122,13 +122,13 @@ User namespace key: "users:#{id}:#{property}"
 Properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
 birthDate format: 'DD-MM-YYYY'
 User namespace index: "usersEmailIndex:#{email}:#{property}"
-properties: "id"
+property: "id"
 
 Trip namespace key: "trips:#{id}:#{property}"
 Properties: "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
 dateTime format: 'DD-MM-YYYY H:mm'
-Trip namespace index: "tripsPassengerIndex:#{userId}:#{trip.id}:#{property}"
-properties: "dateTime"
+Trip namespace index: "tripsPassengerIndex:#{userId}:#{id}:#{property}"
+property: "dateTime"
 
 Tripsearch namespace key: "tripsearch:#{userId}:#{distance}:#{tripId}"
 

@@ -51,7 +51,7 @@
     util.inherits importStream, stream.Writable
     importStream.prototype._write = (chunk, encoding, done) ->
       that = this
-      #console.log "Writing"
+      console.log "Writing"
       if this.format is 'csv'
         if this.type is 'user'
           parse chunk.toString(), {delimiter: ';'}, (err, users) ->
@@ -87,7 +87,7 @@
                           storeCSVUser i+1
               else
                 that.destination.close()
-                #console.log "Done"
+                console.log "Done"
                 done()
             storeCSVUser 0
         else if this.type is 'stop'
@@ -154,6 +154,6 @@
           storeJSONUser 0
 
     importStream.prototype.end = () ->
-      #console.log 'ImportStream ended'
+      console.log 'ImportStream ended'
 
     module.exports = importStream

@@ -88,8 +88,8 @@ describe 'Trip search test', ->
                                 trip.numberOfPassenger.should.eql '2'
                                 trip.passenger_1.should.eql '0'
                                 trip.passenger_2.should.eql '0'
-                                should.not.exists trip.passenger3
-                                should.not.exists trip.passenger4
+                                should.not.exists trip.passenger_3
+                                should.not.exists trip.passenger_4
                                 client2.trips.get '1', (err, trip) ->
                                   return next err if err
                                   trip.latStart.should.eql '48.856470'
@@ -241,8 +241,8 @@ describe 'Trip search test', ->
                                           trip.numberOfPassenger.should.eql '2'
                                           trip.passenger_1.should.eql '0'
                                           trip.passenger_2.should.eql '0'
-                                          should.not.exists trip.passenger3
-                                          should.not.exists trip.passenger4
+                                          should.not.exists trip.passenger_3
+                                          should.not.exists trip.passenger_4
                                           client2.trips.get '1', (err, trip) ->
                                             return next err if err
                                             trip.latStart.should.eql '48.856470'
@@ -386,8 +386,8 @@ describe 'Trip search test', ->
                                           trip.numberOfPassenger.should.eql '2'
                                           trip.passenger_1.should.eql '0'
                                           trip.passenger_2.should.eql '0'
-                                          should.not.exists trip.passenger3
-                                          should.not.exists trip.passenger4
+                                          should.not.exists trip.passenger_3
+                                          should.not.exists trip.passenger_4
                                           client2.trips.get '1', (err, trip) ->
                                             return next err if err
                                             trip.latStart.should.eql '48.856470'
@@ -578,8 +578,8 @@ describe 'Trip search test', ->
                                           trip.numberOfPassenger.should.eql '2'
                                           trip.passenger_1.should.eql '0'
                                           trip.passenger_2.should.eql '0'
-                                          should.not.exists trip.passenger3
-                                          should.not.exists trip.passenger4
+                                          should.not.exists trip.passenger_3
+                                          should.not.exists trip.passenger_4
                                           client2.trips.get '1', (err, trip) ->
                                             return next err if err
                                             trip.latStart.should.eql '48.856470'
@@ -725,8 +725,8 @@ describe 'Trip search test', ->
                                           trip.numberOfPassenger.should.eql '2'
                                           trip.passenger_1.should.eql '0'
                                           trip.passenger_2.should.eql '0'
-                                          should.not.exists trip.passenger3
-                                          should.not.exists trip.passenger4
+                                          should.not.exists trip.passenger_3
+                                          should.not.exists trip.passenger_4
                                           client2.trips.get '1', (err, trip) ->
                                             return next err if err
                                             trip.latStart.should.eql '48.856470'

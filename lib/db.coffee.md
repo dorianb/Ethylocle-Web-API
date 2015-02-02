@@ -191,6 +191,22 @@
           ]
           db.batch op, (err) ->
             callback err
+        getByUser: (userId, callback) ->
+          result = []
+          db.createReadStream
+            gte: "tripsearch:#{userId}:"
+            lte: "tripsearch:#{userId}:\xff"
+          .on 'data', (data) ->
+            row = {}
+            [_, userId, distance, tripId, key] = data.key.split ':'
+            row.userId = userId
+            row.distance = distance
+            row.tripId = tripId
+            result.push row
+          .on 'error', (err) ->
+            callback err, null
+          .on 'end', ->
+            callback null, result
       stops:
         get: (id, callback) ->
           stop = {}

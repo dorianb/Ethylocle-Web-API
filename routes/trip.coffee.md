@@ -23,7 +23,7 @@
           else if trip.id
             res.json
               result: true
-              data: trip.id
+              data: null
           else
             res.json
               result: false
@@ -41,32 +41,57 @@
         body = {}
         for k, v of req.body
           continue unless v and k in ["latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople"]
+          console.log "Key: " + k + " value: " + v
           body[k] = v
-        tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
-          data = []
-          client = db "#{__dirname}/../db/trip"
-          getTripDetails = (i) ->
-            if i < trips.length
-              client.trips.get trips[i], (err, trip) ->
-                if err
-                  errorMessage res, err
-                else
-                  datum = {}
-                  datum.id = trip.id
-                  datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
-                  datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
-                  datum.dateTime = trip.dateTime
-                  datum.numberOfPassenger = trip.numberOfPassenger
-                  # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
-                  datum.maxPrice = trip.price
-                  data.push datum
-                  getTripDetails i+1
-            else
-              client.close()
-              res.json
-                result: true
-                data: data
-          getTripDetails 0
+        if body.numberOfPeople < 1
+          res.json
+            result: false
+            data: "Le nombre de personne est nul"
+        else
+          tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
+            client = db "#{__dirname}/../db/trip"
+            data = []
+            getTripDetails = (i) ->
+              if i < trips.length
+                client.trips.get trips[i], (err, trip) ->
+                  if err
+                    errorMessage res, err
+                  else
+                    datum = {}
+                    datum.id = trip.id
+                    datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
+                    datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
+                    datum.dateTime = trip.dateTime
+                    datum.numberOfPassenger = trip.numberOfPassenger
+                    # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
+                    datum.maxPrice = trip.price
+                    data.push datum
+                    getTripDetails i+1
+              else
+                client.close()
+                tripsearchClient = db "#{__dirname}/../db/tripsearch"
+                console.log "Get trip search by user"
+                tripsearchClient.tripsearch.getByUser req.session.userId, (err, result) ->
+                  if err
+                    errorMessage res, err
+                  else
+                    console.log "Deleting trip search"
+                    delTripSearchByUser = (i) ->
+                      if i < result.length
+                        console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
+                        tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
+                          if err
+                            errorMessage res, err
+                          else
+                            delTripSearchByUser i+1
+                      else
+                        console.log "Tripsearch closed"
+                        tripsearchClient.close()
+                        res.json
+                          result: true
+                          data: data
+                    delTripSearchByUser 0
+            getTripDetails 0
       else
         res.json
           result: false
@@ -80,6 +105,10 @@
           res.json
             result: false
             data: "Impossible de rejoindre un trajet si plus de 3 personnes"
+        else if req.body.numberOfPeople < 1
+          res.json
+            result: false
+            data: "Le nombre de personne est nul"
         else
           client = db "#{__dirname}/../db/trip"
           client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
@@ -141,6 +170,10 @@
           res.json
             result: false
             data: "Impossible de créer un trajet pour plus de 2 personnes"
+        else if req.body.numberOfPeople < 1
+          res.json
+            result: false
+            data: "Le nombre de personne est nul"
         else
           client = db "#{__dirname}/../db/trip"
           client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
