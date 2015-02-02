@@ -20,7 +20,7 @@ else if(argv['format'])
       fs
       .createReadStream(argv['_'][0])
       .on('end', function(){
-        console.log('Importation terminée');
+        console.log('Import finished');
       })
       .pipe(importStream(client, argv['format'], argv['type'], {objectMode: true}));
     }
@@ -39,7 +39,7 @@ else
     fs
     .createReadStream(argv['_'][0])
     .on('end', function(){
-      console.log('Importation terminée');
+      console.log('Import finished');
     })
     .pipe(importStream(client, 'csv', argv['type'], {objectMode: true}));
   }

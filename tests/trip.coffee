@@ -503,18 +503,14 @@ describe 'Trip test', ->
                                                             numberOfPeople: '2'
                                                           tripSearch "#{__dirname}/../db/tmp", user3.id, body, (err, trips) ->
                                                             tripsearchClient = db "#{__dirname}/../db/tmp/tripsearch"
-                                                            console.log "Get trip search by user"
                                                             tripsearchClient.tripsearch.getByUser user3.id, (err, result) ->
                                                               return next err if err
-                                                              console.log "Deleting trip search"
                                                               delTripSearchByUser = (i) ->
                                                                 if i < result.length
-                                                                  console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
                                                                   tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
                                                                     return next err if err
                                                                     delTripSearchByUser i+1
                                                                 else
-                                                                  console.log "Tripsearch closed"
                                                                   tripsearchClient.close()
                                                               delTripSearchByUser 0
                                                             data = []
@@ -537,22 +533,6 @@ describe 'Trip test', ->
                                                                 client3.close()
                                                                 trips.length.should.eql 3
                                                                 next()
-                                                                ###tripsearchClient = db "#{__dirname}/../db/tmp/tripsearch"
-                                                                console.log "Get trip search by user"
-                                                                tripsearchClient.tripsearch.getByUser user3.id, (err, result) ->
-                                                                  return next err if err
-                                                                  console.log "Deleting trip search"
-                                                                  delTripSearchByUser = (i) ->
-                                                                    if i < result.length
-                                                                      console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
-                                                                      tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
-                                                                        return next err if err
-                                                                        delTripSearchByUser i+1
-                                                                    else
-                                                                      console.log "Tripsearch closed"
-                                                                      tripsearchClient.close()
-                                                                      next()
-                                                                  delTripSearchByUser 0###
                                                             getTripDetails 0
 
   it 'Has a trip', (next) ->
@@ -1256,6 +1236,7 @@ describe 'Trip test', ->
                                                           tripId = 0
                                                           client3 = db "#{__dirname}/../db/tmp/trip"
                                                           client3.trips.get tripId, (err, trip) ->
+                                                            return next err if err
                                                             delPassengerIndex = (i) ->
                                                               if i <= trip.numberOfPassenger
                                                                 client3.trips.delByPassenger trip["passenger_" + i], trip, (err) ->

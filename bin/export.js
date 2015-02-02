@@ -17,7 +17,7 @@ else if(argv['format'])
     {
       exportStream(__dirname + "/../db/user", argv['format'], {objectMode: true})
       .on('end', function(){
-        console.log('Exportation terminée');
+        console.log('Export finished');
       })
       .pipe(fs.createWriteStream(argv['_'][0]));
     }
@@ -33,7 +33,7 @@ else
   {
     exportStream(__dirname + "/../db/user", 'csv', {objectMode: true})
     .on('end', function(){
-      console.log('Exportation terminée');
+      console.log('Export finished');
     })
     .pipe(fs.createWriteStream(argv['_'][0]));
   }

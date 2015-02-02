@@ -189,4 +189,5 @@ node ./bin/export --format csv users.csv
 ### Delete data
 ```
 node ./bin/delete --type user 0
+node ./bin/delete --type trip 0
 ```
