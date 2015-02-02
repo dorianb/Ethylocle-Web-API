@@ -77,7 +77,7 @@ Retour: { "result": bool, "data": null }
 ## Trip request
 
 ### Has trip
-Allows client to know if the user has a trip in progress and get its id
+Allows client to know if the user has a trip in progress
 ```
 url: 195.154.9.74:3000/trp/hastrip
 Paramètres: {}

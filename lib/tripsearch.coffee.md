@@ -46,7 +46,30 @@
               console.log "Insert in tripsearch"
               callback err, null if err
               console.log "Tripsearch closed"
-              tripsearchClient.close()
+              tripsearchClient.close (err) ->
+                callback err, null if err
+                trips = []
+                console.log "Tripsearch opened"
+                tripsearchClient = level db + "/tripsearch"
+                console.log "Tripsearch reading"
+                tripsearchClient.createReadStream
+                  gte: "tripsearch:#{userId}:"
+                  lte: "tripsearch:#{userId}:\xff"
+                  limit: 5
+                .on 'data', (data) ->
+                  [_, userId, distance, tripId, key] = data.key.split ':'
+                  trips.push tripId
+                  console.log "User: " + userId + " trip: " + tripId + " distance: " + distance
+                .on 'error', (err) ->
+                  callback err, null
+                .on 'end', ->
+                  console.log "Tripsearch closed"
+                  tripsearchClient.close()
+                  callback null, trips
+          else
+            console.log "Tripsearch closed"
+            tripsearchClient.close (err) ->
+              callback err, null if err
               trips = []
               console.log "Tripsearch opened"
               tripsearchClient = level db + "/tripsearch"
@@ -62,29 +85,9 @@
               .on 'error', (err) ->
                 callback err, null
               .on 'end', ->
-                console.log "Tripsearch closed"
-                tripsearchClient.close()
-                callback null, trips
-          else
-            console.log "Tripsearch closed"
-            tripsearchClient.close()
-            trips = []
-            console.log "Tripsearch opened"
-            tripsearchClient = level db + "/tripsearch"
-            console.log "Tripsearch reading"
-            tripsearchClient.createReadStream
-              gte: "tripsearch:#{userId}:"
-              lte: "tripsearch:#{userId}:\xff"
-              limit: 5
-            .on 'data', (data) ->
-              [_, userId, distance, tripId, key] = data.key.split ':'
-              trips.push tripId
-              console.log "User: " + userId + " trip: " + tripId + " distance: " + distance
-            .on 'error', (err) ->
-              callback err, null
-            .on 'end', ->
-              console.log "Tripsearch closed"
-              tripsearchClient.close()
-              callback null, trips
+                tripsearchClient.close (err) ->
+                  callback err, null if err
+                  console.log "Tripsearch closed"
+                  callback null, trips
 
     module.exports = tripSearch

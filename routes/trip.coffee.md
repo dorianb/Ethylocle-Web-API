@@ -49,6 +49,26 @@
             data: "Le nombre de personne est nul"
         else
           tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
+            tripsearchClient = db "#{__dirname}/../db/tripsearch"
+            tripsearchClient.tripsearch.getByUser req.session.userId, (err, result) ->
+              if err
+                errorMessage res, err
+              else
+                delTripSearchByUser = (i) ->
+                  if i < result.length
+                    console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
+                    tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
+                      if err
+                        errorMessage res, err
+                      else
+                        delTripSearchByUser i+1
+                  else
+                    console.log "Tripsearch closed"
+                    tripsearchClient.close()
+                    res.json
+                      result: true
+                      data: data
+                delTripSearchByUser 0
             client = db "#{__dirname}/../db/trip"
             data = []
             getTripDetails = (i) ->
@@ -69,28 +89,6 @@
                     getTripDetails i+1
               else
                 client.close()
-                tripsearchClient = db "#{__dirname}/../db/tripsearch"
-                console.log "Get trip search by user"
-                tripsearchClient.tripsearch.getByUser req.session.userId, (err, result) ->
-                  if err
-                    errorMessage res, err
-                  else
-                    console.log "Deleting trip search"
-                    delTripSearchByUser = (i) ->
-                      if i < result.length
-                        console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
-                        tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
-                          if err
-                            errorMessage res, err
-                          else
-                            delTripSearchByUser i+1
-                      else
-                        console.log "Tripsearch closed"
-                        tripsearchClient.close()
-                        res.json
-                          result: true
-                          data: data
-                    delTripSearchByUser 0
             getTripDetails 0
       else
         res.json
