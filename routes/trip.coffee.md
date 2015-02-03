@@ -41,7 +41,6 @@
         body = {}
         for k, v of req.body
           continue unless v and k in ["latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople"]
-          console.log "Key: " + k + " value: " + v
           body[k] = v
         if body.numberOfPeople < 1
           res.json
@@ -52,44 +51,46 @@
             tripsearchClient = db "#{__dirname}/../db/tripsearch"
             tripsearchClient.tripsearch.getByUser req.session.userId, (err, result) ->
               if err
+                tripsearchClient.close()
                 errorMessage res, err
               else
                 delTripSearchByUser = (i) ->
                   if i < result.length
-                    console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
+                    #console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
                     tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
                       if err
+                        tripsearchClient.close()
                         errorMessage res, err
                       else
                         delTripSearchByUser i+1
                   else
-                    console.log "Tripsearch closed"
                     tripsearchClient.close()
-                    res.json
-                      result: true
-                      data: data
+                    client = db "#{__dirname}/../db/trip"
+                    data = []
+                    getTripDetails = (i) ->
+                      if i < trips.length
+                        client.trips.get trips[i], (err, trip) ->
+                          if err
+                            client.close()
+                            errorMessage res, err
+                          else
+                            datum = {}
+                            datum.id = trip.id
+                            datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
+                            datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
+                            datum.dateTime = trip.dateTime
+                            datum.numberOfPassenger = trip.numberOfPassenger
+                            # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
+                            datum.maxPrice = trip.price
+                            data.push datum
+                            getTripDetails i+1
+                      else
+                        client.close()
+                        res.json
+                          result: true
+                          data: data
+                    getTripDetails 0
                 delTripSearchByUser 0
-            client = db "#{__dirname}/../db/trip"
-            data = []
-            getTripDetails = (i) ->
-              if i < trips.length
-                client.trips.get trips[i], (err, trip) ->
-                  if err
-                    errorMessage res, err
-                  else
-                    datum = {}
-                    datum.id = trip.id
-                    datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
-                    datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
-                    datum.dateTime = trip.dateTime
-                    datum.numberOfPassenger = trip.numberOfPassenger
-                    # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
-                    datum.maxPrice = trip.price
-                    data.push datum
-                    getTripDetails i+1
-              else
-                client.close()
-            getTripDetails 0
       else
         res.json
           result: false
@@ -245,7 +246,7 @@
                   continue unless k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
                   data[k] = v
                 # Renvoyer le prix qu'a payé l'utilisateur et non le prix global de la course calculé à partir de l'API G7
-                data.price = trip.price
+                data.maxPrice = trip.price
                 res.json
                   result: true
                   data: data

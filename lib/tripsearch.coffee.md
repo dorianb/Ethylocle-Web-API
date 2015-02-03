@@ -7,6 +7,24 @@
     lexi = require 'lexinum'
     database = require '../lib/db'
 
+    tripSearchSorting = (db, userId, callback) ->
+        trips = []
+        tripsearchClient = level db
+        tripsearchClient.createReadStream
+          gte: "tripsearch:#{userId}:"
+          lte: "tripsearch:#{userId}:\xff"
+          limit: 5
+        .on 'data', (data) ->
+          [_, userId, distance, tripId, key] = data.key.split ':'
+          trips.push tripId
+          #console.log "User: " + userId + " trip: " + tripId + " distance: " + distance
+        .on 'error', (err) ->
+          callback err, null
+        .on 'end', ->
+          tripsearchClient.close (err) ->
+            callback err, null if err
+            callback null, trips
+
     tripSearch = (db="#{__dirname}../db", userId, criteria, callback) ->
       trip = {}
       limit = moment().add 20, 'm'
@@ -45,49 +63,18 @@
             tripsearchClient.tripsearch.set userId, lexi(distanceStart + distanceEnd), trip.id, (err) ->
               #console.log "Insert in tripsearch"
               callback err, null if err
-              #console.log "Tripsearch closed"
               tripsearchClient.close (err) ->
                 callback err, null if err
-                trips = []
-                #console.log "Tripsearch opened"
-                tripsearchClient = level db + "/tripsearch"
-                #console.log "Tripsearch reading"
-                tripsearchClient.createReadStream
-                  gte: "tripsearch:#{userId}:"
-                  lte: "tripsearch:#{userId}:\xff"
-                  limit: 5
-                .on 'data', (data) ->
-                  [_, userId, distance, tripId, key] = data.key.split ':'
-                  trips.push tripId
-                  #console.log "User: " + userId + " trip: " + tripId + " distance: " + distance
-                .on 'error', (err) ->
-                  callback err, null
-                .on 'end', ->
-                  #console.log "Tripsearch closed"
-                  tripsearchClient.close()
+                #console.log "Tripsearch closed"
+                tripSearchSorting db + "/tripsearch", userId, (err, trips) ->
+                  callback err, null if err
                   callback null, trips
           else
-            #console.log "Tripsearch closed"
             tripsearchClient.close (err) ->
               callback err, null if err
-              trips = []
-              #console.log "Tripsearch opened"
-              tripsearchClient = level db + "/tripsearch"
-              #console.log "Tripsearch reading"
-              tripsearchClient.createReadStream
-                gte: "tripsearch:#{userId}:"
-                lte: "tripsearch:#{userId}:\xff"
-                limit: 5
-              .on 'data', (data) ->
-                [_, userId, distance, tripId, key] = data.key.split ':'
-                trips.push tripId
-                #console.log "User: " + userId + " trip: " + tripId + " distance: " + distance
-              .on 'error', (err) ->
-                callback err, null
-              .on 'end', ->
-                tripsearchClient.close (err) ->
-                  callback err, null if err
-                  #console.log "Tripsearch closed"
-                  callback null, trips
+              #console.log "Tripsearch closed"
+              tripSearchSorting db + "/tripsearch", userId, (err, trips) ->
+                callback err, null if err
+                callback null, trips
 
     module.exports = tripSearch

@@ -512,28 +512,28 @@ describe 'Trip test', ->
                                                                     delTripSearchByUser i+1
                                                                 else
                                                                   tripsearchClient.close()
+                                                                  client3 = db "#{__dirname}/../db/tmp/trip"
+                                                                  data = []
+                                                                  getTripDetails = (i) ->
+                                                                    if i < trips.length
+                                                                      client3.trips.get trips[i], (err, trip) ->
+                                                                        return next err if err
+                                                                        datum = {}
+                                                                        datum.id = trip.id
+                                                                        datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
+                                                                        datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
+                                                                        datum.dateTime = trip.dateTime
+                                                                        datum.numberOfPassenger = trip.numberOfPassenger
+                                                                        # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
+                                                                        datum.maxPrice = trip.price
+                                                                        data.push datum
+                                                                        getTripDetails i+1
+                                                                    else
+                                                                      client3.close()
+                                                                      trips.length.should.eql 3
+                                                                      next()
+                                                                  getTripDetails 0
                                                               delTripSearchByUser 0
-                                                            data = []
-                                                            client3 = db "#{__dirname}/../db/tmp/trip"
-                                                            getTripDetails = (i) ->
-                                                              if i < trips.length
-                                                                client3.trips.get trips[i], (err, trip) ->
-                                                                  return next err if err
-                                                                  datum = {}
-                                                                  datum.id = trip.id
-                                                                  datum.distanceToStart = geolib.getDistance({latitude: body.latStart, longitude: body.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
-                                                                  datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
-                                                                  datum.dateTime = trip.dateTime
-                                                                  datum.numberOfPassenger = trip.numberOfPassenger
-                                                                  # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
-                                                                  datum.maxPrice = trip.price
-                                                                  data.push datum
-                                                                  getTripDetails i+1
-                                                              else
-                                                                client3.close()
-                                                                trips.length.should.eql 3
-                                                                next()
-                                                            getTripDetails 0
 
   it 'Has a trip', (next) ->
     this.timeout 10000

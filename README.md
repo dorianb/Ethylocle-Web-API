@@ -113,7 +113,7 @@ Once a user has joined or created a trip, he can access a part of the trip data
 ```
 url: 195.154.9.74:3000/trp/gettripdata
 Paramètres: {}
-Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPassenger" } }
+Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger" } }
 ```
 
 ## LevelDB schema
