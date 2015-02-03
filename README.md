@@ -66,7 +66,7 @@ Paramètres: {}
 Retour: { "result": bool, "data": userObject }
 ```
 
-## Get user data by Id
+### Get user data by Id
 A user can get data of another user by providing user's id
 ```
 url: 195.154.74:3000/usr/getbyid

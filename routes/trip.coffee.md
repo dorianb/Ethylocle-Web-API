@@ -4,6 +4,7 @@
     router = express.Router()
     db = require '../lib/db'
     tripSearch = require '../lib/tripsearch'
+    tripPrice = require '../lib/tripprice'
     geolib = require 'geolib'
     moment = require 'moment'
 
@@ -56,7 +57,6 @@
               else
                 delTripSearchByUser = (i) ->
                   if i < result.length
-                    #console.log "Delete row with userId: " + result[i].userId + " distance: " + result[i].distance + " tripId: " + result[i].tripId
                     tripsearchClient.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
                       if err
                         tripsearchClient.close()
@@ -80,10 +80,10 @@
                             datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
                             datum.dateTime = trip.dateTime
                             datum.numberOfPassenger = trip.numberOfPassenger
-                            # Créer une fonction pour déterminer le prix maximal en fonction du nombre de parties prenantes
-                            datum.maxPrice = trip.price
-                            data.push datum
-                            getTripDetails i+1
+                            tripPrice.getPresumedPrice trip, (err, price) ->
+                              data.maxPrice = price
+                              data.push datum
+                              getTripDetails i+1
                       else
                         client.close()
                         res.json
@@ -100,8 +100,6 @@
 
     router.post '/jointrip', (req, res) ->
       if req.session.userId and req.session.email
-        console.log "Number of people: " + req.body.numberOfPeople
-        console.log "Id: " + req.body.id
         unless req.body.numberOfPeople
           res.json
             result: false
@@ -135,7 +133,6 @@
                   errorMessage res, err
                   client.close()
                 else if trip.id
-                  console.log "Trip id: " + trip.id
                   if req.body.numberOfPeople <= 4 - +trip.numberOfPassenger
                     data = {}
                     data.numberOfPassenger = +trip.numberOfPassenger + +req.body.numberOfPeople
@@ -152,7 +149,6 @@
                             errorMessage res, err
                             client.close()
                           else
-                            console.log "Trip id: " + trip.id
                             client.trips.setByPassenger req.session.userId, trip, (err) ->
                               res.json
                                 result: true
@@ -220,27 +216,28 @@
                 else
                   data[k] = v
               if counter == 8
-                data.price = '30' # A déterminer à partir du prix de la course via l'API G7
-                client.trips.getMaxId (err, maxId) ->
-                  if err
-                    errorMessage res, err
-                    client.close()
-                  else
-                    client.trips.set ++maxId, data, (err) ->
-                      if err
-                        errorMessage res, err
-                        client.close()
-                      else
-                        client.trips.get maxId, (err, trip) ->
-                          if err
-                            errorMessage res, err
-                            client.close()
-                          else
-                            client.trips.setByPassenger req.session.userId, trip, (err) ->
-                              res.json
-                                result: true
-                                data: null
+                tripPrice.getGlobalPrice data, (err, price) ->
+                  data.price = price
+                  client.trips.getMaxId (err, maxId) ->
+                    if err
+                      errorMessage res, err
+                      client.close()
+                    else
+                      client.trips.set ++maxId, data, (err) ->
+                        if err
+                          errorMessage res, err
+                          client.close()
+                        else
+                          client.trips.get maxId, (err, trip) ->
+                            if err
+                              errorMessage res, err
                               client.close()
+                            else
+                              client.trips.setByPassenger req.session.userId, trip, (err) ->
+                                res.json
+                                  result: true
+                                  data: null
+                                client.close()
               else
                 res.json
                   result: false
@@ -269,11 +266,11 @@
                 for k, v of trip
                   continue unless k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4"]
                   data[k] = v
-                # Renvoyer le prix qu'a payé l'utilisateur et non le prix global de la course calculé à partir de l'API G7
-                data.maxPrice = trip.price
-                res.json
-                  result: true
-                  data: data
+                tripPrice.getActualPrice trip, (err, price) ->
+                  data.maxPrice = price
+                  res.json
+                    result: true
+                    data: data
               client.close()
           else
             client.close()
@@ -294,16 +291,16 @@
           client.trips.get req.body.id, (err, trip) ->
             if err
               errorMessage res, err
-            else if trip.id is req.body.id
+            else if trip.id
               data = {}
               for k, v of trip
                 continue unless k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
                 data[k] = v
-              # Renvoyer le prix que devrait payer l'utilisateur et non le prix global de la course calculé à partir de l'API G7
-              data.maxPrice = trip.price
-              res.json
-                result: true
-                data: data
+              tripPrice.getPresumedPrice trip, (err, price) ->
+                data.maxPrice = price
+                res.json
+                  result: true
+                  data: data
             else
               res.json
                 result: false
