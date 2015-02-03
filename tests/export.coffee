@@ -7,11 +7,10 @@ db = require '../lib/db'
 describe 'export', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp", next
+    rimraf "#{__dirname}/../db/tmp/user", next
 
   it 'Export users to csv', (next) ->
-    next()
-    ###user1 =
+    user1 =
       email: 'dorian@ethylocle.com'
       lastname: 'Bagur'
       firstname: 'Dorian'
@@ -52,4 +51,4 @@ describe 'export', ->
                       exportStream "#{__dirname}/../db/tmp/user", 'csv', objectMode: true
                       .on 'end', () ->
                         next()
-                      .pipe fs.createWriteStream "#{__dirname}/../users.csv"###
+                      .pipe fs.createWriteStream "#{__dirname}/../users.csv"

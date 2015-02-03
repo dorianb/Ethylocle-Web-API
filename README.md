@@ -71,7 +71,7 @@ A user can get data of another user by providing user's id
 ```
 url: 195.154.74:3000/usr/getbyid
 Paramètres: { "id" }
-Retour: { "result": bool, "data": ["image", "lastname", "firstname", "birthDate", "gender", "phone"] }
+Retour: { "result": bool, "data": ["id", "image", "lastname", "firstname", "birthDate", "gender", "phone"] }
 ```
 
 ### Delete user
@@ -113,7 +113,7 @@ If the user doesn't want to join an existing trip, he can create his own one by 
 ```
 url: 195.154.9.74:3000/trp/createtrip
 Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
-Retour: { "result": bool, "data": "id" }
+Retour: { "result": bool, "data": null }
 ```
 
 ### Get trip data

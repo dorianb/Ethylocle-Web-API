@@ -62,46 +62,72 @@
 
 ## Sign up
 
+    isEmail = (email) ->
+      regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
+      regEmail.test email
+
+    isPassword = (password) ->
+      score = 0
+      match = new RegExp "[a-z]+", ""
+      if match.test password
+        score++
+      match = new RegExp "[A-Z]+", ""
+      if match.test password
+        score++
+      match = new RegExp "[0-9]+", ""
+      if match.test password
+        score++
+      match = new RegExp "[^A-Za-z0-9]+", ""
+      if match.test password
+        score++
+      score += password.length
+      if score > 8
+        return true
+      else
+        return false
+
     router.post '/signup', (req, res) ->
       if req.body.email and req.body.password
-        isEmail = (email) ->
-          regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
-          regEmail.test email
         if isEmail req.body.email
-          client = db "#{__dirname}/../db/user"
-          client.users.getByEmail req.body.email, (err, user) ->
-            if err
-              errorMessage res, err
-              client.close()
-            else if user.email is req.body.email
-              res.json
-                result: false
-                data: "L'email est déjà utilisé pour un autre compte"
-              client.close()
-            else
-              client.users.getMaxId (err, maxId) ->
-                if err
-                  errorMessage res, err
-                  client.close()
-                else
-                  data =
-                    email: req.body.email
-                    password: req.body.password
-                  data.id = ++maxId
-                  client.users.set data.id, data, (err) ->
-                    if err
-                      errorMessage res, err
-                      client.close()
-                    else
-                      client.users.setByEmail data.email, data, (err) ->
-                        if err
-                          errorMessage res, err
-                        else
-                          setSessionCookie req, data
-                          res.json
-                            result: true
-                            data: null
+          if isPassword req.body.password
+            client = db "#{__dirname}/../db/user"
+            client.users.getByEmail req.body.email, (err, user) ->
+              if err
+                errorMessage res, err
+                client.close()
+              else if user.email is req.body.email
+                res.json
+                  result: false
+                  data: "L'email est déjà utilisé pour un autre compte"
+                client.close()
+              else
+                client.users.getMaxId (err, maxId) ->
+                  if err
+                    errorMessage res, err
+                    client.close()
+                  else
+                    data =
+                      email: req.body.email
+                      password: req.body.password
+                    data.id = ++maxId
+                    client.users.set data.id, data, (err) ->
+                      if err
+                        errorMessage res, err
                         client.close()
+                      else
+                        client.users.setByEmail data.email, data, (err) ->
+                          if err
+                            errorMessage res, err
+                          else
+                            setSessionCookie req, data
+                            res.json
+                              result: true
+                              data: null
+                          client.close()
+          else
+            res.json
+              result: false
+              data: "La complexité du mot de passe est trop faible"
         else
           res.json
             result: false
@@ -116,9 +142,6 @@
     router.post '/updateemail', (req, res) ->
       if req.session.userId and req.session.email
         if req.body.email
-          isEmail = (email) ->
-            regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
-            regEmail.test email
           if isEmail req.body.email
             client = db "#{__dirname}/../db/user"
             client.users.getByEmail req.body.email, (err, user) ->
@@ -178,19 +201,35 @@
 
     router.post '/update', (req, res) ->
       if req.session.userId and req.session.email
-        client = db "#{__dirname}/../db/user"
         data = {}
         for k, v of req.body
           continue unless v and k in ["image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate"]
           data[k] = v
-        client.users.set req.session.userId, data, (err) ->
-          if err
-            errorMessage res, err
+        if data.password
+          if isPassword data.password
+            client = db "#{__dirname}/../db/user"
+            client.users.set req.session.userId, data, (err) ->
+              if err
+                errorMessage res, err
+              else
+                res.json
+                  result: true
+                  data: null
+              client.close()
           else
             res.json
-              result: true
-              data: null
-          client.close()
+              result: false
+              data: "La complexité du mot de passe est trop faible"
+        else
+          client = db "#{__dirname}/../db/user"
+          client.users.set req.session.userId, data, (err) ->
+            if err
+              errorMessage res, err
+            else
+              res.json
+                result: true
+                data: null
+            client.close()
       else
         res.json
           result: false
@@ -230,7 +269,7 @@
             else
               data = {}
               for k, v of user
-                continue unless k in ["image", "lastname", "firstname", "birthDate", "gender", "phone"]
+                continue unless k in ["id", "image", "lastname", "firstname", "birthDate", "gender", "phone"]
                 data[k] = v
               res.json
                 result: true

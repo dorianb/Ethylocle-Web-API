@@ -295,11 +295,12 @@ describe 'User test', ->
             id: maxId
           client.close (err) ->
             return next err if err
-            client = db "#{__dirname}/../db/trip"
+            client = db "#{__dirname}/../db/tmp/trip"
             client.trips.getByPassengerTripInProgress data.id, moment(), (err, trip) ->
               return next err if err
               should.not.exists trip.id
               client.close (err) ->
+                client = db "#{__dirname}/../db/tmp/user"
                 client.users.get data.id, (err, user) ->
                   return next err if err
                   client.users.del user.id, user, (err) ->
@@ -355,4 +356,35 @@ describe 'User test', ->
     isEmail(emails[0]).should.eql false
     isEmail(emails[1]).should.eql true
     isEmail(emails[2]).should.eql true
+    next()
+
+  it 'Check password complexity', (next) ->
+    isPassword = (password) ->
+      score = 0
+      match = new RegExp "[a-z]+", ""
+      if match.test password
+        score++
+      match = new RegExp "[A-Z]+", ""
+      if match.test password
+        score++
+      match = new RegExp "[0-9]+", ""
+      if match.test password
+        score++
+      match = new RegExp "[^A-Za-z0-9]+", ""
+      if match.test password
+        score++
+      score += password.length
+      #console.log score
+      if score > 8
+        return true
+      else
+        return false
+
+    passwords = new Array '6143614', 'coucou', 'HelloDorian', '61436143', 'couCou'
+
+    isPassword(passwords[0]).should.eql false
+    isPassword(passwords[1]).should.eql false
+    isPassword(passwords[2]).should.eql true
+    isPassword(passwords[3]).should.eql true
+    isPassword(passwords[4]).should.eql false
     next()

@@ -45,7 +45,7 @@
         if body.numberOfPeople < 1
           res.json
             result: false
-            data: "Le nombre de personne est nul"
+            data: "Le nombre de personne est inférieur à 1"
         else
           tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
             tripsearchClient = db "#{__dirname}/../db/tripsearch"
@@ -100,14 +100,24 @@
 
     router.post '/jointrip', (req, res) ->
       if req.session.userId and req.session.email
-        if req.body.numberOfPeople > 3
+        console.log "Number of people: " + req.body.numberOfPeople
+        console.log "Id: " + req.body.id
+        unless req.body.numberOfPeople
+          res.json
+            result: false
+            data: "Veuillez fournir un nombre de personne"
+        else if req.body.numberOfPeople > 3
           res.json
             result: false
             data: "Impossible de rejoindre un trajet si plus de 3 personnes"
         else if req.body.numberOfPeople < 1
           res.json
             result: false
-            data: "Le nombre de personne est nul"
+            data: "Le nombre de personne est inférieur à 1"
+        else unless req.body.id
+          res.json
+            result: false
+            data: "Veuillez fournir l'identifiant du trajet"
         else
           client = db "#{__dirname}/../db/trip"
           client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
@@ -125,26 +135,28 @@
                   errorMessage res, err
                   client.close()
                 else if trip.id
+                  console.log "Trip id: " + trip.id
                   if req.body.numberOfPeople <= 4 - +trip.numberOfPassenger
                     data = {}
                     data.numberOfPassenger = +trip.numberOfPassenger + +req.body.numberOfPeople
                     i = trip.numberOfPassenger
                     while i < data.numberOfPassenger
                       data["passenger_" + ++i] = req.session.userId
-                    client.trips.set req.body.id, data, (err) ->
+                    client.trips.set trip.id, data, (err) ->
                       if err
                         errorMessage res, err
                         client.close()
                       else
-                        client.trips.get req.body.id, (err, trip) ->
+                        client.trips.get trip.id, (err, trip) ->
                           if err
                             errorMessage res, err
                             client.close()
                           else
+                            console.log "Trip id: " + trip.id
                             client.trips.setByPassenger req.session.userId, trip, (err) ->
                               res.json
                                 result: true
-                                data: trip.id
+                                data: null
                               client.close()
                   else
                     res.json
@@ -165,15 +177,19 @@
 
     router.post '/createtrip', (req, res) ->
       if req.session.userId and req.session.email
-        if req.body.numberOfPeople > 2
+        unless req.body.numberOfPeople
+          res.json
+            result: false
+            data: "Veuillez fournir un nombre de personne"
+        else if req.body.numberOfPeople > 2
           res.json
             result: false
             data: "Impossible de créer un trajet pour plus de 2 personnes"
         else if req.body.numberOfPeople < 1
           res.json
             result: false
-            data: "Le nombre de personne est nul"
-        else if req.body.dateTime
+            data: "Le nombre de personne est inférieur à 1"
+        else unless req.body.dateTime
           res.json
             result: false
             data: "Veuillez fournir une date"
@@ -223,7 +239,7 @@
                             client.trips.setByPassenger req.session.userId, trip, (err) ->
                               res.json
                                 result: true
-                                data: trip.id
+                                data: null
                               client.close()
               else
                 res.json
@@ -251,7 +267,7 @@
               else
                 data = {}
                 for k, v of trip
-                  continue unless k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4"]
+                  continue unless k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4"]
                   data[k] = v
                 # Renvoyer le prix qu'a payé l'utilisateur et non le prix global de la course calculé à partir de l'API G7
                 data.maxPrice = trip.price
@@ -281,7 +297,7 @@
             else if trip.id is req.body.id
               data = {}
               for k, v of trip
-                continue unless k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
+                continue unless k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
                 data[k] = v
               # Renvoyer le prix que devrait payer l'utilisateur et non le prix global de la course calculé à partir de l'API G7
               data.maxPrice = trip.price
