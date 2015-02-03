@@ -54,7 +54,7 @@ Retour: { "result": bool, "data": null }
 This request allows client to update user data as password but not email and id
 ```
 url: 195.154.9.74:3000/usr/update
-Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "vehicul", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
+Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
 Retour: { "result": bool, "data": null}
 ```
 
@@ -66,8 +66,16 @@ Paramètres: {}
 Retour: { "result": bool, "data": userObject }
 ```
 
+## Get user data by Id
+A user can get data of another user by providing user's id
+```
+url: 195.154.74:3000/usr/getbyid
+Paramètres: { "id" }
+Retour: { "result": bool, "data": ["image", "lastname", "firstname", "birthDate", "gender", "phone"] }
+```
+
 ### Delete user
-Delete all user data in user database
+Delete all user data in user database if he hasn't got a trip in progress
 ```
 url: 195.154.9.74:3000/usr/delete
 Paramètres: {}
@@ -109,10 +117,18 @@ Retour: { "result": bool, "data": "id" }
 ```
 
 ### Get trip data
-Once a user has joined or created a trip, he can access a part of the trip data
+Once a user has joined or created a trip, he can access all the trip data such as passengers id
 ```
 url: 195.154.9.74:3000/trp/gettripdata
 Paramètres: {}
+Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4" } }
+```
+
+### Get trip data by id
+All users can access a part of the trip data by providing trip id
+```
+url: 195.154.9.74:3000/trp/gettripdatabyid
+Paramètres: { "id" }
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger" } }
 ```
 

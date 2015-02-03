@@ -64,50 +64,10 @@
 
     router.post '/signup', (req, res) ->
       if req.body.email and req.body.password
-        client = db "#{__dirname}/../db/user"
-        client.users.getByEmail req.body.email, (err, user) ->
-          if err
-            errorMessage res, err
-            client.close()
-          else if user.email is req.body.email
-            res.json
-              result: false
-              data: "L'email est déjà utilisé pour un autre compte"
-            client.close()
-          else
-            client.users.getMaxId (err, maxId) ->
-              if err
-                errorMessage res, err
-                client.close()
-              else
-                data =
-                  email: req.body.email
-                  password: req.body.password
-                data.id = ++maxId
-                client.users.set data.id, data, (err) ->
-                  if err
-                    errorMessage res, err
-                    client.close()
-                  else
-                    client.users.setByEmail data.email, data, (err) ->
-                      if err
-                        errorMessage res, err
-                      else
-                        setSessionCookie req, data
-                        res.json
-                          result: true
-                          data: null
-                      client.close()
-      else
-        res.json
-          result: false
-          data: "L'email ou le mot de passe envoyé est nul"
-
-## Update email
-
-    router.post '/updateemail', (req, res) ->
-      if req.session.userId and req.session.email
-        if req.body.email
+        isEmail = (email) ->
+          regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
+          regEmail.test email
+        if isEmail req.body.email
           client = db "#{__dirname}/../db/user"
           client.users.getByEmail req.body.email, (err, user) ->
             if err
@@ -119,40 +79,96 @@
                 data: "L'email est déjà utilisé pour un autre compte"
               client.close()
             else
-              client.users.get req.session.userId, (err, user) ->
+              client.users.getMaxId (err, maxId) ->
                 if err
                   errorMessage res, err
                   client.close()
                 else
-                  client.users.delByEmail req.session.email, user, (err) ->
+                  data =
+                    email: req.body.email
+                    password: req.body.password
+                  data.id = ++maxId
+                  client.users.set data.id, data, (err) ->
                     if err
                       errorMessage res, err
                       client.close()
                     else
-                      client.users.setByEmail req.body.email,
-                        id: req.session.userId
-                      , (err) ->
+                      client.users.setByEmail data.email, data, (err) ->
                         if err
                           errorMessage res, err
-                          client.close()
                         else
-                          client.users.set req.session.userId,
-                            email: req.body.email
-                          , (err) ->
-                            if err
-                              errorMessage res, err
-                            else
-                              setSessionCookie req,
-                                id: req.session.userId
-                                email: req.body.email
-                              res.json
-                                result: true
-                                data: null
-                            client.close()
+                          setSessionCookie req, data
+                          res.json
+                            result: true
+                            data: null
+                        client.close()
         else
           res.json
             result: false
-            data: "L'email envoyé est nul"
+            data: "Cette adresse email est invalide"
+      else
+        res.json
+          result: false
+          data: "L'adresse email ou le mot de passe envoyé est nul"
+
+## Update email
+
+    router.post '/updateemail', (req, res) ->
+      if req.session.userId and req.session.email
+        if req.body.email
+          isEmail = (email) ->
+            regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
+            regEmail.test email
+          if isEmail req.body.email
+            client = db "#{__dirname}/../db/user"
+            client.users.getByEmail req.body.email, (err, user) ->
+              if err
+                errorMessage res, err
+                client.close()
+              else if user.email is req.body.email
+                res.json
+                  result: false
+                  data: "L'email est déjà utilisé pour un autre compte"
+                client.close()
+              else
+                client.users.get req.session.userId, (err, user) ->
+                  if err
+                    errorMessage res, err
+                    client.close()
+                  else
+                    client.users.delByEmail req.session.email, user, (err) ->
+                      if err
+                        errorMessage res, err
+                        client.close()
+                      else
+                        client.users.setByEmail req.body.email,
+                          id: req.session.userId
+                        , (err) ->
+                          if err
+                            errorMessage res, err
+                            client.close()
+                          else
+                            client.users.set req.session.userId,
+                              email: req.body.email
+                            , (err) ->
+                              if err
+                                errorMessage res, err
+                              else
+                                setSessionCookie req,
+                                  id: req.session.userId
+                                  email: req.body.email
+                                res.json
+                                  result: true
+                                  data: null
+                              client.close()
+          else
+            res.json
+              result: false
+              data: "Cette adresse email est invalide"
+        else
+          res.json
+            result: false
+            data: "L'adresse email envoyée est nulle"
       else
         res.json
           result: false
@@ -202,34 +218,76 @@
           result: false
           data: "Authentification requise"
 
+## Get user data by Id
+
+    router.post '/getbyid', (req, res) ->
+      if req.session.userId and req.session.email
+        if req.body.id
+          client = db "#{__dirname}/../db/user"
+          client.users.get req.body.id, (err, user) ->
+            if err
+              errorMessage res, err
+            else
+              data = {}
+              for k, v of user
+                continue unless k in ["image", "lastname", "firstname", "birthDate", "gender", "phone"]
+                data[k] = v
+              res.json
+                result: true
+                data: data
+            client.close()
+        else
+          res.json
+            result: false
+            data: "L'identifiant de l'utilisateur est nul"
+      else
+        res.json
+          result: false
+          data: "Authentification requise"
+
 ## Delete
 
     router.post '/delete', (req, res) ->
       if req.session.userId and req.session.email
-        client = db "#{__dirname}/../db/user"
-        client.users.get req.session.userId, (err, user) ->
+        client = db "#{__dirname}/../db/trip"
+        client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
           if err
-            errorMessage res, err
             client.close()
+            errorMessage res, err
+          else if trip.id
+            client.close()
+            res.json
+              result: false
+              data: "Impossible de supprimer votre compte si vous avez un trajet en cours"
           else
-            client.users.del req.session.userId, user, (err) ->
+            client.close (err) ->
               if err
                 errorMessage res, err
-                client.close()
               else
-                client.users.delByEmail req.session.email, user, (err) ->
+                client = db "#{__dirname}/../db/user"
+                client.users.get req.session.userId, (err, user) ->
                   if err
                     errorMessage res, err
                     client.close()
                   else
-                    req.session.destroy (err) ->
+                    client.users.del req.session.userId, user, (err) ->
                       if err
                         errorMessage res, err
+                        client.close()
                       else
-                        res.json
-                          result: true
-                          data: null
-                      client.close()
+                        client.users.delByEmail req.session.email, user, (err) ->
+                          if err
+                            errorMessage res, err
+                            client.close()
+                          else
+                            req.session.destroy (err) ->
+                              if err
+                                errorMessage res, err
+                              else
+                                res.json
+                                  result: true
+                                  data: null
+                              client.close()
       else
         res.json
           result: false

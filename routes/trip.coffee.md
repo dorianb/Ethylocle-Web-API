@@ -173,6 +173,14 @@
           res.json
             result: false
             data: "Le nombre de personne est nul"
+        else if req.body.dateTime
+          res.json
+            result: false
+            data: "Veuillez fournir une date"
+        else if moment(req.body.dateTime, "DD-MM-YYYY H:mm") < moment()
+          res.json
+            result: false
+            data: "L'heure et la date fournie sont passées"
         else
           client = db "#{__dirname}/../db/trip"
           client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
@@ -243,7 +251,7 @@
               else
                 data = {}
                 for k, v of trip
-                  continue unless k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
+                  continue unless k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4"]
                   data[k] = v
                 # Renvoyer le prix qu'a payé l'utilisateur et non le prix global de la course calculé à partir de l'API G7
                 data.maxPrice = trip.price
@@ -256,6 +264,39 @@
             res.json
               result: false
               data: "Aucun trajet en cours"
+      else
+        res.json
+          result: false
+          data: "Authentification requise"
+
+### Get trip data by id
+
+    router.post '/gettripdatabyid', (req, res) ->
+      if req.session.userId and req.session.email
+        if req.body.id
+          client = db "#{__dirname}/../db/trip"
+          client.trips.get req.body.id, (err, trip) ->
+            if err
+              errorMessage res, err
+            else if trip.id is req.body.id
+              data = {}
+              for k, v of trip
+                continue unless k in ["addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
+                data[k] = v
+              # Renvoyer le prix que devrait payer l'utilisateur et non le prix global de la course calculé à partir de l'API G7
+              data.maxPrice = trip.price
+              res.json
+                result: true
+                data: data
+            else
+              res.json
+                result: false
+                data: "Le trajet n'existe plus"
+            client.close()
+        else
+          res.json
+            result: false
+            data: "L'identifiant du trajet est nul"
       else
         res.json
           result: false

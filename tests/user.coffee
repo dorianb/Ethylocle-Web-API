@@ -1,6 +1,7 @@
 rimraf = require 'rimraf'
 should = require 'should'
 db = require '../lib/db'
+moment = require 'moment'
 
 describe 'User test', ->
 
@@ -292,20 +293,27 @@ describe 'User test', ->
           return next err if err
           data =
             id: maxId
-          client.users.get data.id, (err, user) ->
+          client.close (err) ->
             return next err if err
-            client.users.del user.id, user, (err) ->
+            client = db "#{__dirname}/../db/trip"
+            client.trips.getByPassengerTripInProgress data.id, moment(), (err, trip) ->
               return next err if err
-              client.users.delByEmail user.email, user, (err) ->
-                return next err if err
-                client.users.getByEmail user1.email, (err, user) ->
+              should.not.exists trip.id
+              client.close (err) ->
+                client.users.get data.id, (err, user) ->
                   return next err if err
-                  user.should.eql {}
-                  client.users.get user1.id, (err, user) ->
+                  client.users.del user.id, user, (err) ->
                     return next err if err
-                    user.should.eql {}
-                    client.close()
-                    next()
+                    client.users.delByEmail user.email, user, (err) ->
+                      return next err if err
+                      client.users.getByEmail user1.email, (err, user) ->
+                        return next err if err
+                        user.should.eql {}
+                        client.users.get user1.id, (err, user) ->
+                          return next err if err
+                          user.should.eql {}
+                          client.close()
+                          next()
 
   it 'Collection', (next) ->
     user =
@@ -335,4 +343,16 @@ describe 'User test', ->
     should.not.exists data.lastKnownPositionDate
     should.not.exists data.bac
     should.not.exists data.lastBacKnownDate
+    next()
+
+  it 'Check email address', (next) ->
+    isEmail = (email) ->
+      regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
+      regEmail.test email
+
+    emails = new Array 'adressemail@gmail', 'adresse@mel.fr', 'adr@fr.com.eu'
+
+    isEmail(emails[0]).should.eql false
+    isEmail(emails[1]).should.eql true
+    isEmail(emails[2]).should.eql true
     next()

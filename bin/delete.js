@@ -37,8 +37,16 @@ else if(argv['type'])
                 }
                 else
                 {
-                  console.log('User ' + user.id + ' deleted');
-                  client.close();
+                  client.close(function(err) {
+                    if(err != null)
+                    {
+                      console.log(err.message);
+                    }
+                    else
+                    {
+                      console.log('User ' + user.id + ' deleted');
+                    }
+                  });
                 }
               })
             }
@@ -49,37 +57,49 @@ else if(argv['type'])
   }
   else if(argv['type'] == 'trip')
   {
-    var client = db(path);
-    client.trips.get(tripId, function(err, trip) {
-      function delPassengerIndex(i) {
-        if(i <= trip.numberOfPassenger)
-        {
-          client.trips.delByPassenger(trip["passenger_" + i], trip, function(err) {
-            if(err != null)
-            {
-              console.log(err.message);
-            }
-            else
-            {
-              delPassengerIndex(i+1);
-            }
-          })
+    if(argv['_'][0] != null)
+    {
+      var client = db(path);
+      client.trips.get(argv['_'][0], function(err, trip) {
+        function delPassengerIndex(i) {
+          if(i <= trip.numberOfPassenger)
+          {
+            client.trips.delByPassenger(trip["passenger_" + i], trip, function(err) {
+              if(err != null)
+              {
+                console.log(err.message);
+              }
+              else
+              {
+                delPassengerIndex(i+1);
+              }
+            })
+          }
+          else
+          {
+            client.trips.del(trip.id, trip, function(err) {
+              if(err != null)
+              {
+                console.log(err.message);
+              }
+              else
+              {
+                client.close(function(err) {
+                  if(err != null)
+                  {
+                    console.log(err.message);
+                  }
+                  else
+                  {
+                    console.log('Trip ' + trip.id + ' deleted');
+                  }
+                });
+              }
+            })
+          }
         }
-        else
-        {
-          client.trips.del(trip.id, trip, function(err) {
-            if(err != null)
-            {
-              console.log(err.message);
-            }
-            else
-            {
-              client.close();
-            }
-          })
-        }
-      }
-    })
+      })
+    }
   }
   else
   {
