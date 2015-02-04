@@ -3,7 +3,7 @@ should = require 'should'
 app  = require "../lib/app"
 port = 3000
 
-describe 'app', () ->
+describe 'App', () ->
 
   before (done) ->
     app.listen port, (err, result) ->

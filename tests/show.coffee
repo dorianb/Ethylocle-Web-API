@@ -1,15 +1,14 @@
 rimraf = require 'rimraf'
 should = require 'should'
-fs = require 'fs'
-exportStream = require '../lib/export'
+show = require '../lib/show'
 db = require '../lib/db'
 
-describe 'Export', ->
+describe 'Show', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp/user", next
 
-  it 'Export users to csv', (next) ->
+  it 'Show user database with 3 users', (next) ->
     user1 =
       email: 'dorian@ethylocle.com'
       lastname: 'Bagur'
@@ -47,8 +46,34 @@ describe 'Export', ->
                     return next err if err
                     client.users.setByEmail user3.email, user3, (err) ->
                       return next err if err
-                      client.close()
-                      exportStream "#{__dirname}/../db/tmp/user", 'csv', objectMode: true
-                      .on 'end', () ->
-                        next()
-                      .pipe fs.createWriteStream "#{__dirname}/../users.csv"
+                      client.close (err) ->
+                        show "#{__dirname}/../db/tmp/user", 'user', (err, nbRows) ->
+                          console.log err.message if err
+                          console.log "Users: " + nbRows
+                          next()
+
+  it 'Show user database without user', (next) ->
+    show "#{__dirname}/../db/tmp/user", 'user', (err, nbRows) ->
+      console.log err.message if err
+      console.log "Users: " + nbRows
+      next()
+
+  it 'Show user database with 1 user', (next) ->
+    user1 =
+      email: 'dorian@ethylocle.com'
+      lastname: 'Bagur'
+      firstname: 'Dorian'
+      password: '1234'
+    client = db "#{__dirname}/../db/tmp/user"
+    client.users.getMaxId (err, maxId) ->
+      return next err if err
+      user1.id = ++maxId
+      client.users.set user1.id, user1, (err) ->
+        return next err if err
+        client.users.setByEmail user1.email, user1, (err) ->
+          return next err if err
+          client.close (err) ->
+            show "#{__dirname}/../db/tmp/user", 'user', (err, nbRows) ->
+              console.log err.message if err
+              console.log "Users: " + nbRows
+              next()

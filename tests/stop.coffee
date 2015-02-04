@@ -6,7 +6,7 @@ importStream = require '../lib/import'
 
 client = undefined
 
-describe 'Stop test', ->
+describe 'Stop', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp/stop", next

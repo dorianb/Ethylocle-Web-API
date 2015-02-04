@@ -5,7 +5,7 @@ tripSearch = require '../lib/tripsearch'
 geolib = require 'geolib'
 moment = require 'moment'
 
-describe 'Trip test', ->
+describe 'Trip', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp/tripsearch", ->
@@ -1237,33 +1237,35 @@ describe 'Trip test', ->
                                                           client3 = db "#{__dirname}/../db/tmp/trip"
                                                           client3.trips.get tripId, (err, trip) ->
                                                             return next err if err
-                                                            delPassengerIndex = (i) ->
+                                                            delPassengerIndex = (i, callback) ->
                                                               if i <= trip.numberOfPassenger
                                                                 client3.trips.delByPassenger trip["passenger_" + i], trip, (err) ->
-                                                                  return next err if err
-                                                                  delPassengerIndex i+1
+                                                                  callback err if err
+                                                                  delPassengerIndex i+1, callback
                                                               else
-                                                                client3.trips.del trip.id, trip, (err) ->
+                                                                callback null
+                                                            delPassengerIndex 1, (err) ->
+                                                              return next err if err
+                                                              client3.trips.del trip.id, trip, (err) ->
+                                                                return next err if err
+                                                                client3.trips.get tripId, (err, trip) ->
                                                                   return next err if err
-                                                                  client3.trips.get tripId, (err, trip) ->
+                                                                  should.not.exists trip.latStart
+                                                                  should.not.exists trip.lonStart
+                                                                  should.not.exists trip.latEnd
+                                                                  should.not.exists trip.lonEnd
+                                                                  should.not.exists trip.dateTime
+                                                                  should.not.exists trip.price
+                                                                  should.not.exists trip.numberOfPassenger
+                                                                  should.not.exists trip.passenger_1
+                                                                  should.not.exists trip.passenger_2
+                                                                  should.not.exists trip.passenger_3
+                                                                  should.not.exists trip.passenger_4
+                                                                  client3.trips.getByPassenger user1.id, (err, trips) ->
                                                                     return next err if err
-                                                                    should.not.exists trip.latStart
-                                                                    should.not.exists trip.lonStart
-                                                                    should.not.exists trip.latEnd
-                                                                    should.not.exists trip.lonEnd
-                                                                    should.not.exists trip.dateTime
-                                                                    should.not.exists trip.price
-                                                                    should.not.exists trip.numberOfPassenger
-                                                                    should.not.exists trip.passenger_1
-                                                                    should.not.exists trip.passenger_2
-                                                                    should.not.exists trip.passenger_3
-                                                                    should.not.exists trip.passenger_4
-                                                                    client3.trips.getByPassenger user1.id, (err, trips) ->
-                                                                      return next err if err
-                                                                      trips.length.should.eql 0
-                                                                      client3.close()
-                                                                      next()
-                                                            delPassengerIndex 1
+                                                                    trips.length.should.eql 0
+                                                                    client3.close()
+                                                                    next()
 
   it 'Geolib call with string: error handling', (next) ->
     next()

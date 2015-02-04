@@ -5,7 +5,7 @@ tripSearch = require '../lib/tripsearch'
 geolib = require 'geolib'
 moment = require 'moment'
 
-describe 'Trip search test', ->
+describe 'Trip search', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp/tripsearch", ->

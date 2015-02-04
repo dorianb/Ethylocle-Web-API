@@ -17,28 +17,28 @@ else if(argv['type'])
     {
       var client = db(path);
       client.users.get(argv['_'][0], function(err, user) {
-        if(err != null)
+        if(err)
         {
           console.log(err.message);
         }
-        else
+        else if(user.id)
         {
           client.users.del(user.id, user, function(err) {
-            if(err != null)
+            if(err)
             {
               console.log(err.message);
             }
             else
             {
               client.users.delByEmail(user.email, user, function(err) {
-                if(err != null)
+                if(err)
                 {
                   console.log(err.message);
                 }
                 else
                 {
                   client.close(function(err) {
-                    if(err != null)
+                    if(err)
                     {
                       console.log(err.message);
                     }
@@ -48,11 +48,19 @@ else if(argv['type'])
                     }
                   });
                 }
-              })
+              });
             }
-          })
+          });
         }
-      })
+        else
+        {
+          console.log("User does not exist");
+        }
+      });
+    }
+    else
+    {
+      console.log('Input argument is missing');
     }
   }
   else if(argv['type'] == 'trip')
@@ -61,31 +69,37 @@ else if(argv['type'])
     {
       var client = db(path);
       client.trips.get(argv['_'][0], function(err, trip) {
-        function delPassengerIndex(i) {
+        delPassengerIndex = function(i, callback) {
           if(i <= trip.numberOfPassenger)
           {
             client.trips.delByPassenger(trip["passenger_" + i], trip, function(err) {
-              if(err != null)
+              if(err)
               {
-                console.log(err.message);
+                callback(err);
               }
               else
               {
-                delPassengerIndex(i+1);
+                delPassengerIndex(i+1, callback);
               }
-            })
+            });
           }
           else
           {
+            callback(null);
+          }
+        }
+        if(trip.id != null)
+        {
+          delPassengerIndex(1, function(err) {
             client.trips.del(trip.id, trip, function(err) {
-              if(err != null)
+              if(err)
               {
                 console.log(err.message);
               }
               else
               {
                 client.close(function(err) {
-                  if(err != null)
+                  if(err)
                   {
                     console.log(err.message);
                   }
@@ -95,10 +109,18 @@ else if(argv['type'])
                   }
                 });
               }
-            })
-          }
+            });
+          });
         }
-      })
+        else
+        {
+          console.log('Trip does not exist');
+        }
+      });
+    }
+    else
+    {
+      console.log('Input argument is missing');
     }
   }
   else

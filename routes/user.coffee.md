@@ -127,7 +127,7 @@
           else
             res.json
               result: false
-              data: "La complexité du mot de passe est trop faible"
+              data: "Le mot de passe doit comporter au moins 8 caractères"
         else
           res.json
             result: false
@@ -219,7 +219,7 @@
           else
             res.json
               result: false
-              data: "La complexité du mot de passe est trop faible"
+              data: "Le mot de passe doit comporter au moins 8 caractères"
         else
           client = db "#{__dirname}/../db/user"
           client.users.set req.session.userId, data, (err) ->

@@ -3,7 +3,7 @@ should = require 'should'
 db = require '../lib/db'
 moment = require 'moment'
 
-describe 'User test', ->
+describe 'User', ->
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../db/tmp/user", next

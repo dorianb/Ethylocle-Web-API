@@ -1,7 +1,7 @@
 should = require 'should'
 tripPrice = require '../lib/tripprice'
 
-describe 'Trip price test', ->
+describe 'Trip price', ->
 
   it 'Get global price', (next) ->
     next()

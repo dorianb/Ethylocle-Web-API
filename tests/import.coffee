@@ -4,7 +4,7 @@ fs = require 'fs'
 importStream = require '../lib/import'
 db = require '../lib/db'
 
-describe 'import', ->
+describe 'Import', ->
 
   beforeEach (next) ->
     console.log "Before Each"

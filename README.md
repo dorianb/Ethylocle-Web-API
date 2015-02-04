@@ -190,6 +190,18 @@ forever start ./bin/start.js
 ## Manage database
 Several scripts are provided for managing database
 
+### Show data
+```
+node ./bin/show user
+node ./bin/show trip
+```
+
+### Delete data
+```
+node ./bin/delete --type user 0
+node ./bin/delete --type trip 0
+```
+
 ### Import data
 ```
 node ./bin/import --format csv --type users "user sample.csv"
@@ -200,10 +212,4 @@ node ./bin/import --format csv --type stops "ratp_stops_with_routes.csv"
 ### Export data
 ```
 node ./bin/export --format csv users.csv
-```
-
-### Delete data
-```
-node ./bin/delete --type user 0
-node ./bin/delete --type trip 0
 ```

@@ -21,6 +21,10 @@ else if(argv['format'])
       })
       .pipe(fs.createWriteStream(argv['_'][0]));
     }
+    else
+    {
+      console.log('Input argument is missing');
+    }
   }
   else
   {
@@ -36,5 +40,9 @@ else
       console.log('Export finished');
     })
     .pipe(fs.createWriteStream(argv['_'][0]));
+  }
+  else
+  {
+    console.log('Input argument is missing');
   }
 }

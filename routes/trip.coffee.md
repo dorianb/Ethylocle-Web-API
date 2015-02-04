@@ -210,7 +210,7 @@
                 counter++
                 if k is 'numberOfPeople'
                   data.numberOfPassenger = v
-                  i = 1
+                  i = 0
                   while i < v
                     data["passenger_" + ++i] = req.session.userId
                 else
