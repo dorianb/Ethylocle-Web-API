@@ -26,7 +26,7 @@ describe 'Trip price', ->
       price: '13.925'
       passenger_1: '3'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05
+      price.should.eql 13.925/1.1
       next()
 
   it 'Get actual price with 2 passengers and 2 parties', (next) ->
@@ -41,7 +41,7 @@ describe 'Trip price', ->
       passenger_1: '3'
       passenger_2: '1'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/2
+      price.should.eql 13.925/2/1.1
       next()
 
   it 'Get actual price with 2 passengers and 1 party', (next) ->
@@ -56,7 +56,7 @@ describe 'Trip price', ->
       passenger_1: '3'
       passenger_2: '3'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05
+      price.should.eql 13.925/1.1
       next()
 
   it 'Get actual price with 3 passengers and 2 parties', (next) ->
@@ -72,7 +72,7 @@ describe 'Trip price', ->
       passenger_2: '1'
       passenger_3: '1'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/2
+      price.should.eql 13.925/2/1.1
       next()
 
   it 'Get actual price with 4 passengers and 2 parties', (next) ->
@@ -89,7 +89,7 @@ describe 'Trip price', ->
       passenger_3: '1'
       passenger_4: '1'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/2
+      price.should.eql 13.925/2/1.1
       next()
 
   it 'Get actual price with 4 passengers and 3 parties', (next) ->
@@ -106,7 +106,7 @@ describe 'Trip price', ->
       passenger_3: '1'
       passenger_4: '2'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/3
+      price.should.eql 13.925/3/1.1
       next()
 
   it 'Get actual price with 4 passengers and 3 parties', (next) ->
@@ -123,7 +123,7 @@ describe 'Trip price', ->
       passenger_3: '2'
       passenger_4: '2'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/3
+      price.should.eql 13.925/3/1.1
       next()
 
   it 'Get actual price with 4 passengers and 4 parties', (next) ->
@@ -140,7 +140,7 @@ describe 'Trip price', ->
       passenger_3: '0'
       passenger_4: '2'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/4
+      price.should.eql 13.925/4/1.1
       next()
 
   it 'Get presumed price', (next) ->
@@ -154,5 +154,5 @@ describe 'Trip price', ->
       price: '13.925'
       passenger_1: '3'
     tripPrice().getPresumedPrice trip, (err, price) ->
-      price.should.eql 13.925*1.05/2
+      price.should.eql 13.925/2/1.1
       next()

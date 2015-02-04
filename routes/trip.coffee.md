@@ -11,7 +11,7 @@
     errorMessage = (res, err) ->
       res.json
         result: false
-        data: "Une erreur inattendue est survenue: " + err
+        data: "Une erreur inattendue est survenue: " + err.message
 
 ## Has trip
 
