@@ -14,7 +14,7 @@ else if(argv['_'][0])
   show(path, argv['_'][0], function(err, nbRows) {
     if(err)
     {
-      console.log(err.message);
+      console.log("Error at row " + nbRows + ": " + err.message);
     }
     else
     {

@@ -28,7 +28,7 @@
           user.id = id
           user[key] = data.value
         .on 'error', (err) ->
-          callback err, null
+          callback err, nbRows
         .on 'end', ->
           source.close()
           if user.id
@@ -66,7 +66,7 @@
           trip.id = id
           trip[key] = data.value
         .on 'error', (err) ->
-          callback err, null
+          callback err, nbRows
         .on 'end', ->
           source.close()
           if trip.id
