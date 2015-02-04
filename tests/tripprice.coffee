@@ -12,7 +12,7 @@ describe 'Trip price', ->
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '1'
     tripPrice().getGlobalPriceFromTaxiAPI trip, (err, price) ->
-      price.should.eql 13.925
+      price.should.eql '13.93'
       next()
 
   it 'Get actual price with 1 passenger', (next) ->
@@ -23,10 +23,10 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '1'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/1.1
+      price.should.eql '13.93'
       next()
 
   it 'Get actual price with 2 passengers and 2 parties', (next) ->
@@ -37,11 +37,11 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '2'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/2/1.1
+      price.should.eql (13.93/2/1.1).toFixed 2
       next()
 
   it 'Get actual price with 2 passengers and 1 party', (next) ->
@@ -52,11 +52,11 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '2'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '3'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/1.1
+      price.should.eql '13.93'
       next()
 
   it 'Get actual price with 3 passengers and 2 parties', (next) ->
@@ -67,12 +67,12 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '3'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
       passenger_3: '1'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/2/1.1
+      price.should.eql (13.93/2/1.1).toFixed 2
       next()
 
   it 'Get actual price with 4 passengers and 2 parties', (next) ->
@@ -83,13 +83,13 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '4'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
       passenger_3: '1'
       passenger_4: '1'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/2/1.1
+      price.should.eql (13.93/2/1.1).toFixed 2
       next()
 
   it 'Get actual price with 4 passengers and 3 parties', (next) ->
@@ -100,13 +100,13 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '4'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
       passenger_3: '1'
       passenger_4: '2'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/3/1.1
+      price.should.eql (13.93/3/1.1).toFixed 2
       next()
 
   it 'Get actual price with 4 passengers and 3 parties', (next) ->
@@ -117,13 +117,13 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '4'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
       passenger_3: '2'
       passenger_4: '2'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/3/1.1
+      price.should.eql (13.93/3/1.1).toFixed 2
       next()
 
   it 'Get actual price with 4 passengers and 4 parties', (next) ->
@@ -134,13 +134,13 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '4'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
       passenger_3: '0'
       passenger_4: '2'
     tripPrice().getActualPrice trip, (err, price) ->
-      price.should.eql 13.925/4/1.1
+      price.should.eql (13.93/4/1.1).toFixed 2
       next()
 
   it 'Get presumed price', (next) ->
@@ -151,8 +151,8 @@ describe 'Trip price', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '1'
-      price: '13.925'
+      price: '13.93'
       passenger_1: '3'
     tripPrice().getPresumedPrice trip, (err, price) ->
-      price.should.eql 13.925/2/1.1
+      price.should.eql (13.93/2/1.1).toFixed 2
       next()

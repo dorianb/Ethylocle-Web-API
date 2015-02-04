@@ -27,7 +27,7 @@
 
     tripSearch = (db="#{__dirname}../db", userId, criteria, callback) ->
       trip = {}
-      limit = moment().add 20, 'm'
+      limit = moment()
       date = moment criteria.dateTime, "DD-MM-YYYY H:mm"
       limit = date if date > limit
       #console.log limit.toDate()

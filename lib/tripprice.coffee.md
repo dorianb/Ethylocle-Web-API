@@ -10,7 +10,7 @@
           #price = ratio*distance/1000
         distance = geolib.getDistance {latitude: trip.latStart, longitude: trip.lonStart}, {latitude: trip.latEnd, longitude: trip.lonEnd}
         ratio = 5
-        callback null, ratio*distance/1000
+        callback null, (ratio*distance/1000).toFixed 2
       getActualPrice: (trip, callback) ->
         #On récupère le nombre de parties prenantes
         nbParty = 1
@@ -19,7 +19,12 @@
           unless trip["passenger_" + i] is trip["passenger_" + (i+1)]
             nbParty++
           i++
-        callback null, trip.price/nbParty/1.1
+        if nbParty is 1
+          #Pas de réduction pour une seule partie prenante
+          callback null, trip.price if nbParty is 1
+        else
+          #On gagne de l'argent lorsqu'on regroupe des personnes #Plus le nombre de parties sur un trajet est grand, plus on gagne de l'argent
+          callback null, (trip.price/nbParty/1.1).toFixed 2
       getPresumedPrice: (trip, callback) ->
         #On récupère le nombre de parties prenantes
         nbParty = 2
@@ -28,6 +33,6 @@
           unless trip["passenger_" + i] is trip["passenger_" + (i+1)]
             nbParty++
           i++
-        callback null, trip.price/nbParty/1.1
+        callback null, (trip.price/nbParty/1.1).toFixed 2
 
     module.exports = tripPrice
