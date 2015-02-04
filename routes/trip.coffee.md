@@ -80,8 +80,7 @@
                             datum.distanceToEnd = geolib.getDistance({latitude: body.latEnd, longitude: body.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
                             datum.dateTime = trip.dateTime
                             datum.numberOfPassenger = trip.numberOfPassenger
-                            trippriceEngine = tripPrice()
-                            trippriceEngine.getPresumedPrice trip, (err, price) ->
+                            tripPrice().getPresumedPrice trip, (err, price) ->
                               datum.maxPrice = price
                               data.push datum
                               getTripDetails i+1
@@ -217,8 +216,7 @@
                 else
                   data[k] = v
               if counter == 8
-                trippriceEngine = tripPrice()
-                trippriceEngine.getGlobalPriceFromTaxiAPI data, (err, price) ->
+                tripPrice().getGlobalPriceFromTaxiAPI data, (err, price) ->
                   data.price = price
                   client.trips.getMaxId (err, maxId) ->
                     if err
@@ -268,8 +266,7 @@
                 for k, v of trip
                   continue unless k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4"]
                   data[k] = v
-                trippriceEngine = tripPrice()
-                trippriceEngine.getActualPrice trip, (err, price) ->
+                tripPrice().getActualPrice trip, (err, price) ->
                   data.maxPrice = price
                   res.json
                     result: true
@@ -299,8 +296,7 @@
               for k, v of trip
                 continue unless k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
                 data[k] = v
-              trippriceEngine = tripPrice()
-              trippriceEngine.getPresumedPrice trip, (err, price) ->
+              tripPrice().getPresumedPrice trip, (err, price) ->
                 data.maxPrice = price
                 res.json
                   result: true
