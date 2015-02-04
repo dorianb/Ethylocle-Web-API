@@ -195,6 +195,10 @@ Several scripts are provided for managing database
 node ./bin/show user
 node ./bin/show trip
 ```
+Just pipe it with grep command to look at a particular entry !
+```
+node ./bin/show user | grep id:8
+```
 
 ### Delete data
 ```
