@@ -15,7 +15,7 @@
             lte: "users:\xff"
           .on 'data', (data) ->
             [_, id, key] = data.key.split ':'
-            maxId = id if id > maxId
+            maxId = id if +id > +maxId
           .on 'error', (err) ->
             callback err, null
           .on 'end', ->
@@ -84,7 +84,7 @@
             lte: "trips:\xff"
           .on 'data', (data) ->
             [_, id, key] = data.key.split ':'
-            maxId = id if id > maxId
+            maxId = id if +id > +maxId
           .on 'error', (err) ->
             callback err, null
           .on 'end', ->

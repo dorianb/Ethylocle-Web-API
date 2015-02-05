@@ -388,3 +388,68 @@ describe 'User', ->
     isPassword(passwords[3]).should.eql true
     isPassword(passwords[4]).should.eql false
     next()
+
+  it 'GetMaxId with more than 10 users', (next) ->
+    user1 =
+      email: 'dorian@ethylocle.com'
+      password: '1234'
+    user2 =
+      email: 'maoqiao@ethylocle.com'
+      password: '4321'
+    user3 =
+      email: 'robin@ethylocle.com'
+      password: '4321'
+    user4 =
+      email: 'pierre@ethylocle.com'
+      password: '4321'
+    client1 = db "#{__dirname}/../db/tmp/user"
+    client1.users.getMaxId (err, maxId) ->
+      return next err if err
+      user1.id = ++maxId
+      client1.users.set user1.id, user1, (err) ->
+        return next err if err
+        client1.users.setByEmail user1.email, user1, (err) ->
+          return next err if err
+          client1.users.getMaxId (err, maxId) ->
+            return next err if err
+            user2.id = 9
+            client1.users.set user2.id, user2, (err) ->
+              return next err if err
+              client1.users.setByEmail user2.email, user2, (err) ->
+                return next err if err
+                client1.users.getMaxId (err, maxId) ->
+                  return next err if err
+                  user3.id = ++maxId
+                  client1.users.set user3.id, user3, (err) ->
+                    return next err if err
+                    client1.users.setByEmail user3.email, user3, (err) ->
+                      return next err if err
+                      client1.users.getMaxId (err, maxId) ->
+                        return next err if err
+                        user4.id = ++maxId
+                        client1.users.set user4.id, user4, (err) ->
+                          return next err if err
+                          client1.users.setByEmail user4.email, user4, (err) ->
+                            return next err if err
+                            client1.users.get user1.id, (err, user) ->
+                              return next err if err
+                              user.id.should.eql '0'
+                              user.email.should.eql 'dorian@ethylocle.com'
+                              user.password.should.eql '1234'
+                              client1.users.get user2.id, (err, user) ->
+                                return next err if err
+                                user.id.should.eql '9'
+                                user.email.should.eql 'maoqiao@ethylocle.com'
+                                user.password.should.eql '4321'
+                                client1.users.get user3.id, (err, user) ->
+                                  return next err if err
+                                  user.id.should.eql '10'
+                                  user.email.should.eql 'robin@ethylocle.com'
+                                  user.password.should.eql '4321'
+                                  client1.users.get user4.id, (err, user) ->
+                                    return next err if err
+                                    user.id.should.eql '11'
+                                    user.email.should.eql 'pierre@ethylocle.com'
+                                    user.password.should.eql '4321'
+                                    client1.close()
+                                    next()
