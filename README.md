@@ -1,12 +1,11 @@
-# Ethyloclé backend web server using Express framework
+# Web application using Express framework
 
-I used CoffeeScript as programmation language and MarkDown to document our code.
+I used CoffeeScript as programmation language and MarkDown to document my code.
 
 ## Functionalities
-* Manage account profile: sign in, sign up, update and delete
-* Manage trip: create trip, get trips, join trip, get trip data
-* Import users data from csv and json files
-* Export users data to csv file
+* Manage account profile: sign in, sign up, update, delete, etc.
+* Manage trip: create trip, get trips, join trip, get trip data, etc.
+* Manage database: show, delete, import, export, etc.
 
 ## User request
 
