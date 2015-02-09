@@ -60,7 +60,7 @@ Retour: { "result": bool, "data": null}
 ### Get user data
 Client will get user data without password
 ```
-url: 195.154.74:3000/usr/get
+url: domain/usr/get
 Paramètres: {}
 Retour: { "result": bool, "data": userObject }
 ```
@@ -68,7 +68,7 @@ Retour: { "result": bool, "data": userObject }
 ### Get user data by Id
 A user can get data of another user by providing user's id
 ```
-url: 195.154.74:3000/usr/getbyid
+url: domain/usr/getbyid
 Paramètres: { "id" }
 Retour: { "result": bool, "data": ["id", "image", "lastname", "firstname", "birthDate", "gender", "phone"] }
 ```
