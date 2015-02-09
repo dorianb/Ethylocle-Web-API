@@ -12,7 +12,7 @@ I used CoffeeScript as programmation language and MarkDown to document my code.
 ### Sign in
 If the email and password are correct, a session cookie is returned to the client
 ```
-url: 195.154.9.74:3000/usr/signin
+url: domain/usr/signin
 Paramètres: {email, password}
 Retour: { "result": bool, "data": null }
 ```
@@ -20,7 +20,7 @@ Retour: { "result": bool, "data": null }
 ### Check password
 Allows client to check password before allowing client user to reset critical information
 ```
-url: 195.154.9.74:3000/usr/checkpassword
+url: domain/usr/checkpassword
 Paramètres: {password}
 Retour: { "result": bool, "data": null }
 ```
@@ -28,7 +28,7 @@ Retour: { "result": bool, "data": null }
 ### Sign up
 Client user can sign up with an email and password if the email is not already used
 ```
-url: 195.154.9.74:3000/usr/signup
+url: domain/usr/signup
 Paramètres: {email, password}
 Retour: { "result": bool, "data": null }
 ```
@@ -36,7 +36,7 @@ Retour: { "result": bool, "data": null }
 ### Sign out
 Just destroying the cookie session
 ```
-url: 195.154.9.74:3000/usr/signout
+url: domain/usr/signout
 Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
@@ -44,7 +44,7 @@ Retour: { "result": bool, "data": null }
 ### Update email
 As the email is set as index in user database, it needs special treatments
 ```
-url: 195.154.9.74:3000/usr/updateemail
+url: domain/usr/updateemail
 Paramètres: {email}
 Retour: { "result": bool, "data": null }
 ```
@@ -52,7 +52,7 @@ Retour: { "result": bool, "data": null }
 ### Update user data
 This request allows client to update user data as password but not email and id
 ```
-url: 195.154.9.74:3000/usr/update
+url: domain/usr/update
 Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
 Retour: { "result": bool, "data": null}
 ```
@@ -76,7 +76,7 @@ Retour: { "result": bool, "data": ["id", "image", "lastname", "firstname", "birt
 ### Delete user
 Delete all user data in user database if he hasn't got a trip in progress
 ```
-url: 195.154.9.74:3000/usr/delete
+url: domain/usr/delete
 Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
@@ -86,7 +86,7 @@ Retour: { "result": bool, "data": null }
 ### Has trip
 Allows client to know if the user has a trip in progress
 ```
-url: 195.154.9.74:3000/trp/hastrip
+url: domain/trp/hastrip
 Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
@@ -94,7 +94,7 @@ Retour: { "result": bool, "data": null }
 ### Get trips
 Client can get all the trips available based on user's search preference
 ```
-url: 195.154.9.74:3000/trp/gettrips
+url: domain/trp/gettrips
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
 ```
@@ -102,7 +102,7 @@ Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", 
 ### Join trip
 User can join an existing trip by providing its id and the numberOfPeople. If the trip is no longer available, the user will be notified in this way.
 ```
-url: 195.154.9.74:3000/trp/jointrip
+url: domain/trp/jointrip
 Paramètres: { "id", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
@@ -110,7 +110,7 @@ Retour: { "result": bool, "data": null }
 ### Create trip
 If the user doesn't want to join an existing trip, he can create his own one by providing the essential data requested
 ```
-url: 195.154.9.74:3000/trp/createtrip
+url: domain/trp/createtrip
 Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
@@ -118,7 +118,7 @@ Retour: { "result": bool, "data": null }
 ### Get trip data
 Once a user has joined or created a trip, he can access all the trip data such as passengers id
 ```
-url: 195.154.9.74:3000/trp/gettripdata
+url: domain/trp/gettripdata
 Paramètres: {}
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4" } }
 ```
@@ -126,7 +126,7 @@ Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart"
 ### Get trip data by id
 All users can access a part of the trip data by providing trip id
 ```
-url: 195.154.9.74:3000/trp/gettripdatabyid
+url: domain/trp/gettripdatabyid
 Paramètres: { "id" }
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger" } }
 ```
@@ -169,11 +169,11 @@ npm test
 ```
 You can test the sign in request from a client using the following command on windows:
 ```
-curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/usr/signin -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
+curl -H "Content-Type: application/json" -X POST http://domain/usr/signin -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
 ```
 You can test the sign up request from a client using the following command on windows:
 ```
-curl -H "Content-Type: application/json" -X POST http://195.154.9.74:3000/usr/signup -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
+curl -H "Content-Type: application/json" -X POST http://domain/usr/signup -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
 ```
 
 ## Launch server
