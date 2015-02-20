@@ -1,5 +1,5 @@
 should = require 'should'
-tripPrice = require '../lib/tripprice'
+tripPrice = require '../tripPrice'
 
 describe 'Trip price', ->
 

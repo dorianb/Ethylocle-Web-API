@@ -1,18 +1,18 @@
 rimraf = require 'rimraf'
 should = require 'should'
-db = require '../lib/db'
+db = require '../../lib/factory/model'
 fs = require 'fs'
-importStream = require '../lib/import'
+importStream = require '../../lib/tool/import'
 
 client = undefined
 
 describe 'Stop', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp/stop", next
+    rimraf "#{__dirname}/../../db/tmp/stop", next
 
   it 'Insert and get a stop', (next) ->
-    client = db "#{__dirname}/../db/tmp/stop"
+    client = db "#{__dirname}/../../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -34,7 +34,7 @@ describe 'Stop', ->
         next()
 
   it 'Insert and get a single stop', (next) ->
-    client = db "#{__dirname}/../db/tmp/stop"
+    client = db "#{__dirname}/../../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -65,7 +65,7 @@ describe 'Stop', ->
           next()
 
   it 'Insert and get a stop by line type', (next) ->
-    client = db "#{__dirname}/../db/tmp/stop"
+    client = db "#{__dirname}/../../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -94,7 +94,7 @@ describe 'Stop', ->
               next()
 
   it 'Insert and get stops by line type', (next) ->
-    client = db "#{__dirname}/../db/tmp/stop"
+    client = db "#{__dirname}/../../db/tmp/stop"
     client.stops.set '4035172',
       name: 'REPUBLIQUE - DEFORGES'
       desc: 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
@@ -158,9 +158,9 @@ describe 'Stop', ->
 
   before (next) ->
     this.timeout 10000
-    client = db "#{__dirname}/../db/tmp/stop"
+    client = db "#{__dirname}/../../db/tmp/stop"
     fs
-    .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
+    .createReadStream "#{__dirname}/../../ratp_stops_with_routes.csv"
     .on 'end', () ->
       #console.log 'Import finished'
       next()

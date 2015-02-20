@@ -2,9 +2,9 @@
 
     express = require 'express'
     router = express.Router()
-    db = require '../lib/db'
-    tripSearch = require '../lib/tripsearch'
-    tripPrice = require '../lib/tripprice'
+    db = require '../lib/factory/model'
+    tripSearch = require '../lib/tool/tripSearch'
+    tripPrice = require '../lib/tool/tripPrice'
     geolib = require 'geolib'
     moment = require 'moment'
 

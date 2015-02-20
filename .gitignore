@@ -1,8 +1,4 @@
 node_modules/
 db/
-user sample.csv
-user sample.json
+resource/
 README.pdf
-users.csv
-ratp_stops_with_routes.csv
-input.json

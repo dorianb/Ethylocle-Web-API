@@ -1,18 +1,18 @@
 rimraf = require 'rimraf'
 should = require 'should'
-db = require '../lib/db'
+db = require '../../lib/factory/model'
 moment = require 'moment'
 
 describe 'User', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp/user", next
+    rimraf "#{__dirname}/../../db/tmp/user", next
 
   it 'Insert and get user', (next) ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -30,7 +30,7 @@ describe 'User', ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -55,7 +55,7 @@ describe 'User', ->
     user2 =
       email: 'maoqiao@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -94,7 +94,7 @@ describe 'User', ->
     user2 =
       email: 'maoqiao@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -125,7 +125,7 @@ describe 'User', ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -186,7 +186,7 @@ describe 'User', ->
       country: "France"
       phone: "+330619768399"
       password: "1234"
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -228,7 +228,7 @@ describe 'User', ->
     user1 =
       email: "dorian@ethylocle.com"
       password: "1234"
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -283,7 +283,7 @@ describe 'User', ->
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -295,12 +295,12 @@ describe 'User', ->
             id: maxId
           client.close (err) ->
             return next err if err
-            client = db "#{__dirname}/../db/tmp/trip"
+            client = db "#{__dirname}/../../db/tmp/trip"
             client.trips.getByPassengerTripInProgress data.id, moment(), (err, trip) ->
               return next err if err
               should.not.exists trip.id
               client.close (err) ->
-                client = db "#{__dirname}/../db/tmp/user"
+                client = db "#{__dirname}/../../db/tmp/user"
                 client.users.get data.id, (err, user) ->
                   return next err if err
                   client.users.del user.id, user, (err) ->
@@ -402,7 +402,7 @@ describe 'User', ->
     user4 =
       email: 'pierre@ethylocle.com'
       password: '4321'
-    client1 = db "#{__dirname}/../db/tmp/user"
+    client1 = db "#{__dirname}/../../db/tmp/user"
     client1.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId

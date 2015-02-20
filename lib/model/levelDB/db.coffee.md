@@ -1,9 +1,9 @@
-# Database with level up
+# LevelDB Model
 
     level = require 'level'
     moment = require 'moment'
 
-    database = (db="#{__dirname}../db") ->
+    Database = (db) ->
       db = level db if typeof db is 'string'
       close: (callback) ->
         db.close callback
@@ -223,7 +223,7 @@
             callback null, stop
         set: (id, stop, callback) ->
           ops = for k, v of stop
-            continue if k is 'id'
+            continue if k is 'stop_id'
             v = 'null' unless v
             type: 'put'
             key: "stops:#{id}:#{k}"
@@ -233,8 +233,8 @@
         getByLineType: (lineType, callback) ->
           stops = []
           db.createReadStream
-            gte: "stops:#{lineType}:"
-            lte: "stops:#{lineType}:\xff"
+            gte: "stopsLineTypeIndex:#{lineType}:"
+            lte: "stopsLineTypeIndex:#{lineType}:\xff"
           .on 'data', (data) ->
             [_, lineType, id] = data.key.split ':'
             stop = {}
@@ -248,10 +248,10 @@
         setByLineType: (lineType, id, callback) ->
           op = [
             type: 'put'
-            key: "stops:#{lineType}:#{id}"
+            key: "stopsLineTypeIndex:#{lineType}:#{id}"
             value: id
           ]
           db.batch op, (err) ->
             callback err
 
-    module.exports = database
+    module.exports = Database

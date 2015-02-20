@@ -1,26 +1,23 @@
 rimraf = require 'rimraf'
 should = require 'should'
 fs = require 'fs'
-importStream = require '../lib/import'
-db = require '../lib/db'
+importStream = require '../import'
+db = require '../../factory/model'
 
 describe 'Import', ->
 
   beforeEach (next) ->
-    console.log "Before Each"
-    rimraf "#{__dirname}/../db/tmp/user", ->
-      console.log "User delete"
-      rimraf "#{__dirname}/../db/tmp/stop", next
+    rimraf "#{__dirname}/../../../db/tmp/user", ->
+      rimraf "#{__dirname}/../../../db/tmp/stop", next
 
   it 'Import users from csv', (next) ->
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../../db/tmp/user"
     fs
-    .createReadStream "#{__dirname}/../user sample.csv"
-    .on 'end', ->
-      console.log "End"
-      #client.close()
-      next()
-      ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
+    .createReadStream "#{__dirname}/../../../resource/user sample.csv"
+    .pipe importStream client, 'csv', 'user'
+    .on 'finish', ->
+      this.iterator.should.eql 3
+      client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
         return next err if err
         client.users.get user.id, (err, user) ->
           return next err if err
@@ -87,19 +84,16 @@ describe 'Import', ->
                   user.bac.should.eql "0.56"
                   user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
                   client.close()
-                  next()###
-    .pipe importStream(client, 'csv', 'user', objectMode: true).on 'finish', ->
-      console.log "C'est vraiment finis !"
+                  next()
 
   it 'Import users from json', (next) ->
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../../db/tmp/user"
     fs
-    .createReadStream "#{__dirname}/../user sample.json"
-    .on 'end', ->
-      #console.log "End"
-      #client.close()
-      next()
-      ###client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
+    .createReadStream "#{__dirname}/../../../resource/user sample.json"
+    .pipe importStream client, 'json', 'user'
+    .on 'finish', ->
+      this.iterator.should.eql 3
+      client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
         return next err if err
         client.users.get user.id, (err, user) ->
           return next err if err
@@ -166,26 +160,47 @@ describe 'Import', ->
                   user.bac.should.eql "0.56"
                   user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
                   client.close()
-                  next()###
-    .pipe importStream client, 'json', 'user', objectMode: true
+                  next()
 
-  ###it 'Import stops from csv', (next) ->
+  it 'Import stops from csv', (next) ->
     this.timeout 10000
-    client = db "#{__dirname}/../db/tmp/stop"
+    client = db "#{__dirname}/../../../db/tmp/stop"
     fs
-    .createReadStream "#{__dirname}/../ratp_stops_with_routes.csv"
-    .on 'end', () ->
-      console.log "End"
-      client.close()
-      next()
+    .createReadStream "#{__dirname}/../../../resource/ratp_stops_with_routes.csv"
+    .pipe importStream client, 'csv', 'stop'
+    .on 'finish', ->
+      this.iterator.should.eql 26621
       client.stops.get '4035172', (err, stop) ->
         return next err if err
-        stop.name.should.eql 'REPUBLIQUE - DEFORGES'
-        stop.desc.should.eql 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
-        stop.lat.should.eql '48.80383802353411'
-        stop.lon.should.eql '2.2978373453843948'
-        stop.lineType.should.eql 'BUS'
-        stop.lineName.should.eql 'BUS N63'
-        client.close()
-        next()
-    .pipe importStream client, 'csv', 'stop', objectMode: true###
+        stop.stop_name.should.eql 'REPUBLIQUE - DEFORGES'
+        stop.stop_desc.should.eql 'FACE 91 AVENUE DE LA REPUBLIQUE - 92020'
+        stop.stop_lat.should.eql '48.80383802353411'
+        stop.stop_lon.should.eql '2.2978373453843948'
+        stop.line_type.should.eql 'BUS'
+        stop.line_name.should.eql 'BUS N63'
+        client.stops.get '1724', (err, stop) ->
+          return next err if err
+          stop.stop_name.should.eql 'Saint-Lazare'
+          stop.stop_desc.should.eql 'Saint-Lazare (97 rue) - 75108'
+          stop.stop_lat.should.eql '48.876067814352574'
+          stop.stop_lon.should.eql '2.324188100771013'
+          stop.line_type.should.eql 'M;M'
+          stop.line_name.should.eql 'M 13;M 13'
+          client.stops.get '3663555', (err, stop) ->
+            return next err if err
+            stop.stop_name.should.eql '8 MAI 1945'
+            stop.stop_desc.should.eql '7 RUE DES MARTYRS DE LA DEPORTATION - 93007'
+            stop.stop_lat.should.eql '48.94760765462246'
+            stop.stop_lon.should.eql '2.438002324652052'
+            stop.line_type.should.eql 'BUS'
+            stop.line_name.should.eql 'BUS 148'
+            client.stops.get '4035339', (err, stop) ->
+              return next err if err
+              stop.stop_name.should.eql "VAL D'OR"
+              stop.stop_desc.should.eql '20 BOULEVARD LOUIS LOUCHEUR - 92073'
+              stop.stop_lat.should.eql '48.860042582683505'
+              stop.stop_lon.should.eql '2.2133715937731506'
+              stop.line_type.should.eql 'BUS'
+              stop.line_name.should.eql 'BUS N53'
+              client.close()
+              next()

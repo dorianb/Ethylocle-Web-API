@@ -1,12 +1,12 @@
 rimraf = require 'rimraf'
 should = require 'should'
-show = require '../lib/show'
-db = require '../lib/db'
+show = require '../show'
+db = require '../../factory/model'
 
 describe 'Show', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp/user", next
+    rimraf "#{__dirname}/../../../db/tmp/user", next
 
   it 'Show user database with 3 users', (next) ->
     user1 =
@@ -24,7 +24,7 @@ describe 'Show', ->
       lastname: 'Biondi'
       firstname: 'Robin'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -47,13 +47,13 @@ describe 'Show', ->
                     client.users.setByEmail user3.email, user3, (err) ->
                       return next err if err
                       client.close (err) ->
-                        show "#{__dirname}/../db/tmp/user", 'user', (err, nbRows) ->
+                        show "#{__dirname}/../../../db/tmp/user", 'user', (err, nbRows) ->
                           console.log err.message if err
                           console.log "Users: " + nbRows
                           next()
 
   it 'Show user database without user', (next) ->
-    show "#{__dirname}/../db/tmp/user", 'user', (err, nbRows) ->
+    show "#{__dirname}/../../../db/tmp/user", 'user', (err, nbRows) ->
       console.log err.message if err
       console.log "Users: " + nbRows
       next()
@@ -64,7 +64,7 @@ describe 'Show', ->
       lastname: 'Bagur'
       firstname: 'Dorian'
       password: '1234'
-    client = db "#{__dirname}/../db/tmp/user"
+    client = db "#{__dirname}/../../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -73,7 +73,7 @@ describe 'Show', ->
         client.users.setByEmail user1.email, user1, (err) ->
           return next err if err
           client.close (err) ->
-            show "#{__dirname}/../db/tmp/user", 'user', (err, nbRows) ->
+            show "#{__dirname}/../../../db/tmp/user", 'user', (err, nbRows) ->
               console.log err.message if err
               console.log "Users: " + nbRows
               next()

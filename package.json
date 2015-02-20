@@ -1,11 +1,12 @@
 {
   "name": "expressApp",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "author": "Dorian BAGUR",
+  "factory": "levelDB",
   "scripts": {
     "start": "node ./bin/start",
-    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register tests"
+    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register ./lib/host/test ./lib/entity/test ./lib/factory/test ./routes/test ./lib/tool/test"
   },
   "dependencies": {
     "coffee-script": "latest",

@@ -1,6 +1,6 @@
 http = require 'http'
 should = require 'should'
-app  = require "../lib/app"
+app  = require "../app"
 port = 3000
 
 describe 'App', () ->

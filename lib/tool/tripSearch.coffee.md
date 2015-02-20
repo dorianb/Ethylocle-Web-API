@@ -5,7 +5,7 @@
     moment = require 'moment'
     geolib = require 'geolib'
     lexi = require 'lexinum'
-    database = require '../lib/db'
+    database = require '../factory/model'
 
     tripSearchSorting = (db, userId, callback) ->
         trips = []
@@ -25,7 +25,7 @@
             callback err, null if err
             callback null, trips
 
-    tripSearch = (db="#{__dirname}../db", userId, criteria, callback) ->
+    tripSearch = (db="#{__dirname}/../../db", userId, criteria, callback) ->
       trip = {}
       limit = moment()
       date = moment criteria.dateTime, "DD-MM-YYYY H:mm"

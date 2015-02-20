@@ -215,4 +215,5 @@ node ./bin/import --format csv --type stops "ratp_stops_with_routes.csv"
 ### Export data
 ```
 node ./bin/export --format csv users.csv
+node ./bin/export --format csv stops.csv
 ```

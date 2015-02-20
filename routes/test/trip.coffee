@@ -1,20 +1,20 @@
 rimraf = require 'rimraf'
 should = require 'should'
-db = require '../lib/db'
-tripSearch = require '../lib/tripsearch'
+db = require '../../lib/factory/model'
+tripSearch = require '../../lib/tool/tripSearch'
 geolib = require 'geolib'
 moment = require 'moment'
 
 describe 'Trip', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../db/tmp/tripsearch", ->
-      rimraf "#{__dirname}/../db/tmp/trip", ->
-        rimraf "#{__dirname}/../db/tmp/user", next
+    rimraf "#{__dirname}/../../db/tmp/tripsearch", ->
+      rimraf "#{__dirname}/../../db/tmp/trip", ->
+        rimraf "#{__dirname}/../../db/tmp/user", next
 
   it 'Insert and get a trip', (next) ->
-    client1 = db "#{__dirname}/../db/tmp/user"
-    client2 = db "#{__dirname}/../db/tmp/trip"
+    client1 = db "#{__dirname}/../../db/tmp/user"
+    client2 = db "#{__dirname}/../../db/tmp/trip"
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -53,8 +53,8 @@ describe 'Trip', ->
               next()
 
   it 'Insert two trips and get a single one', (next) ->
-    client1 = db "#{__dirname}/../db/tmp/user"
-    client2 = db "#{__dirname}/../db/tmp/trip"
+    client1 = db "#{__dirname}/../../db/tmp/user"
+    client2 = db "#{__dirname}/../../db/tmp/trip"
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -125,7 +125,7 @@ describe 'Trip', ->
                         next()
 
   it 'Get last trip id', (next) ->
-    client = db "#{__dirname}/../db/tmp/trip"
+    client = db "#{__dirname}/../../db/tmp/trip"
     client.trips.set '0',
       latStart: '48.853611'
       lonStart: '2.287546'
@@ -154,8 +154,8 @@ describe 'Trip', ->
           next()
 
   it 'Insert two trips without knowing last id', (next) ->
-    client1 = db "#{__dirname}/../db/tmp/user"
-    client2 = db "#{__dirname}/../db/tmp/trip"
+    client1 = db "#{__dirname}/../../db/tmp/user"
+    client2 = db "#{__dirname}/../../db/tmp/trip"
     user1 =
       email: 'dorian@ethylocle.com'
       password: '1234'
@@ -243,7 +243,7 @@ describe 'Trip', ->
     if body.numberOfPeople > 2
       console.log "Impossible de créer un trajet pour plus de 2 personnes"
     else
-      client = db "#{__dirname}/../db/tmp/trip"
+      client = db "#{__dirname}/../../db/tmp/trip"
       data = {}
       for k, v of body
         continue unless v
@@ -292,7 +292,7 @@ describe 'Trip', ->
     if body.numberOfPeople > 2
       console.log "Impossible de créer un trajet pour plus de 2 personnes"
     else
-      client = db "#{__dirname}/../db/tmp/trip"
+      client = db "#{__dirname}/../../db/tmp/trip"
       data = {}
       for k, v of body
         continue unless v
@@ -359,7 +359,7 @@ describe 'Trip', ->
     user4 =
       email: 'pierre@ethylocle.com'
       password: '4321'
-    client1 = db "#{__dirname}/../db/tmp/user"
+    client1 = db "#{__dirname}/../../db/tmp/user"
     client1.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -389,7 +389,7 @@ describe 'Trip', ->
                           client1.users.setByEmail user4.email, user4, (err) ->
                             return next err if err
                             client1.close()
-                            client2 = db "#{__dirname}/../db/tmp/trip"
+                            client2 = db "#{__dirname}/../../db/tmp/trip"
                             client2.trips.getMaxId (err, maxId) ->
                               return next err if err
                               maxId.should.eql '-1'
@@ -501,8 +501,8 @@ describe 'Trip', ->
                                                             lonEnd: '2.321514'
                                                             dateTime: moment().add(25, 'm').format "DD-MM-YYYY H:mm"
                                                             numberOfPeople: '2'
-                                                          tripSearch "#{__dirname}/../db/tmp", user3.id, body, (err, trips) ->
-                                                            tripsearchClient = db "#{__dirname}/../db/tmp/tripsearch"
+                                                          tripSearch "#{__dirname}/../../db/tmp", user3.id, body, (err, trips) ->
+                                                            tripsearchClient = db "#{__dirname}/../../db/tmp/tripsearch"
                                                             tripsearchClient.tripsearch.getByUser user3.id, (err, result) ->
                                                               return next err if err
                                                               delTripSearchByUser = (i) ->
@@ -512,7 +512,7 @@ describe 'Trip', ->
                                                                     delTripSearchByUser i+1
                                                                 else
                                                                   tripsearchClient.close()
-                                                                  client3 = db "#{__dirname}/../db/tmp/trip"
+                                                                  client3 = db "#{__dirname}/../../db/tmp/trip"
                                                                   data = []
                                                                   getTripDetails = (i) ->
                                                                     if i < trips.length
@@ -552,7 +552,7 @@ describe 'Trip', ->
     user4 =
       email: 'pierre@ethylocle.com'
       password: '4321'
-    client1 = db "#{__dirname}/../db/tmp/user"
+    client1 = db "#{__dirname}/../../db/tmp/user"
     client1.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -582,7 +582,7 @@ describe 'Trip', ->
                           client1.users.setByEmail user4.email, user4, (err) ->
                             return next err if err
                             client1.close()
-                            client2 = db "#{__dirname}/../db/tmp/trip"
+                            client2 = db "#{__dirname}/../../db/tmp/trip"
                             client2.trips.getMaxId (err, maxId) ->
                               return next err if err
                               maxId.should.eql '-1'
@@ -689,7 +689,7 @@ describe 'Trip', ->
                                                           client2.close()
                                                           session =
                                                             userId: user4.id
-                                                          client3 = db "#{__dirname}/../db/tmp/trip"
+                                                          client3 = db "#{__dirname}/../../db/tmp/trip"
                                                           client3.trips.getByPassengerTripInProgress session.userId, moment(), (err, trip) ->
                                                             trip.id.should.eql '2'
                                                             trip.dateTime.should.eql dateTime3
@@ -725,7 +725,7 @@ describe 'Trip', ->
     user4 =
       email: 'pierre@ethylocle.com'
       password: '4321'
-    client1 = db "#{__dirname}/../db/tmp/user"
+    client1 = db "#{__dirname}/../../db/tmp/user"
     client1.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -755,7 +755,7 @@ describe 'Trip', ->
                           client1.users.setByEmail user4.email, user4, (err) ->
                             return next err if err
                             client1.close()
-                            client2 = db "#{__dirname}/../db/tmp/trip"
+                            client2 = db "#{__dirname}/../../db/tmp/trip"
                             client2.trips.getMaxId (err, maxId) ->
                               return next err if err
                               maxId.should.eql '-1'
@@ -862,7 +862,7 @@ describe 'Trip', ->
                                                           client2.close()
                                                           session =
                                                             userId: user4.id
-                                                          client3 = db "#{__dirname}/../db/tmp/trip"
+                                                          client3 = db "#{__dirname}/../../db/tmp/trip"
                                                           client3.trips.getByPassengerTripInProgress session.userId, moment(), (err, trip) ->
                                                             return next err if err
                                                             trip.id.should.eql '2'
@@ -901,7 +901,7 @@ describe 'Trip', ->
     user4 =
       email: 'pierre@ethylocle.com'
       password: '4321'
-    client1 = db "#{__dirname}/../db/tmp/user"
+    client1 = db "#{__dirname}/../../db/tmp/user"
     client1.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -931,7 +931,7 @@ describe 'Trip', ->
                           client1.users.setByEmail user4.email, user4, (err) ->
                             return next err if err
                             client1.close()
-                            client2 = db "#{__dirname}/../db/tmp/trip"
+                            client2 = db "#{__dirname}/../../db/tmp/trip"
                             client2.trips.getMaxId (err, maxId) ->
                               return next err if err
                               maxId.should.eql '-1'
@@ -1041,7 +1041,7 @@ describe 'Trip', ->
                                                           body =
                                                             id: '2'
                                                             numberOfPeople: '2'
-                                                          client3 = db "#{__dirname}/../db/tmp/trip"
+                                                          client3 = db "#{__dirname}/../../db/tmp/trip"
                                                           client3.trips.getByPassengerTripInProgress session.userId, moment(), (err, trip) ->
                                                             return next err if err
                                                             should.not.exists trip.id
@@ -1098,7 +1098,7 @@ describe 'Trip', ->
     user4 =
       email: 'pierre@ethylocle.com'
       password: '4321'
-    client1 = db "#{__dirname}/../db/tmp/user"
+    client1 = db "#{__dirname}/../../db/tmp/user"
     client1.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -1128,7 +1128,7 @@ describe 'Trip', ->
                           client1.users.setByEmail user4.email, user4, (err) ->
                             return next err if err
                             client1.close()
-                            client2 = db "#{__dirname}/../db/tmp/trip"
+                            client2 = db "#{__dirname}/../../db/tmp/trip"
                             client2.trips.getMaxId (err, maxId) ->
                               return next err if err
                               maxId.should.eql '-1'
@@ -1234,7 +1234,7 @@ describe 'Trip', ->
                                                           trips[0].dateTime.should.eql dateTime3
                                                           client2.close()
                                                           tripId = 0
-                                                          client3 = db "#{__dirname}/../db/tmp/trip"
+                                                          client3 = db "#{__dirname}/../../db/tmp/trip"
                                                           client3.trips.get tripId, (err, trip) ->
                                                             return next err if err
                                                             delPassengerIndex = (i, callback) ->

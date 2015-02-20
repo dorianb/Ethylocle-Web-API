@@ -2,7 +2,7 @@
 
     express = require 'express'
     router = express.Router()
-    db = require '../lib/db'
+    db = require '../lib/factory/model'
 
     setSessionCookie = (req, user) ->
       req.session.userId = user.id
