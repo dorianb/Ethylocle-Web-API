@@ -1,4 +1,4 @@
-rimraf = require 'rimraf'
+###rimraf = require 'rimraf'
 should = require 'should'
 db = require '../../lib/factory/model'
 fs = require 'fs'
@@ -152,7 +152,7 @@ describe 'Stop', ->
                       stop.lineType.should.eql 'BUS'
                       stop.lineName.should.eql 'BUS N63'
                       client.close()
-                      next()
+                      next()###
 
 ###describe 'Find nearest stop test', ->
 

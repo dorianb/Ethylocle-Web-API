@@ -15,10 +15,15 @@
 
 ## Has trip
 
-    router.post '/hastrip', (req, res) ->
+    router.post '/has', (req, res) ->
       if req.session.userId and req.session.email
         client = db "#{__dirname}/../db/trip"
-        client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
+
+        # Has trip
+        # Envoie id
+        # Retourne true ou false avec un message d'erreur
+
+        ###client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
           if err
             errorMessage res, err
           else if trip.id
@@ -29,26 +34,31 @@
             res.json
               result: false
               data: "Aucun trajet en cours"
-          client.close()
+          client.close()###
       else
         res.json
           result: false
           data: "Authentification requise"
 
-## Get trips
+## Search trips
 
-    router.post '/gettrips', (req, res) ->
+    router.post '/search', (req, res) ->
       if req.session.userId and req.session.email
-        body = {}
+        ###body = {}
         for k, v of req.body
           continue unless v and k in ["latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople"]
-          body[k] = v
+          body[k] = v###
         if body.numberOfPeople < 1
           res.json
             result: false
             data: "Le nombre de personne est inférieur à 1"
         else
-          tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
+
+          # Get trips
+          # Envoie id et criteria
+          # Retourne true ou false avec un tableau de trajets
+
+          ###tripSearch "#{__dirname}/../db", req.session.userId, body, (err, trips) ->
             tripsearchClient = db "#{__dirname}/../db/tripsearch"
             tripsearchClient.tripsearch.getByUser req.session.userId, (err, result) ->
               if err
@@ -90,7 +100,7 @@
                           result: true
                           data: data
                     getTripDetails 0
-                delTripSearchByUser 0
+                delTripSearchByUser 0###
       else
         res.json
           result: false
@@ -98,7 +108,7 @@
 
 ## Join trip
 
-    router.post '/jointrip', (req, res) ->
+    router.post '/join', (req, res) ->
       if req.session.userId and req.session.email
         unless req.body.numberOfPeople
           res.json
@@ -118,7 +128,12 @@
             data: "Veuillez fournir l'identifiant du trajet"
         else
           client = db "#{__dirname}/../db/trip"
-          client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
+
+          # Join trip
+          # Envoie id user, trip id, number of people
+          # Retourne true ou false avec un message d'erreur
+
+          ###client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
             if err
               errorMessage res, err
               client.close()
@@ -163,7 +178,7 @@
                   res.json
                     result: false
                     data: "Le trajet n'existe plus"
-                  client.close()
+                  client.close()###
       else
         res.json
           result: false
@@ -171,7 +186,7 @@
 
 ## Create trip
 
-    router.post '/createtrip', (req, res) ->
+    router.post '/create', (req, res) ->
       if req.session.userId and req.session.email
         unless req.body.numberOfPeople
           res.json
@@ -195,7 +210,12 @@
             data: "L'heure et la date fournie sont passées"
         else
           client = db "#{__dirname}/../db/trip"
-          client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
+
+          # Create trip
+          # Envoie user id, body
+          # Retourne true ou false avec un message d'erreur
+
+          ###client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
             if err
               errorMessage res, err
             else if trip.id
@@ -242,18 +262,23 @@
                 res.json
                   result: false
                   data: "Le nombre d'arguments est insuffisant"
-                client.close()
+                client.close()###
       else
         res.json
           result: false
           data: "Authentification requise"
 
-## Get trip data
+## Get trip
 
-    router.post '/gettripdata', (req, res) ->
+    router.post '/get', (req, res) ->
       if req.session.userId and req.session.email
         client = db "#{__dirname}/../db/trip"
-        client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
+
+        # Get
+        # Envoie uder id
+        # Retourne true ou false avec un objet trajet
+
+        ###client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
           if err
             errorMessage res, err
             client.close()
@@ -276,19 +301,24 @@
             client.close()
             res.json
               result: false
-              data: "Aucun trajet en cours"
+              data: "Aucun trajet en cours"###
       else
         res.json
           result: false
           data: "Authentification requise"
 
-### Get trip data by id
+### Get trip by id
 
-    router.post '/gettripdatabyid', (req, res) ->
+    router.post '/getbyid', (req, res) ->
       if req.session.userId and req.session.email
         if req.body.id
           client = db "#{__dirname}/../db/trip"
-          client.trips.get req.body.id, (err, trip) ->
+
+          # Get by id
+          # Envoie id trip
+          # Retourne true ou false avec le trajet
+
+          ###client.trips.get req.body.id, (err, trip) ->
             if err
               errorMessage res, err
             else if trip.id
@@ -305,7 +335,7 @@
               res.json
                 result: false
                 data: "Le trajet n'existe plus"
-            client.close()
+            client.close()###
         else
           res.json
             result: false

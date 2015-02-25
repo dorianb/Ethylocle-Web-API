@@ -1,4 +1,4 @@
-rimraf = require 'rimraf'
+###rimraf = require 'rimraf'
 should = require 'should'
 db = require '../../lib/factory/model'
 tripSearch = require '../../lib/tool/tripSearch'
@@ -693,18 +693,18 @@ describe 'Trip', ->
                                                           client3.trips.getByPassengerTripInProgress session.userId, moment(), (err, trip) ->
                                                             trip.id.should.eql '2'
                                                             trip.dateTime.should.eql dateTime3
-                                                            ###if trip.id
+                                                            if trip.id
                                                               console.log "Un trajet est en cours"
                                                             else
-                                                              console.log "Aucun trajet en cours"###
+                                                              console.log "Aucun trajet en cours"
                                                             session =
                                                               userId: user3.id
                                                             client3.trips.getByPassengerTripInProgress session.userId, moment(), (err, trip) ->
                                                               trip.should.eql {}
-                                                              ###if trip.id
+                                                              if trip.id
                                                                 console.log "Un trajet est en cours"
                                                               else
-                                                                console.log "Aucun trajet en cours"###
+                                                                console.log "Aucun trajet en cours"
                                                               client3.close()
                                                               next()
 
@@ -1268,4 +1268,4 @@ describe 'Trip', ->
                                                                     next()
 
   it 'Geolib call with string: error handling', (next) ->
-    next()
+    next()###

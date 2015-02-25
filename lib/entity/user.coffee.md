@@ -1,11 +1,9 @@
-# User class inheriting from Entity class
-
-    Entity = require './entity'
+# User class
 
     User = (user) ->
       return new User user unless this instanceof User
-      Entity.apply this, [user]
       if user
+        this.id = user.id
         this.email = user.email
         this.image = user.image
         this.lastName = user.lastName
@@ -24,9 +22,6 @@
         this.positionDate = user.positionDate
         this.bac = user.bac
         this.bacDate = user.bacDate
-
-    User.prototype = Object.create Entity.prototype
-    User.prototype.constructor = User
 
     User.prototype.get = () ->
       result = {}

@@ -1,11 +1,11 @@
 # Model Factory
 
-    levelDB = require '../model/levelDB/db'
-    postgreSQL= require '../model/postgreSQL/db'
+    config = require '../../package'
+    levelDB = require '../model/levelDB/up'
 
-    ModelFactory = (db="#{__dirname}/../../db") ->
-      switch require('../../package').factory
-        when "levelDB" then levelDB db
-        when "postgreSQL" then postgreSQL db
+    ModelFactory = () ->
+      switch config.factory
+        when "levelDB" then new levelDB "#{__dirname}/../../db/tmp"
+        when "postgreSQL" then null
 
     module.exports = ModelFactory

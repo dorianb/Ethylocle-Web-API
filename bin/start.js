@@ -1,6 +1,6 @@
 require('coffee-script/register')
 
-var app = require('../lib/app');
+var app = require('../lib/host/app');
 
 app.set('port', process.env.PORT || 3000);
 

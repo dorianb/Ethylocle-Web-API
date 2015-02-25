@@ -2,17 +2,19 @@ http = require 'http'
 should = require 'should'
 app  = require "../app"
 port = 3000
+server = undefined
 
 describe 'App', () ->
 
   before (done) ->
-    app.listen port, (err, result) ->
+    server = app.listen port, (err, result) ->
       if err
         done err
       else
         done()
 
   after (done) ->
+    server.close()
     done()
 
   it 'should exist', (done) ->

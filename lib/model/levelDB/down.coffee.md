@@ -1,9 +1,9 @@
-# LevelDB Model
+# Down
 
     level = require 'level'
     moment = require 'moment'
 
-    Database = (db) ->
+    Down = (db) ->
       db = level db if typeof db is 'string'
       close: (callback) ->
         db.close callback
@@ -254,4 +254,4 @@
           db.batch op, (err) ->
             callback err
 
-    module.exports = Database
+    module.exports = Down

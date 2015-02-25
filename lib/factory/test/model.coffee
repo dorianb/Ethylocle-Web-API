@@ -1,11 +1,10 @@
 should = require 'should'
-factory = require '../model'
+model = require '../model'
+Up = require '../../model/levelDB/up'
 
-describe 'Model Factory', ->
+describe 'Model factory', ->
 
-  it 'Call factory', (next) ->
-    model = factory "#{__dirname}/../../../db/tmp"
-    should.exists model.users
-    should.exists model.trips
-    should.exists model.stops
+  it 'Call model factory for LevelDB', (next) ->
+    assertion = model() instanceof Up
+    assertion.should.eql true
     next()

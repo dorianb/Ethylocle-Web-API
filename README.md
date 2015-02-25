@@ -13,7 +13,7 @@ I used CoffeeScript as programmation language and MarkDown to document my code.
 If the email and password are correct, a session cookie is returned to the client
 ```
 url: domain/usr/signin
-Paramètres: {email, password}
+Paramètres: {"email", "password"}
 Retour: { "result": bool, "data": null }
 ```
 
@@ -21,7 +21,7 @@ Retour: { "result": bool, "data": null }
 Allows client to check password before allowing client user to reset critical information
 ```
 url: domain/usr/checkpassword
-Paramètres: {password}
+Paramètres: {"password"}
 Retour: { "result": bool, "data": null }
 ```
 
@@ -29,7 +29,7 @@ Retour: { "result": bool, "data": null }
 Client user can sign up with an email and password if the email is not already used
 ```
 url: domain/usr/signup
-Paramètres: {email, password}
+Paramètres: {"email", "password"}
 Retour: { "result": bool, "data": null }
 ```
 
@@ -45,7 +45,7 @@ Retour: { "result": bool, "data": null }
 As the email is set as index in user database, it needs special treatments
 ```
 url: domain/usr/updateemail
-Paramètres: {email}
+Paramètres: {"email"}
 Retour: { "result": bool, "data": null }
 ```
 
@@ -57,7 +57,7 @@ Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight",
 Retour: { "result": bool, "data": null}
 ```
 
-### Get user data
+### Get user
 Client will get user data without password
 ```
 url: domain/usr/get
@@ -65,7 +65,7 @@ Paramètres: {}
 Retour: { "result": bool, "data": userObject }
 ```
 
-### Get user data by Id
+### Get user by Id
 A user can get data of another user by providing user's id
 ```
 url: domain/usr/getbyid
@@ -86,15 +86,15 @@ Retour: { "result": bool, "data": null }
 ### Has trip
 Allows client to know if the user has a trip in progress
 ```
-url: domain/trp/hastrip
+url: domain/trp/has
 Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
 
-### Get trips
-Client can get all the trips available based on user's search preference
+### Search trips
+Client can search trips available based on user's preference
 ```
-url: domain/trp/gettrips
+url: domain/trp/search
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
 ```
@@ -102,7 +102,7 @@ Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", 
 ### Join trip
 User can join an existing trip by providing its id and the numberOfPeople. If the trip is no longer available, the user will be notified in this way.
 ```
-url: domain/trp/jointrip
+url: domain/trp/join
 Paramètres: { "id", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
@@ -110,23 +110,23 @@ Retour: { "result": bool, "data": null }
 ### Create trip
 If the user doesn't want to join an existing trip, he can create his own one by providing the essential data requested
 ```
-url: domain/trp/createtrip
+url: domain/trp/create
 Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
 
-### Get trip data
+### Get trip
 Once a user has joined or created a trip, he can access all the trip data such as passengers id
 ```
-url: domain/trp/gettripdata
+url: domain/trp/get
 Paramètres: {}
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4" } }
 ```
 
-### Get trip data by id
+### Get trip by id
 All users can access a part of the trip data by providing trip id
 ```
-url: domain/trp/gettripdatabyid
+url: domain/trp/getbyid
 Paramètres: { "id" }
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger" } }
 ```
@@ -166,14 +166,6 @@ npm install forever -g
 Several tests are provided, execute them using the following command:
 ```
 npm test
-```
-You can test the sign in request from a client using the following command on windows:
-```
-curl -H "Content-Type: application/json" -X POST http://domain/usr/signin -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
-```
-You can test the sign up request from a client using the following command on windows:
-```
-curl -H "Content-Type: application/json" -X POST http://domain/usr/signup -d "{\"email\":\"dorian@ethylocle.com\", \"password\": \"1234\"}"
 ```
 
 ## Launch server
