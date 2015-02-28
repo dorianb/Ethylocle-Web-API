@@ -13,8 +13,8 @@
     app = express()
 
     app.use bodyParser.json()
-    app.use bodyParser.urlencoded(extended: false)
-    app.use cookieParser('A8g8o7Zf-c0d8-e0V<-QVe2')
+    app.use bodyParser.urlencoded extended: false
+    app.use cookieParser 'A8g8o7Zf-c0d8-e0V<-QVe2'
     app.use methodOverride '_method'
 
     sess =
@@ -27,16 +27,16 @@
       app.set "trust proxy", 1
       sess.cookie.secure = true
 
-    app.use expressSession(sess)
+    app.use expressSession sess
 
-    app.use serveStatic("#{__dirname}/../../public")
+    app.use serveStatic "#{__dirname}/../../public"
 
-    app.use '/', require('../../routes/index');
-    app.use '/usr', require('../../routes/user');
-    app.use '/stp', require('../../routes/stop');
-    app.use '/trp', require('../../routes/trip');
+    app.use '/', require '../../routes/index'
+    app.use '/usr', require '../../routes/user'
+    app.use '/stp', require '../../routes/stop'
+    app.use '/trp', require '../../routes/trip'
 
-    app.use serveIndex("#{__dirname}/../../public")
+    app.use serveIndex "#{__dirname}/../../public"
     app.use errorHandler() if process.env.NODE_ENV is "development"
 
     module.exports = app

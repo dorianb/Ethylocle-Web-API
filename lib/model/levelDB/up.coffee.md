@@ -12,9 +12,9 @@
 
 ## User methods
 
-    Up.prototype.signIn = (body, callback) ->
+    Up.prototype.signIn = (usr, callback) ->
       client = Down this.path + "/user"
-      client.users.getByEmail body.email, (err, user) ->
+      client.users.getByEmail usr.email, (err, user) ->
         if err
           client.close()
           callback err
@@ -23,34 +23,97 @@
             if err
               client.close()
               callback err
-            else if user.email is body.email and user.password is body.password
+            else if user.email is usr.email and user.password is usr.password
               client.close()
               callback null, {result: true, data: null, user: user}
             else
               client.close()
               callback null, {result: false, data: "Email ou mot de passe incorrect"}
 
-    Up.prototype.checkPassword = (body, callback) ->
+    Up.prototype.checkPassword = (usr, callback) ->
       client = Down this.path + "/user"
-      client.users.get body.id, (err, user) ->
+      client.users.get usr.id, (err, user) ->
         if err
           client.close()
           callback err
-        else if user.id is body.id and user.password is body.password
+        else if user.id is usr.id and user.password is usr.password
           client.close()
           callback null, {result: true, data: null}
         else
           client.close()
           callback null, {result: false, data: null}
 
-    Up.prototype.signUp = (user, callback) ->
-      #TO DO
+    Up.prototype.signUp = (usr, callback) ->
+      client = Down this.path + "/user"
+      client.users.getByEmail usr.email, (err, user) ->
+        if err
+          client.close()
+          callback err
+        else if user.email is usr.email
+          client.close()
+          callback null, {result: false, data: "L'email n'est plus disponible"}
+        else
+          client.users.getMaxId (err, maxId) ->
+            if err
+              client.close()
+              callback err
+            else
+              usr.id = (++maxId).toString()
+              client.users.set usr.id, usr.get(), (err) ->
+                if err
+                  client.close()
+                  callback err
+                else
+                  client.users.setByEmail usr.email, usr.get(), (err) ->
+                    if err
+                      client.close()
+                      callback err
+                    else
+                      client.close()
+                      callback null, {result: true, data: null, user: usr.get()}
 
-    Up.prototype.updateEmail = (user, callback) ->
-      #TO DO
+    Up.prototype.updateEmail = (usr, callback) ->
+      client = Down this.path + "/user"
+      client.users.getByEmail usr.email, (err, user) ->
+        if err
+          client.close()
+          callback err
+        else if user.email is usr.email
+          client.close()
+          callback null, {result: false, data: "L'email n'est plus disponible"}
+        else
+          client.users.get usr.id, (err, user) ->
+            if err
+              client.close()
+              callback err
+            else
+              client.users.delByEmail user.email, user, (err) ->
+                if err
+                  client.close()
+                  callback err
+                else
+                  client.users.set usr.id, usr.get(), (err) ->
+                    if err
+                      client.close()
+                      callback err
+                    else
+                      client.users.setByEmail usr.email, usr.get(), (err) ->
+                        if err
+                          client.close()
+                          callback err
+                        else
+                          client.close()
+                          callback null, {result: true, data: null}
 
-    Up.prototype.update = (user, callback) ->
-      #TO DO
+    Up.prototype.update = (usr, callback) ->
+      client = Down this.path + "/user"
+      client.users.set usr.id, usr.get(), (err) ->
+        if err
+          client.close()
+          callback err
+        else
+          client.close()
+          callback null, {result: true, data: null}
 
     Up.prototype.get = (user, callback) ->
       #TO DO

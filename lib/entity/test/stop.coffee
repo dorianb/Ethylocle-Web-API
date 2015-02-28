@@ -12,7 +12,7 @@ describe 'Stop entity', ->
       name: 'Saint-Lazare'
       lineType: 'BUS'
       lineName: 'BUS 231'
-    stop = new Stop data
+    stop = Stop data
     stop.id.should.eql data.id
     stop.lat.should.eql data.lat
     stop.lon.should.eql data.lon
@@ -31,7 +31,7 @@ describe 'Stop entity', ->
       name: 'Saint-Lazare'
       lineType: 'BUS'
       lineName: 'BUS 231'
-    stop = new Stop data
+    stop = Stop data
     stop = stop.get()
     stop.id.should.eql data.id
     stop.lat.should.eql data.lat

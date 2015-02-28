@@ -14,7 +14,7 @@ describe 'Trip entity', ->
       price: '30'
       passenger_1: '0'
       passenger_2: '0'
-    trip = new Trip data
+    trip = Trip data
     trip.id.should.eql data.id
     should.not.exists trip.addressStart
     trip.latStart.should.eql data.latStart
@@ -41,7 +41,7 @@ describe 'Trip entity', ->
       price: '30'
       passenger_1: '0'
       passenger_2: '0'
-    trip = new Trip data
+    trip = Trip data
     trip = trip.get()
     trip.id.should.eql data.id
     should.not.exists trip.addressStart

@@ -9,225 +9,112 @@
       req.session.userId = user.id
       req.session.email = user.email
       req.session.cookie.maxAge = 3600000
-      console.log "Cookie: " + req.session.userId + " " + req.session.email + " " + req.session.cookie.maxAge/1000 + "s"
+      #console.log "Cookie: " + req.session.userId + " " + req.session.email + " " + req.session.cookie.maxAge/1000 + "s"
 
     error = (err) ->
       result: false
-      data: "Une erreur inattendue est survenue: " + err.message
+      data: "Une erreur inattendue est survenue: " + err.send
 
-    message = (res, response) ->
+    send = (res, message) ->
       res.json
-        result: response.result
-        data: response.data
+        result: message.result
+        data: message.data
 
 ## Sign in
 
     router.post '/signin', (req, res) ->
       if req.body.hasOwnProperty("email") and req.body.hasOwnProperty("password")
-        model().signIn req.body, (err, response) ->
+        model().signIn User(req.body), (err, message) ->
           if err
-            message res, error(err)
-          else if response.result
-            session req, response.user
-            message res, response
+            send res, error(err)
+          else if message.result
+            session req, message.user
+            send res, message
           else
-            message res, response
+            send res, message
       else
-        message res, {result: false, data: "Email ou mot de passe manquant"}
+        send res, {result: false, data: "Email ou mot de passe manquant"}
 
 ## Check password
 
     router.post '/checkpassword', (req, res) ->
       if req.session.userId and req.session.email
         if req.body.hasOwnProperty("password")
-          model().checkPassword {id: req.session.userId, password: req.body.password}, (err, response) ->
+          model().checkPassword User({id: req.session.userId, password: req.body.password}), (err, message) ->
             if err
-              message res, error(err)
+              send res, error(err)
             else
-              message res, response
+              send res, message
         else
-          message res, {result: false, data: "Mot de passe manquant"}
+          send res, {result: false, data: "Mot de passe manquant"}
       else
-        message res, {result: false, data: "Authentification requise"}
+        send res, {result: false, data: "Authentification requise"}
 
 ## Sign up
 
-    isEmail = (email) ->
-      regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
-      regEmail.test email
-
-    isPassword = (password) ->
-      score = 0
-      match = new RegExp "[a-z]+", ""
-      if match.test password
-        score++
-      match = new RegExp "[A-Z]+", ""
-      if match.test password
-        score++
-      match = new RegExp "[0-9]+", ""
-      if match.test password
-        score++
-      match = new RegExp "[^A-Za-z0-9]+", ""
-      if match.test password
-        score++
-      score += password.length
-      if score > 8
-        return true
-      else
-        return false
-
     router.post '/signup', (req, res) ->
-      if req.body.email and req.body.password
-        if isEmail req.body.email
-          if isPassword req.body.password
-            client = db "#{__dirname}/../db/user"
-
-            # Sign up
-            # Envoie l'email et le mot de passe
-            # Retourne true ou false avec un message
-
-            ###client.users.getByEmail req.body.email, (err, user) ->
+      if req.body.hasOwnProperty("email") and req.body.hasOwnProperty("password")
+        user = User req.body
+        if user.isEmail()
+          if user.isPassword()
+            model().signUp user, (err, message) ->
               if err
-                errorMessage res, err
-                client.close()
-              else if user.email is req.body.email
-                res.json
-                  result: false
-                  data: "L'email est déjà utilisé pour un autre compte"
-                client.close()
+                send res, error(err)
+              else if message.result
+                session req, message.user
+                send res, message
               else
-                client.users.getMaxId (err, maxId) ->
-                  if err
-                    errorMessage res, err
-                    client.close()
-                  else
-                    data =
-                      email: req.body.email
-                      password: req.body.password
-                    data.id = ++maxId
-                    client.users.set data.id, data, (err) ->
-                      if err
-                        errorMessage res, err
-                        client.close()
-                      else
-                        client.users.setByEmail data.email, data, (err) ->
-                          if err
-                            errorMessage res, err
-                          else
-                            setSessionCookie req, data
-                            res.json
-                              result: true
-                              data: null
-                          client.close()###
+                send res, message
           else
-            res.json
-              result: false
-              data: "Le mot de passe doit comporter au moins 8 caractères"
+            send res, {result: false, data: "Le mot de passe doit comporter au moins 8 caractères"}
         else
-          res.json
-            result: false
-            data: "Cette adresse email est invalide"
+          send res, {result: false, data: "Cette adresse email est invalide"}
       else
-        res.json
-          result: false
-          data: "L'adresse email ou le mot de passe envoyé est nul"
+        send res, {result: false, data: "Email ou mot de passe manquant"}
 
 ## Update email
 
     router.post '/updateemail', (req, res) ->
       if req.session.userId and req.session.email
-        if req.body.email
-          if isEmail req.body.email
-            client = db "#{__dirname}/../db/user"
-
-            # Update email
-            # Envoie l'id et l'email
-            # Retourne true ou false avec un message
-
-            ###client.users.getByEmail req.body.email, (err, user) ->
+        if req.body.hasOwnProperty("email")
+          user = User()
+          user.id = req.session.userId
+          user.email = req.body.email
+          if user.isEmail()
+            model().updateEmail user, (err, message) ->
               if err
-                errorMessage res, err
-                client.close()
-              else if user.email is req.body.email
-                res.json
-                  result: false
-                  data: "L'email est déjà utilisé pour un autre compte"
-                client.close()
+                send res, error(err)
+              else if message.result
+                session req, user
+                send res, message
               else
-                client.users.get req.session.userId, (err, user) ->
-                  if err
-                    errorMessage res, err
-                    client.close()
-                  else
-                    client.users.delByEmail req.session.email, user, (err) ->
-                      if err
-                        errorMessage res, err
-                        client.close()
-                      else
-                        client.users.setByEmail req.body.email,
-                          id: req.session.userId
-                        , (err) ->
-                          if err
-                            errorMessage res, err
-                            client.close()
-                          else
-                            client.users.set req.session.userId,
-                              email: req.body.email
-                            , (err) ->
-                              if err
-                                errorMessage res, err
-                              else
-                                setSessionCookie req,
-                                  id: req.session.userId
-                                  email: req.body.email
-                                res.json
-                                  result: true
-                                  data: null
-                              client.close()###
+                send res, message
           else
-            res.json
-              result: false
-              data: "Cette adresse email est invalide"
+            send res, {result: false, data: "Cette adresse email est invalide"}
         else
-          res.json
-            result: false
-            data: "L'adresse email envoyée est nulle"
+          send res, {result: false, data: "Email manquant"}
       else
-        res.json
-          result: false
-          data: "Authentification requise"
+        send res, {result: false, data: "Authentification requise"}
 
 ## Update user data
 
     router.post '/update', (req, res) ->
       if req.session.userId and req.session.email
-        ###data = {}
-        for k, v of req.body
-          continue unless v and k in ["image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate"]
-          data[k] = v###
-        if data.password and !isPassword data.password
-          res.json
-            result: false
-            data: "Le mot de passe doit comporter au moins 8 caractères"
-        else
-          client = db "#{__dirname}/../db/user"
-
-          # Update
-          # Envoie l'id et les données à mettre à jour
-          # Retourne true ou false avec un message
-
-          ###client.users.set req.session.userId, data, (err) ->
+        if Object.keys(req.body).length > 0
+          user = User req.body
+          user.id = req.session.userId
+          user.email = ""
+          if req.body.hasOwnProperty("password") and !user.isPassword()
+            return send res, {result: false, data: "Le mot de passe doit comporter au moins 8 caractères"}
+          model().update user, (err, message) ->
             if err
-              errorMessage res, err
+              send res, error(err)
             else
-              res.json
-                result: true
-                data: null
-            client.close()###
+              send res, message
+        else
+          send res, {result: false, data: "La requête ne comporte aucun argument"}
       else
-        res.json
-          result: false
-          data: "Authentification requise"
+        send res, {result: false, data: "Authentification requise"}
 
 ## Get user
 
@@ -241,7 +128,7 @@
 
         ###client.users.get req.session.userId, (err, user) ->
           if err
-            errorMessage res, err
+            errorsend res, err
           else
             data = {}
             for k, v of user
@@ -269,7 +156,7 @@
 
           ###client.users.get req.body.id, (err, user) ->
             if err
-              errorMessage res, err
+              errorsend res, err
             else
               data = {}
               for k, v of user
@@ -296,12 +183,12 @@
 
         # Delete
         # Envoie l'id
-        # Retourne true ou false avec un message
+        # Retourne true ou false avec un send
 
         ###client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
           if err
             client.close()
-            errorMessage res, err
+            errorsend res, err
           else if trip.id
             client.close()
             res.json
@@ -310,27 +197,27 @@
           else
             client.close (err) ->
               if err
-                errorMessage res, err
+                errorsend res, err
               else
                 client = db "#{__dirname}/../db/user"
                 client.users.get req.session.userId, (err, user) ->
                   if err
-                    errorMessage res, err
+                    errorsend res, err
                     client.close()
                   else
                     client.users.del req.session.userId, user, (err) ->
                       if err
-                        errorMessage res, err
+                        errorsend res, err
                         client.close()
                       else
                         client.users.delByEmail req.session.email, user, (err) ->
                           if err
-                            errorMessage res, err
+                            errorsend res, err
                             client.close()
                           else
                             req.session.destroy (err) ->
                               if err
-                                errorMessage res, err
+                                errorsend res, err
                               else
                                 res.json
                                   result: true
@@ -347,7 +234,7 @@
       if req.session.userId and req.session.email
         req.session.destroy (err) ->
           if err
-            errorMessage res, err
+            errorsend res, err
           else
             res.json
               result: true

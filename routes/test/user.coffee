@@ -12,10 +12,11 @@ defaultGetOptions = (path) ->
     "path": path
     "method": "POST"
 
-GetOptionsWithHeaders = (path, body) ->
+GetOptionsWithHeaders = (path, body, cookie) ->
   headers =
     'Content-Type': 'application/json'
     'Content-Length': body.length
+    'Cookie': cookie
   options =
     "host": "localhost"
     "port": port
@@ -46,7 +47,7 @@ describe 'User routes', ->
       res.statusCode.should.eql 200
       next()
 
-  it 'Sign in without body', (next) ->
+  it 'Sign in without body (without email or password)', (next) ->
     headers = defaultGetOptions '/usr/signin'
     http.get headers, (res) ->
       res.statusCode.should.eql 200
@@ -54,13 +55,15 @@ describe 'User routes', ->
       res.on 'data', (data) ->
         body += data
       res.on 'end', (err) ->
+        return next err if err
         res = JSON.parse body
+        Object.keys(res).length.should.eql 2
         res.result.should.eql false
         res.data.should.eql "Email ou mot de passe manquant"
         next()
 
   it 'Sign in without signed up', (next) ->
-    bodyString = JSON.stringify {email: "dorian@ethylocle.com", password: "1234"}
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "1234"
     headers = GetOptionsWithHeaders '/usr/signin', bodyString
     req = http.request headers, (res) ->
       res.statusCode.should.eql 200
@@ -68,58 +71,395 @@ describe 'User routes', ->
       res.on 'data', (data) ->
         body += data
       res.on 'end', (err) ->
+        return next err if err
         res = JSON.parse body
+        Object.keys(res).length.should.eql 2
         res.result.should.eql false
         res.data.should.eql "Email ou mot de passe incorrect"
         next()
     req.write bodyString
     req.end()
 
-  it 'Sign up', (next) ->
-    next()
+  it 'Sign up correctly', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql true
+        should.not.exists res.data
+        next()
+    req.write bodyString
+    req.end()
 
-  it 'Sign up and sign in', (next) ->
-    next()
+  it 'Sign up without email or password', (next) ->
+    bodyString = JSON.stringify password: "1234"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Email ou mot de passe manquant"
+        next()
+    req.write bodyString
+    req.end()
 
-  it 'Check email address', (next) ->
-    isEmail = (email) ->
-      regEmail = new RegExp '^[0-9a-z._-]+@{1}[0-9a-z.-]{2,}[.]{1}[a-z]{2,5}$', 'i'
-      regEmail.test email
+  it 'Sign up without a valid email', (next) ->
+    bodyString = JSON.stringify email: "dorianethylocle.com", password: "1234"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Cette adresse email est invalide"
+        next()
+    req.write bodyString
+    req.end()
 
-    emails = new Array 'adressemail@gmail', 'adresse@mel.fr', 'adr@fr.com.eu'
+  it 'Sign up without a strong password', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "1234"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Le mot de passe doit comporter au moins 8 caractères"
+        next()
+    req.write bodyString
+    req.end()
 
-    isEmail(emails[0]).should.eql false
-    isEmail(emails[1]).should.eql true
-    isEmail(emails[2]).should.eql true
-    next()
+  it 'Sign in after signed up', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+        headers = GetOptionsWithHeaders '/usr/signin', bodyString
+        req2 = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            next()
+        req2.write bodyString
+        req2.end()
+    req.write bodyString
+    req.end()
 
-  it 'Check password complexity', (next) ->
-    isPassword = (password) ->
-      score = 0
-      match = new RegExp "[a-z]+", ""
-      if match.test password
-        score++
-      match = new RegExp "[A-Z]+", ""
-      if match.test password
-        score++
-      match = new RegExp "[0-9]+", ""
-      if match.test password
-        score++
-      match = new RegExp "[^A-Za-z0-9]+", ""
-      if match.test password
-        score++
-      score += password.length
-      #console.log score
-      if score > 8
-        return true
-      else
-        return false
+  it 'Check password without signed in', (next) ->
+    bodyString = JSON.stringify password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/checkpassword', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Authentification requise"
+        next()
+    req.write bodyString
+    req.end()
 
-    passwords = new Array '6143614', 'coucou', 'HelloDorian', '61436143', 'couCou'
+  it 'Check password after signed up', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify password: "12345678"
+        headers = GetOptionsWithHeaders '/usr/checkpassword', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
 
-    isPassword(passwords[0]).should.eql false
-    isPassword(passwords[1]).should.eql false
-    isPassword(passwords[2]).should.eql true
-    isPassword(passwords[3]).should.eql true
-    isPassword(passwords[4]).should.eql false
-    next()
+  it 'Check password without password (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify email: "12345678"
+        headers = GetOptionsWithHeaders '/usr/checkpassword', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "Mot de passe manquant"
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update email without signed in', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com"
+    headers = GetOptionsWithHeaders '/usr/updateemail', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Authentification requise"
+        next()
+    req.write bodyString
+    req.end()
+
+  it 'Update email after signed up', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify email: "robin@ethylocle.com"
+        headers = GetOptionsWithHeaders '/usr/updateemail', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update email without email (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        headers = GetOptionsWithHeaders '/usr/updateemail', "", res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "Email manquant"
+            next()
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update email with an unvalid email (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify email: "robinethylocle.com"
+        headers = GetOptionsWithHeaders '/usr/updateemail', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "Cette adresse email est invalide"
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update without signed in', (next) ->
+    bodyString = JSON.stringify email: "maoqiao@ethylocle.com", lastName: "Bagur", firstName: "Dorian"
+    headers = GetOptionsWithHeaders '/usr/update', bodyString
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Authentification requise"
+        next()
+    req.write bodyString
+    req.end()
+
+  it 'Update after signed up', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify email: "maoqiao@ethylocle.com", lastName: "Bagur", firstName: "Dorian", password: "87654321"
+        headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update without arguments (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = ""
+        headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "La requête ne comporte aucun argument"
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update without password (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify email: "maoqiao@ethylocle.com", lastName: "Bagur", firstName: "Dorian"
+        headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Update with an unvalid password (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify password: "1234"
+        headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "Le mot de passe doit comporter au moins 8 caractères"
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()

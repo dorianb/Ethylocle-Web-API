@@ -5,7 +5,7 @@ Up = require '../down'
 describe 'Down levelDB Model', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../../db/tmp/user", next
+    rimraf "#{__dirname}/../../../../db/tmp/user", next
 
   ###it 'Insert and get user', (next) ->
     user1 =
