@@ -115,14 +115,50 @@
           client.close()
           callback null, {result: true, data: null}
 
-    Up.prototype.get = (user, callback) ->
-      #TO DO
+    Up.prototype.get = (usr, callback) ->
+      client = Down this.path + "/user"
+      client.users.get usr.id, (err, user) ->
+        if err
+          client.close()
+          callback err
+        else
+          client.close()
+          usr.set user
+          callback null, {result: true, data: usr.getPrivate()}
 
-    Up.prototype.getById = (user, callback) ->
-      #TO DO
+    Up.prototype.getById = (usr, callback) ->
+      client = Down this.path + "/user"
+      client.users.get usr.id, (err, user) ->
+        if err
+          client.close()
+          callback err
+        else if user.id
+          client.close()
+          usr.set user
+          callback null, {result: true, data: usr.getPublic()}
+        else
+          client.close()
+          callback null, {result: false, data: "L'utilisateur n'existe pas"}
 
-    Up.prototype.delete = (user, callback) ->
-      #TO DO
+    Up.prototype.delete = (usr, callback) ->
+      client = Down this.path + "/user"
+      client.users.get usr.id, (err, user) ->
+        if err
+          client.close()
+          callback err
+        else
+          client.users.del user.id, user, (err) ->
+            if err
+              client.close()
+              callback err
+            else
+              client.users.delByEmail user.email, user, (err) ->
+                if err
+                  client.close()
+                  callback err
+                else
+                  client.close()
+                  callback null, {result: true, data: null}
 
 ## Trip methods
 

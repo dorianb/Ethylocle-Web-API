@@ -30,6 +30,18 @@
           result[k] = v
       return result
 
+    User.prototype.getPrivate = () ->
+      result = {}
+      for k, v of this.get()
+        result[k] = v unless k is 'password'
+      return result
+
+    User.prototype.getPublic = () ->
+      result = {}
+      for k, v of this.get()
+        result[k] = v if k in ["id", "image", "lastName", "firstName", "birthDate", "gender", "phone"]
+      return result
+
     User.prototype.set = (user) ->
       for k, v of user
         this[k] = v if v and typeof v is 'string'

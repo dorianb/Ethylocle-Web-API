@@ -106,6 +106,66 @@ describe 'User entity', ->
     should.not.exists user.bacDate
     next()
 
+  it 'Get private user data', (next) ->
+    data =
+      id: "0"
+      email: "dorian@ethylocle.com"
+      lastName: "Bagur"
+      password: "1234"
+      bac: "1.12"
+    user = User data
+    user = user.getPrivate()
+    user.id.should.eql data.id
+    user.email.should.eql data.email
+    user.lastName.should.eql data.lastName
+    user.bac.should.eql data.bac
+    should.not.exists user.password
+    should.not.exists user.image
+    should.not.exists user.firstName
+    should.not.exists user.birthDate
+    should.not.exists user.gender
+    should.not.exists user.weight
+    should.not.exists user.address
+    should.not.exists user.zipCode
+    should.not.exists user.city
+    should.not.exists user.country
+    should.not.exists user.phone
+    should.not.exists user.latitude
+    should.not.exists user.longitude
+    should.not.exists user.longitude
+    should.not.exists user.bacDate
+    next()
+
+  it 'Get public user data', (next) ->
+    data =
+      id: "0"
+      email: "dorian@ethylocle.com"
+      lastName: "Bagur"
+      password: "1234"
+      bac: "1.12"
+    user = User data
+    user = user.getPublic()
+    user.id.should.eql data.id
+    user.lastName.should.eql data.lastName
+    should.not.exists user.email
+    should.not.exists user.password
+    should.not.exists user.image
+    should.not.exists user.firstName
+    should.not.exists user.birthDate
+    should.not.exists user.gender
+    should.not.exists user.weight
+    should.not.exists user.address
+    should.not.exists user.zipCode
+    should.not.exists user.city
+    should.not.exists user.country
+    should.not.exists user.phone
+    should.not.exists user.latitude
+    should.not.exists user.longitude
+    should.not.exists user.longitude
+    should.not.exists user.bac
+    should.not.exists user.bacDate
+    next()
+
   it 'User toString', (next) ->
     data =
       id: "0"

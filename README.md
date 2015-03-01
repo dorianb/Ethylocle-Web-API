@@ -53,7 +53,7 @@ Retour: { "result": bool, "data": null }
 This request allows client to update user data as password but not email and id
 ```
 url: domain/usr/update
-Paramètres: {"image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
+Paramètres: {"image", "lastName", "firstName", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac", "lastBacKnownDate" }
 Retour: { "result": bool, "data": null}
 ```
 
@@ -70,7 +70,7 @@ A user can get data of another user by providing user's id
 ```
 url: domain/usr/getbyid
 Paramètres: { "id" }
-Retour: { "result": bool, "data": ["id", "image", "lastname", "firstname", "birthDate", "gender", "phone"] }
+Retour: { "result": bool, "data": ["id", "image", "lastName", "firstName", "birthDate", "gender", "phone"] }
 ```
 
 ### Delete user
@@ -134,7 +134,7 @@ Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart"
 ## LevelDB schema
 ```
 User namespace key: "users:#{id}:#{property}"
-Properties: "email", "image", "lastname", "firstname", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
+Properties: "email", "image", "lastName", "firstName", "birthDate", "gender", "weight", "address", "zipCode", "city", "country", "phone", "password", "latitude", "longitude", "lastKnownPositionDate", "bac" and "lastBacKnownDate"
 birthDate format: 'DD-MM-YYYY'
 User namespace index: "usersEmailIndex:#{email}:#{property}"
 property: "id"

@@ -463,3 +463,231 @@ describe 'User routes', ->
         req.end()
     req.write bodyString
     req.end()
+
+  it 'Get without signed in', (next) ->
+    headers = GetOptionsWithHeaders '/usr/get', ""
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Authentification requise"
+        next()
+    req.end()
+
+  it 'Get (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        headers = GetOptionsWithHeaders '/usr/get', "", res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            Object.keys(res.data).length.should.eql 2
+            res.data.id.should.eql '0'
+            res.data.email.should.eql 'dorian@ethylocle.com'
+            next()
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Get by id without signed in', (next) ->
+    headers = GetOptionsWithHeaders '/usr/getbyid', ""
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Authentification requise"
+        next()
+    req.end()
+
+  it 'Get by id (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify id: "0"
+        headers = GetOptionsWithHeaders '/usr/getbyid', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            Object.keys(res.data).length.should.eql 1
+            res.data.id.should.eql '0'
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Get by id without id (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        headers = GetOptionsWithHeaders '/usr/getbyid', "", res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "Identifiant manquant"
+            next()
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Get by id with null id (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = JSON.stringify id: null
+        headers = GetOptionsWithHeaders '/usr/getbyid', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            res.result.should.eql false
+            res.data.should.eql "L'utilisateur n'existe pas"
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Delete without signed in', (next) ->
+    headers = GetOptionsWithHeaders '/usr/delete', ""
+    req = http.request headers, (res) ->
+      res.statusCode.should.eql 200
+      body = ""
+      res.on 'data', (data) ->
+        body += data
+      res.on 'end', (err) ->
+        return next err if err
+        res = JSON.parse body
+        Object.keys(res).length.should.eql 2
+        res.result.should.eql false
+        res.data.should.eql "Authentification requise"
+        next()
+    req.end()
+
+  it 'Delete (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = ""
+        headers = GetOptionsWithHeaders '/usr/delete', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            headers = GetOptionsWithHeaders '/usr/delete', ""
+            req = http.request headers, (res) ->
+              res.statusCode.should.eql 200
+              body = ""
+              res.on 'data', (data) ->
+                body += data
+              res.on 'end', (err) ->
+                return next err if err
+                res = JSON.parse body
+                Object.keys(res).length.should.eql 2
+                res.result.should.eql false
+                res.data.should.eql "Authentification requise"
+                next()
+            req.end()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Sign out (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = http.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = ""
+        headers = GetOptionsWithHeaders '/usr/signout', bodyString, res.headers['set-cookie']
+        req = http.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql true
+            should.not.exists res.data
+            headers = GetOptionsWithHeaders '/usr/signout', ""
+            req = http.request headers, (res) ->
+              res.statusCode.should.eql 200
+              body = ""
+              res.on 'data', (data) ->
+                body += data
+              res.on 'end', (err) ->
+                return next err if err
+                res = JSON.parse body
+                Object.keys(res).length.should.eql 2
+                res.result.should.eql false
+                res.data.should.eql "Authentification requise"
+                next()
+            req.end()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()

@@ -120,113 +120,46 @@
 
     router.post '/get', (req, res) ->
       if req.session.userId and req.session.email
-        client = db "#{__dirname}/../db/user"
-
-        # Get
-        # Envoie l'id
-        # Retourne true ou false avec les données privées et publics sans le mot de passe
-
-        ###client.users.get req.session.userId, (err, user) ->
+        model().get User({id: req.session.userId}), (err, message) ->
           if err
-            errorsend res, err
+            send res, error(err)
           else
-            data = {}
-            for k, v of user
-              continue if k is 'password'
-              data[k] = v
-            res.json
-              result: true
-              data: data
-          client.close()###
+            send res, message
       else
-        res.json
-          result: false
-          data: "Authentification requise"
+        send res, {result: false, data: "Authentification requise"}
 
 ## Get user by Id
 
     router.post '/getbyid', (req, res) ->
       if req.session.userId and req.session.email
-        if req.body.id
-          client = db "#{__dirname}/../db/user"
-
-          # Get by id
-          # Envoie l'id
-          # Retourne true ou false avec les données publics
-
-          ###client.users.get req.body.id, (err, user) ->
+        if req.body.hasOwnProperty('id')
+          model().getById User({id: req.body.id}), (err, message) ->
             if err
-              errorsend res, err
+              send res, error(err)
             else
-              data = {}
-              for k, v of user
-                continue unless k in ["id", "image", "lastname", "firstname", "birthDate", "gender", "phone"]
-                data[k] = v
-              res.json
-                result: true
-                data: data
-            client.close()###
+              send res, message
         else
-          res.json
-            result: false
-            data: "L'identifiant de l'utilisateur est nul"
+          send res, {result: false, data: "Identifiant manquant"}
       else
-        res.json
-          result: false
-          data: "Authentification requise"
+        send res, {result: false, data: "Authentification requise"}
 
 ## Delete
 
     router.post '/delete', (req, res) ->
       if req.session.userId and req.session.email
-        client = db "#{__dirname}/../db/trip"
-
-        # Delete
-        # Envoie l'id
-        # Retourne true ou false avec un send
-
-        ###client.trips.getByPassengerTripInProgress req.session.userId, moment(), (err, trip) ->
+        model().delete User({id: req.session.userId}), (err, message) ->
           if err
-            client.close()
-            errorsend res, err
-          else if trip.id
-            client.close()
-            res.json
-              result: false
-              data: "Impossible de supprimer votre compte si vous avez un trajet en cours"
-          else
-            client.close (err) ->
+            send res, error(err)
+          else if message.result
+            req.session.destroy (err) ->
               if err
-                errorsend res, err
+                send res, error(err)
               else
-                client = db "#{__dirname}/../db/user"
-                client.users.get req.session.userId, (err, user) ->
-                  if err
-                    errorsend res, err
-                    client.close()
-                  else
-                    client.users.del req.session.userId, user, (err) ->
-                      if err
-                        errorsend res, err
-                        client.close()
-                      else
-                        client.users.delByEmail req.session.email, user, (err) ->
-                          if err
-                            errorsend res, err
-                            client.close()
-                          else
-                            req.session.destroy (err) ->
-                              if err
-                                errorsend res, err
-                              else
-                                res.json
-                                  result: true
-                                  data: null
-                              client.close()###
+                send res, message
+          else
+            send res, message
       else
-        res.json
-          result: false
-          data: "Authentification requise"
+        send res, {result: false, data: "Authentification requise"}
 
 ## Sign out
 
@@ -234,14 +167,10 @@
       if req.session.userId and req.session.email
         req.session.destroy (err) ->
           if err
-            errorsend res, err
+            send res, error(err)
           else
-            res.json
-              result: true
-              data: null
+            send res, {result: true, data: null}
       else
-        res.json
-          result: false
-          data: "Authentification requise"
+        send res, {result: false, data: "Authentification requise"}
 
     module.exports = router

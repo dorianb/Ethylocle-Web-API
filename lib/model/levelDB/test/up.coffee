@@ -159,3 +159,64 @@ describe 'Up levelDB Model', ->
         response.result.should.eql true
         should.not.exists response.data
         next()
+
+  it 'Get (after signed up)', (next) ->
+    body =
+      email: 'dorian@ethylocle.com'
+      password: '1234'
+      lastName: "Bagur"
+      bac: "1.12"
+    user = User body
+    Up("#{__dirname}/../../../../db/tmp").signUp user, (err, response) ->
+      return next err if err
+      Up("#{__dirname}/../../../../db/tmp").get User({id: '0'}), (err, response) ->
+        return next err if err
+        Object.keys(response).length.should.eql 2
+        response.result.should.eql true
+        response.data.id.should.eql '0'
+        response.data.email.should.eql user.email
+        response.data.lastName.should.eql user.lastName
+        response.data.bac.should.eql user.bac
+        should.not.exists response.data.password
+        next()
+
+  it 'Get by id (after signed up)', (next) ->
+    body =
+      email: 'dorian@ethylocle.com'
+      password: '1234'
+      lastName: "Bagur"
+      bac: "1.12"
+    user = User body
+    Up("#{__dirname}/../../../../db/tmp").signUp user, (err, response) ->
+      return next err if err
+      Up("#{__dirname}/../../../../db/tmp").getById User({id: '0'}), (err, response) ->
+        return next err if err
+        Object.keys(response).length.should.eql 2
+        response.result.should.eql true
+        response.data.id.should.eql '0'
+        response.data.lastName.should.eql user.lastName
+        should.not.exists response.data.password
+        should.not.exists response.data.email
+        should.not.exists response.data.bac
+        next()
+
+  it 'Delete (after signed up)', (next) ->
+    body =
+      email: 'dorian@ethylocle.com'
+      password: '1234'
+      lastName: "Bagur"
+      bac: "1.12"
+    user = User body
+    Up("#{__dirname}/../../../../db/tmp").signUp user, (err, response) ->
+      return next err if err
+      Up("#{__dirname}/../../../../db/tmp").delete User({id: '0'}), (err, response) ->
+        return next err if err
+        Object.keys(response).length.should.eql 2
+        response.result.should.eql true
+        should.not.exists response.data
+        Up("#{__dirname}/../../../../db/tmp").getById User({id: '0'}), (err, response) ->
+          return next err if err
+          Object.keys(response).length.should.eql 2
+          response.result.should.eql false
+          response.data.should.eql "L'utilisateur n'existe pas"
+          next()
