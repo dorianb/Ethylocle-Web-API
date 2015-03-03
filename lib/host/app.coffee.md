@@ -10,6 +10,8 @@
     serveIndex = require 'serve-index'
     errorHandler = require 'errorhandler'
 
+    process.env.NODE_ENV = "production"
+
     app = express()
 
     app.use bodyParser.json()
@@ -17,17 +19,13 @@
     app.use cookieParser 'A8g8o7Zf-c0d8-e0V<-QVe2'
     app.use methodOverride '_method'
 
-    sess =
+    app.use expressSession
       secret: 'A8g8o7Zf-c0d8-e0V<-QVe2'
       resave: false
       saveUninitialized: true
-      cookie: maxAge: 3600000
-
-    if process.env.NODE_ENV is "production"
-      app.set "trust proxy", 1
-      sess.cookie.secure = true
-
-    app.use expressSession sess
+      cookie:
+        maxAge: 3600000
+        secure: true
 
     app.use serveStatic "#{__dirname}/../../public"
 

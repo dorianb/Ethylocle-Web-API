@@ -2,8 +2,18 @@ rimraf = require 'rimraf'
 should = require 'should'
 db = require '../../lib/factory/model'
 app = require '../../lib/host/app'
-http = require 'http'
-port = 3000
+https = require 'https'
+fs = require 'fs'
+port = 443
+server = undefined
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
+hskey = fs.readFileSync __dirname + "/../../resource/key/key.pem"
+hscert = fs.readFileSync __dirname + "/../../resource/key/cert.pem"
+
+options =
+  key: hskey
+  cert: hscert
 
 defaultGetOptions = (path) ->
   options =
@@ -27,11 +37,13 @@ GetOptionsWithHeaders = (path, body, cookie) ->
 describe 'User routes', ->
 
   before (next) ->
-    app.listen port, (err, result) ->
-      if err
-        next err
-      else
-        next()
+    server = https.createServer(options, app).listen port, (err, result) ->
+      return next err if err
+      next()
+
+  after (next) ->
+    server.close()
+    next()
 
   beforeEach (next) ->
     rimraf "#{__dirname}/../../db/tmp/user", next
@@ -43,13 +55,13 @@ describe 'User routes', ->
   it "should be listening at localhost:#{port}", (next) ->
     headers = defaultGetOptions '/'
     headers.method = "GET"
-    http.get headers, (res) ->
+    https.get headers, (res) ->
       res.statusCode.should.eql 200
       next()
 
   it 'Sign in without body (without email or password)', (next) ->
     headers = defaultGetOptions '/usr/signin'
-    http.get headers, (res) ->
+    https.get headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -65,7 +77,7 @@ describe 'User routes', ->
   it 'Sign in without signed up', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "1234"
     headers = GetOptionsWithHeaders '/usr/signin', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -83,7 +95,7 @@ describe 'User routes', ->
   it 'Sign up correctly', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -101,7 +113,7 @@ describe 'User routes', ->
   it 'Sign up without email or password', (next) ->
     bodyString = JSON.stringify password: "1234"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -119,7 +131,7 @@ describe 'User routes', ->
   it 'Sign up without a valid email', (next) ->
     bodyString = JSON.stringify email: "dorianethylocle.com", password: "1234"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -137,7 +149,7 @@ describe 'User routes', ->
   it 'Sign up without a strong password', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "1234"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -155,13 +167,13 @@ describe 'User routes', ->
   it 'Sign in after signed up', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
         headers = GetOptionsWithHeaders '/usr/signin', bodyString
-        req2 = http.request headers, (res) ->
+        req2 = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -181,7 +193,7 @@ describe 'User routes', ->
   it 'Check password without signed in', (next) ->
     bodyString = JSON.stringify password: "12345678"
     headers = GetOptionsWithHeaders '/usr/checkpassword', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -199,13 +211,13 @@ describe 'User routes', ->
   it 'Check password after signed up', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify password: "12345678"
         headers = GetOptionsWithHeaders '/usr/checkpassword', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -225,13 +237,13 @@ describe 'User routes', ->
   it 'Check password without password (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify email: "12345678"
         headers = GetOptionsWithHeaders '/usr/checkpassword', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -251,7 +263,7 @@ describe 'User routes', ->
   it 'Update email without signed in', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com"
     headers = GetOptionsWithHeaders '/usr/updateemail', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -269,13 +281,13 @@ describe 'User routes', ->
   it 'Update email after signed up', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify email: "robin@ethylocle.com"
         headers = GetOptionsWithHeaders '/usr/updateemail', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -295,12 +307,12 @@ describe 'User routes', ->
   it 'Update email without email (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         headers = GetOptionsWithHeaders '/usr/updateemail', "", res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -319,13 +331,13 @@ describe 'User routes', ->
   it 'Update email with an unvalid email (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify email: "robinethylocle.com"
         headers = GetOptionsWithHeaders '/usr/updateemail', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -345,7 +357,7 @@ describe 'User routes', ->
   it 'Update without signed in', (next) ->
     bodyString = JSON.stringify email: "maoqiao@ethylocle.com", lastName: "Bagur", firstName: "Dorian"
     headers = GetOptionsWithHeaders '/usr/update', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -363,13 +375,13 @@ describe 'User routes', ->
   it 'Update after signed up', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify email: "maoqiao@ethylocle.com", lastName: "Bagur", firstName: "Dorian", password: "87654321"
         headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -389,13 +401,13 @@ describe 'User routes', ->
   it 'Update without arguments (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = ""
         headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -415,13 +427,13 @@ describe 'User routes', ->
   it 'Update without password (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify email: "maoqiao@ethylocle.com", lastName: "Bagur", firstName: "Dorian"
         headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -441,13 +453,13 @@ describe 'User routes', ->
   it 'Update with an unvalid password (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify password: "1234"
         headers = GetOptionsWithHeaders '/usr/update', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -466,7 +478,7 @@ describe 'User routes', ->
 
   it 'Get without signed in', (next) ->
     headers = GetOptionsWithHeaders '/usr/get', ""
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -483,12 +495,12 @@ describe 'User routes', ->
   it 'Get (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         headers = GetOptionsWithHeaders '/usr/get', "", res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -508,7 +520,7 @@ describe 'User routes', ->
 
   it 'Get by id without signed in', (next) ->
     headers = GetOptionsWithHeaders '/usr/getbyid', ""
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -525,13 +537,13 @@ describe 'User routes', ->
   it 'Get by id (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify id: "0"
         headers = GetOptionsWithHeaders '/usr/getbyid', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -552,12 +564,12 @@ describe 'User routes', ->
   it 'Get by id without id (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         headers = GetOptionsWithHeaders '/usr/getbyid', "", res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -576,13 +588,13 @@ describe 'User routes', ->
   it 'Get by id with null id (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify id: null
         headers = GetOptionsWithHeaders '/usr/getbyid', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -600,7 +612,7 @@ describe 'User routes', ->
 
   it 'Delete without signed in', (next) ->
     headers = GetOptionsWithHeaders '/usr/delete', ""
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
       res.on 'data', (data) ->
@@ -617,13 +629,13 @@ describe 'User routes', ->
   it 'Delete (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = ""
         headers = GetOptionsWithHeaders '/usr/delete', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -635,7 +647,7 @@ describe 'User routes', ->
             res.result.should.eql true
             should.not.exists res.data
             headers = GetOptionsWithHeaders '/usr/delete', ""
-            req = http.request headers, (res) ->
+            req = https.request headers, (res) ->
               res.statusCode.should.eql 200
               body = ""
               res.on 'data', (data) ->
@@ -656,13 +668,13 @@ describe 'User routes', ->
   it 'Sign out (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
-    req = http.request headers, (res) ->
+    req = https.request headers, (res) ->
       res.on 'data', (data) ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = ""
         headers = GetOptionsWithHeaders '/usr/signout', bodyString, res.headers['set-cookie']
-        req = http.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -674,7 +686,7 @@ describe 'User routes', ->
             res.result.should.eql true
             should.not.exists res.data
             headers = GetOptionsWithHeaders '/usr/signout', ""
-            req = http.request headers, (res) ->
+            req = https.request headers, (res) ->
               res.statusCode.should.eql 200
               body = ""
               res.on 'data', (data) ->

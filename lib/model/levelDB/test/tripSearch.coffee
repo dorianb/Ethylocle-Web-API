@@ -1,13 +1,15 @@
 rimraf = require 'rimraf'
 should = require 'should'
-db = require '../../factory/model'
+
+db = require '../down'
 tripSearch = require '../tripSearch'
+
 geolib = require 'geolib'
 moment = require 'moment'
 
 describe 'Trip search', ->
 
-  beforeEach (next) ->
+  ###beforeEach (next) ->
     rimraf "#{__dirname}/../../../db/tmp/tripsearch", ->
       rimraf "#{__dirname}/../../../db/tmp/trip", ->
         rimraf "#{__dirname}/../../../db/tmp/user", next
@@ -280,8 +282,8 @@ describe 'Trip search', ->
                                               tripSearch "#{__dirname}/../../../db/tmp", 2, body, (err, trips) ->
                                                 should.not.exists err
                                                 trips.length.should.eql 3
-                                                ###for k, v of trips
-                                                  console.log v###
+                                                for k, v of trips
+                                                  console.log v
                                                 next()
 
   it 'Test the trip search engine without entry values', (next) ->
@@ -617,8 +619,8 @@ describe 'Trip search', ->
                                               tripSearch "#{__dirname}/../../../db/tmp", 2, body, (err, trips) ->
                                                 should.not.exists err
                                                 trips.length.should.eql 2
-                                                ###for k, v of trips
-                                                  console.log v###
+                                                for k, v of trips
+                                                  console.log v
                                                 next()
 
   it 'Test the trip search engine with an overloaded trip', (next) ->
@@ -764,4 +766,4 @@ describe 'Trip search', ->
                                               tripSearch "#{__dirname}/../../../db/tmp", '2', body, (err, trips) ->
                                                 should.not.exists err
                                                 trips.length.should.eql 2
-                                                next()
+                                                next()###

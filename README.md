@@ -96,7 +96,7 @@ Client can search trips available based on user's preference
 ```
 url: domain/trp/search
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
-Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
+Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
 ```
 
 ### Join trip

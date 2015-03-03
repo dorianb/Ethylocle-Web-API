@@ -7,48 +7,48 @@
 
 ## User methods
 
-    Model.prototype.signIn = (user, callback) ->
+    Model.prototype.signIn = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.checkPassword = (user, callback) ->
+    Model.prototype.checkPassword = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.signUp = (user, callback) ->
+    Model.prototype.signUp = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.updateEmail = (user, callback) ->
+    Model.prototype.updateEmail = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.update = (user, callback) ->
+    Model.prototype.update = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.get = (user, callback) ->
+    Model.prototype.get = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.getById = (user, callback) ->
+    Model.prototype.getById = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.delete = (user, callback) ->
+    Model.prototype.delete = (usr, callback) ->
       throw new Error "Abstract method !"
 
 ## Trip methods
 
-    Model.prototype.hasTrip = (user, callback) ->
+    Model.prototype.hasTrip = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.searchTrip = (user, tripCriteria, callback) ->
+    Model.prototype.searchTrip = (usr, tripCriteria, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.joinTrip = (user, trip, tripCriteria, callback) ->
+    Model.prototype.joinTrip = (usr, trp, tripCriteria, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.createTrip = (user, trip, callback) ->
+    Model.prototype.createTrip = (usr, trp, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.getTrip = (user, callback) ->
+    Model.prototype.getTrip = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.getTripById = (trip, callback) ->
+    Model.prototype.getTripById = (trp, callback) ->
       throw new Error "Abstract method !"
 
     module.exports = Model

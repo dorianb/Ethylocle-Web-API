@@ -2,6 +2,14 @@
 
     AbstractModel = require '../abstract'
     Down = require './down'
+    TripSearch = require './tripSearch'
+
+    User = require '../../entity/user'
+    Trip = require '../../entity/trip'
+    TripCriteria = require '../../entity/tripCriteria'
+
+    moment = require 'moment'
+    geolib = require 'geolib'
 
     Up = (path="#{__dirname}/../../../db") ->
       return new Up path unless this instanceof Up
@@ -162,23 +170,157 @@
 
 ## Trip methods
 
-    Up.prototype.hasTrip = (user, callback) ->
-      #TO DO
+    Up.prototype.hasTrip = (usr, callback) ->
+      client = Down this.path + "/trip"
+      client.trips.getByPassengerTripInProgress usr.id, moment(), (err, trip) ->
+        if err
+          client.close()
+          callback err
+        else if trip.id
+          client.close()
+          callback null, {result: true, data: null}
+        else
+          client.close()
+          callback null, {result: false, data: "Aucun trajet en cours"}
 
-    Up.prototype.searchTrip = (user, tripCriteria, callback) ->
-      #TO DO
+    Up.prototype.searchTrip = (usr, tripCriteria, callback) ->
+      tripSearch this.path, usr.id, tripCriteria.get(), (err, trips) ->
+        client = Down this.path + "/tripsearch"
+        client.tripsearch.getByUser usr.id, (err, result) ->
+          if err
+            client.close()
+            callback err
+          else
+            delTripSearchByUser = (i) ->
+              if i < result.length
+                client.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
+                  if err
+                    client.close()
+                    callback err
+                  else
+                    delTripSearchByUser i+1
+              else
+                client.close (err) ->
+                  callback err if err
+                  client = Down this.path + "/trip"
+                  data = []
+                  getTripDetails = (i) ->
+                    if i < trips.length
+                      client.trips.get trips[i], (err, trip) ->
+                        if err
+                          client.close()
+                          callback err
+                        else
+                          trip = Trip trip
+                          datum = trip.getPublic()
+                          datum.distanceToStart = geolib.getDistance({latitude: tripCriteria.latStart, longitude: tripCriteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
+                          datum.distanceToEnd = geolib.getDistance({latitude: tripCriteria.latEnd, longitude: tripCriteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
+                          data.push datum
+                          getTripDetails i+1
+                    else
+                      client.close()
+                      callback null, {result: true, data: data}
+                  getTripDetails 0
+            delTripSearchByUser 0
 
-    Up.prototype.joinTrip = (user, trip, tripCriteria, callback) ->
-      #TO DO
+    Up.prototype.joinTrip = (usr, trp, tripCriteria, callback) ->
+      this.hasTrip usr, (err, message) ->
+        return callback err if err
+        return callback null, {result: false, data: "Vous avez déjà un trajet en cours"} if message.result
+        client = Down this.path + "/trip"
+        client.trips.get trp.id, (err, trip) ->
+          if err
+            client.close()
+            callback err
+          else if trip.id
+            if tripCriteria.numberOfPeople <= 4 - +trip.numberOfPassenger
+              data = {}
+              data.numberOfPassenger = +trip.numberOfPassenger + +tripCriteria.numberOfPeople
+              i = trip.numberOfPassenger
+              while i < data.numberOfPassenger
+                data["passenger_" + ++i] = usr.id
+              client.trips.set trip.id, data, (err) ->
+                if err
+                  client.close()
+                  callback err
+                else
+                  client.trips.get trip.id, (err, trip) ->
+                    if err
+                      client.close()
+                      callback err
+                    else
+                      client.trips.setByPassenger req.session.userId, trip, (err) ->
+                        if err
+                          client.close()
+                          callback err
+                        else
+                          client.close()
+                          callback null, {result: true, data: null}
+            else
+              client.close()
+              callback null, {result: false, data: "Il n'y a plus assez de places disponibles pour ce trajet"}
+          else
+            client.close()
+            callback null, {result: false, data: "Le trajet n'existe plus"}
 
-    Up.prototype.createTrip = (user, trip, callback) ->
-      #TO DO
+    Up.prototype.createTrip = (usr, trp, callback) ->
+      client = Down this.path + "/trip"
+      client.trips.getMaxId (err, maxId) ->
+        if err
+          client.close()
+          callback err
+        else
+          client.trips.set ++maxId, trp.get(), (err) ->
+            if err
+              client.close()
+              callback err
+            else
+              client.trips.get maxId, (err, trip) ->
+                if err
+                  client.close()
+                  callback err
+                else
+                  client.trips.setByPassenger usr.id, trip, (err) ->
+                    if err
+                      client.close()
+                      callback err
+                    else
+                      client.close()
+                      callback null, {result: true, data: null}
 
-    Up.prototype.getTrip = (user, callback) ->
-      #TO DO
+    Up.prototype.getTrip = (usr, callback) ->
+      client = Down this.path + "/trip"
+      client.trips.getByPassengerTripInProgress usr.id, moment(), (err, trip) ->
+        if err
+          client.close()
+          callback err
+        else if trip.id
+          client.trips.get trip.id, (err, trip) ->
+            if err
+              client.close()
+              callback err
+            else
+              client.close()
+              trip = Trip trip
+              data = trip.getPrivate()
+              callback null, {result: true, data: data}
+        else
+          client.close()
+          callback null, {result: false, data: "Aucun trajet en cours"}
 
-    Up.prototype.getTripById = (trip, callback) ->
-      #TO DO
-
+    Up.prototype.getTripById = (trp, callback) ->
+      client = Down this.path + "/trip"
+      client.trips.get trp.id, (err, trip) ->
+        if err
+          client.close()
+          callback err
+        else if trip.id
+          client.close()
+          trip = Trip trip
+          data = trip.getPublic()
+          callback null, {result: true, data: data}
+        else
+          client.close()
+          callback null, {result: false, data: "Le trajet n'existe plus"}
 
     module.exports = Up

@@ -1,13 +1,21 @@
-http = require 'http'
+https = require 'https'
+fs = require 'fs'
 should = require 'should'
 app  = require "../app"
-port = 3000
+port = 443
 server = undefined
+
+hskey = fs.readFileSync __dirname + "/../../../resource/key/key.pem"
+hscert = fs.readFileSync __dirname + "/../../../resource/key/cert.pem"
+
+options =
+  key: hskey
+  cert: hscert
 
 describe 'App', () ->
 
   before (done) ->
-    server = app.listen port, (err, result) ->
+    server = https.createServer(options, app).listen port, (err, result) ->
       if err
         done err
       else
@@ -23,7 +31,7 @@ describe 'App', () ->
 
   it "should be listening at localhost:#{port}", (done) ->
     headers = defaultGetOptions '/'
-    http.get headers, (res) ->
+    https.get headers, (res) ->
       res.statusCode.should.eql 200
       done()
 

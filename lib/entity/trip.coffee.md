@@ -1,5 +1,7 @@
 # Trip entity
 
+    geolib = require 'geolib'
+
     Trip = (trip) ->
       return new Trip trip unless this instanceof Trip
       if trip
@@ -25,10 +27,61 @@
           result[k]=v
       return result
 
+    Trip.prototype.getPrivate = () ->
+      result = {}
+      for k, v of this.get()
+        result[k] = v unless k is "price"
+      result.maxPrice = this.getPricePerParty()
+      return result
+
+    Trip.prototype.getPublic = () ->
+      result = {}
+      for k, v of this.get()
+        result[k] = v if k in ["id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger"]
+      result.maxPrice = this.getPricePerPartyPlusOne()
+      return result
+
+    Trip.prototype.set = (trip) ->
+      for k, v of trip
+        this[k] = v if v and typeof v is 'string'
+
+    Trip.prototype.setFrom = (trip) ->
+      for k, v of trip
+        if v and typeof v is 'string'
+          this[k] = v unless this[k]
+
     Trip.prototype.toString = () ->
       result = "Trip"
       for k, v of this.get()
         result += " " + k + ":" + v
       return result
+
+    Trip.prototype.setPrice = () ->
+      distance = geolib.getDistance {latitude: this.latStart, longitude: this.lonStart}, {latitude: this.latEnd, longitude: this.lonEnd}
+      ratio = 5
+      this.price = (ratio*distance/1000).toFixed 2
+
+    Trip.prototype.getPricePerParty = () ->
+      nbParty = 1
+      i = 1
+      while i < +this.numberOfPassenger
+        unless this["passenger_" + i] is this["passenger_" + (i+1)]
+          nbParty++
+        i++
+      if nbParty is 1
+        #Pas de réduction pour une seule partie prenante
+        return this.price if nbParty is 1
+      else
+        #On gagne de l'argent lorsqu'on regroupe des personnes #Plus le nombre de parties sur un trajet est grand, plus on gagne de l'argent
+        return (this.price/nbParty/1.1).toFixed 2
+
+    Trip.prototype.getPricePerPartyPlusOne = () ->
+      nbParty = 2
+      i = 1
+      while i < +this.numberOfPassenger
+        unless this["passenger_" + i] is this["passenger_" + (i+1)]
+          nbParty++
+        i++
+      return (this.price/nbParty/1.1).toFixed 2
 
     module.exports = Trip

@@ -6,7 +6,6 @@
   "factory": "levelDB",
   "scripts": {
     "start": "node ./bin/start",
-    "testAll": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register ./lib/host/test ./lib/entity/test ./lib/factory/test ./lib/model/test ./lib/model/levelDB/test ./lib/tool/test ./routes/test",
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register ./lib/host/test ./lib/entity/test ./lib/factory/test ./lib/model/test ./lib/model/levelDB/test ./routes/test"
   },
   "dependencies": {
