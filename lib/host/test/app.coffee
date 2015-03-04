@@ -26,7 +26,7 @@ describe 'App', () ->
     done()
 
   it 'should exist', (done) ->
-    should.exist(app)
+    should.exist app
     done()
 
   it "should be listening at localhost:#{port}", (done) ->
