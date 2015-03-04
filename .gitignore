@@ -1,8 +1,5 @@
 node_modules/
-db/tmp/user/*
-!db/tmp/user/LOCK
-db/tmp/trip/*
-!db/tmp/trip/LOCK
+db/
 resource/*.*
 resource/key/csr.pem
 README.pdf
