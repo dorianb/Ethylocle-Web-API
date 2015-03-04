@@ -4,7 +4,7 @@ db = require '../../lib/factory/model'
 app = require '../../lib/host/app'
 https = require 'https'
 fs = require 'fs'
-port = 443
+port = process.env.PORT || 443
 server = undefined
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 

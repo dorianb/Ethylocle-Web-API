@@ -1,4 +1,6 @@
-# Web application using Express framework [![Build Status](https://travis-ci.org/dorianb/Web-application---Ethylocle.svg?branch=master)](https://travis-ci.org/dorianb/Web-application---Ethylocle)
+# Web application using Express framework
+
+[![Build Status](https://travis-ci.org/dorianb/Web-application---Ethylocle.svg?branch=master)](https://travis-ci.org/dorianb/Web-application---Ethylocle)
 
 I used CoffeeScript as programmation language and MarkDown to document my code.
 
