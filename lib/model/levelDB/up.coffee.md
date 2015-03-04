@@ -174,14 +174,14 @@
       client = Down this.path + "/trip"
       client.trips.getByPassengerTripInProgress usr.id, moment(), (err, trip) ->
         if err
-          client.close()
-          callback err
+          client.close () ->
+            callback err
         else if trip.id
-          client.close()
-          callback null, {result: true, data: null}
+          client.close () ->
+            callback null, {result: true, data: null}
         else
-          client.close()
-          callback null, {result: false, data: "Aucun trajet en cours"}
+          client.close () ->
+            callback null, {result: false, data: "Aucun trajet en cours"}
 
     Up.prototype.searchTrip = (usr, tripCriteria, callback) ->
       tripSearch this.path, usr.id, tripCriteria.get(), (err, trips) ->
