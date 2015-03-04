@@ -58,9 +58,9 @@
       user = User {id: req.session.userId}
       tripCriteria = TripCriteria req.body
       return send res, {result: false, data: "Le nombre d'arguments est insuffisant"} if Object.keys(tripCriteria.get()).length < 8
-      return send res, {result: false, data: "Le nombre de personnes est nul"} if tripCriteria.numberOfPeople < 1
-      return send res, {result: false, data: "Impossible de créer un trajet pour plus de 2 personnes"} if tripCriteria.numberOfPeople > 2
-      return send res, {result: false, data: "La date et l'heure fournies sont passées"} if moment(tripCriteria.dateTime, "DD-MM-YYYY H:mm") < moment()
+      return send res, {result: false, data: "Le nombre de personnes est nul"} if +tripCriteria.numberOfPeople < 1
+      return send res, {result: false, data: "Impossible de créer un trajet pour plus de 2 personnes"} if +tripCriteria.numberOfPeople > 2
+      return send res, {result: false, data: "La date et l'heure fournies sont passées"} if moment(tripCriteria.dateTime, "DD-MM-YYYY H:mm").isBefore moment()
       model = model()
       model.hasTrip user, (err, message) ->
         return send res, error(err) if err

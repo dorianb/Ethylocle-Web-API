@@ -173,7 +173,7 @@ describe 'User routes', ->
         return next err if err
         bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
         headers = GetOptionsWithHeaders '/usr/signin', bodyString
-        req2 = https.request headers, (res) ->
+        req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
           res.on 'data', (data) ->
@@ -185,8 +185,8 @@ describe 'User routes', ->
             res.result.should.eql true
             should.not.exists res.data
             next()
-        req2.write bodyString
-        req2.end()
+        req.write bodyString
+        req.end()
     req.write bodyString
     req.end()
 
