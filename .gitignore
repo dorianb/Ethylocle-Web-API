@@ -1,6 +1,5 @@
 node_modules/
 db/
-resource/
-!resource/key/cert.pem
-!resource/key/key.pem
+resource/*.*
+resource/key/csr.pem
 README.pdf
