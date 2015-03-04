@@ -2,7 +2,7 @@ https = require 'https'
 fs = require 'fs'
 should = require 'should'
 app  = require "../app"
-port = process.env.PORT || 3000
+port = process.env.PORT || 443
 server = undefined
 
 hskey = fs.readFileSync __dirname + "/../../../resource/key/key.pem"
