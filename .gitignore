@@ -1,4 +1,5 @@
 node_modules/
 db/
 resource/
+!resource/key/
 README.pdf
