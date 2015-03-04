@@ -15,6 +15,7 @@ options =
 describe 'App', () ->
 
   before (done) ->
+    console.log port
     server = https.createServer(options, app).listen port, (err, result) ->
       if err
         done err
