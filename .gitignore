@@ -1,7 +1,5 @@
 node_modules/
 db/*.*
-!db/tmp
-db/tmp/*.*
 resource/*.*
 resource/key/csr.pem
 README.pdf
