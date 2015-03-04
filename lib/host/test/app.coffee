@@ -2,7 +2,7 @@ https = require 'https'
 fs = require 'fs'
 should = require 'should'
 app  = require "../app"
-port = process.env.PORT || 443
+port = process.env.PORT || 3000
 server = undefined
 
 hskey = fs.readFileSync __dirname + "/../../../resource/key/key.pem"
@@ -15,7 +15,6 @@ options =
 describe 'App', () ->
 
   before (done) ->
-    console.log port
     server = https.createServer(options, app).listen port, (err, result) ->
       if err
         done err
