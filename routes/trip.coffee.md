@@ -43,13 +43,17 @@
       return send res, {result: false, data: "Authentification requise"} unless req.session.userId and req.session.email
       return send res, {result: false, data: "Nombre de personnes manquant"} unless req.body.hasOwnProperty('numberOfPeople')
       return send res, {result: false, data: "Identifiant du trajet manquant"} unless req.body.hasOwnProperty('id')
+      user = User id: req.session.userId
       tripCriteria = TripCriteria req.body
       trip = Trip req.body
       return send res, {result: false, data: "Le nombre de personnes est nul"} if tripCriteria.numberOfPeople < 1
       return send res, {result: false, data: "Impossible de rejoindre un trajet avec plus de 3 personnes"} if tripCriteria.numberOfPeople > 3
-      model().joinTrip User({id: req.session.userId}), trip, tripCriteria, (err, message) ->
+      model().hasTrip user, (err, message) ->
         return send res, error(err) if err
-        send res, message
+        return send res, {result: false, data: "Vous avez déjà un trajet en cours"} if message.result
+        model().joinTrip user, trip, tripCriteria, (err, message) ->
+          return send res, error(err) if err
+          send res, message
 
 ## Create trip
 
@@ -61,8 +65,7 @@
       return send res, {result: false, data: "Le nombre de personnes est nul"} if +tripCriteria.numberOfPeople < 1
       return send res, {result: false, data: "Impossible de créer un trajet pour plus de 2 personnes"} if +tripCriteria.numberOfPeople > 2
       return send res, {result: false, data: "La date et l'heure fournies sont passées"} if moment(tripCriteria.dateTime, "DD-MM-YYYY H:mm").isBefore moment()
-      model = model()
-      model.hasTrip user, (err, message) ->
+      model().hasTrip user, (err, message) ->
         return send res, error(err) if err
         return send res, {result: false, data: "Vous avez déjà un trajet en cours"} if message.result
         trip = Trip tripCriteria
@@ -71,7 +74,7 @@
         while i < +trip.numberOfPassenger
           trip["passenger_" + ++i] = user.id
         trip.setPrice()
-        model.createTrip user, trip, (err, message) ->
+        model().createTrip user, trip, (err, message) ->
           return send res, error(err) if err
           send res, message
 

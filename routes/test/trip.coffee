@@ -265,3 +265,73 @@ describe 'Trip routes', ->
         res.result.should.eql false
         res.data.should.eql "Authentification requise"
         next()
+
+  it 'Has trip after created one (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = https.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        criteria =
+          addressStart: "Aucune"
+          latStart: '48.856470'
+          lonStart: '2.286001'
+          addressEnd: "Aucune"
+          latEnd: '48.865314'
+          lonEnd: '2.321514'
+          dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
+          numberOfPeople: '2'
+        bodyString = JSON.stringify criteria
+        cookie = res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        req = https.request headers, (res) ->
+          res.on 'data', (data) ->
+          res.on 'end', (err) ->
+            return next err if err
+            bodyString = ""
+            headers = GetOptionsWithHeaders '/trp/has', bodyString, cookie
+            req = https.request headers, (res) ->
+              res.statusCode.should.eql 200
+              body = ""
+              res.on 'data', (data) ->
+                body += data
+              res.on 'end', (err) ->
+                return next err if err
+                res = JSON.parse body
+                Object.keys(res).length.should.eql 2
+                res.result.should.eql true
+                should.not.exists res.data
+                next()
+            req.write bodyString
+            req.end()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()
+
+  it 'Has trip without created one (after signed up)', (next) ->
+    bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
+    headers = GetOptionsWithHeaders '/usr/signup', bodyString
+    req = https.request headers, (res) ->
+      res.on 'data', (data) ->
+      res.on 'end', (err) ->
+        return next err if err
+        bodyString = ""
+        headers = GetOptionsWithHeaders '/trp/has', bodyString, res.headers['set-cookie']
+        req = https.request headers, (res) ->
+          res.statusCode.should.eql 200
+          body = ""
+          res.on 'data', (data) ->
+            body += data
+          res.on 'end', (err) ->
+            return next err if err
+            res = JSON.parse body
+            Object.keys(res).length.should.eql 2
+            res.result.should.eql false
+            res.data.should.eql "Aucun trajet en cours"
+            next()
+        req.write bodyString
+        req.end()
+    req.write bodyString
+    req.end()

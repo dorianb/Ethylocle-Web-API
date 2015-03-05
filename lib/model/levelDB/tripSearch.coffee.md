@@ -18,10 +18,10 @@
           [_, userId, distance, tripId, key] = data.key.split ':'
           trips.push tripId
         .on 'error', (err) ->
-          callback err, null
+          callback err
         .on 'end', ->
           tripsearchClient.close (err) ->
-            callback err, null if err
+            callback err if err
             callback null, trips
 
     tripSearch = (db, userId, criteria, callback) ->
@@ -46,25 +46,26 @@
           trip.id = id
           trip[key] = data.value
         .on 'error', (err) ->
-          callback err, null
+          callback err
         .on 'end', ->
-          tripClient.close()
-          date = moment trip.dateTime, "DD-MM-YYYY H:mm"
-          if date > limit and criteria.numberOfPeople <= 4 - +trip.numberOfPassenger
-            distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
-            distanceEnd = geolib.getDistance {latitude: criteria.latEnd, longitude: criteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
-            tripsearchClient.tripsearch.set userId, lexi(distanceStart + distanceEnd), trip.id, (err) ->
-              callback err if err
+          tripClient.close (err) ->
+            callback err if err
+            date = moment trip.dateTime, "DD-MM-YYYY H:mm"
+            if date > limit and criteria.numberOfPeople <= 4 - +trip.numberOfPassenger
+              distanceStart = geolib.getDistance {latitude: criteria.latStart, longitude: criteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart}
+              distanceEnd = geolib.getDistance {latitude: criteria.latEnd, longitude: criteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd}
+              tripsearchClient.tripsearch.set userId, lexi(distanceStart + distanceEnd), trip.id, (err) ->
+                callback err if err
+                tripsearchClient.close (err) ->
+                  callback err if err
+                  tripSearchSorting db + "/tripsearch", userId, (err, trips) ->
+                    callback err if err
+                    callback null, trips
+            else
               tripsearchClient.close (err) ->
                 callback err if err
                 tripSearchSorting db + "/tripsearch", userId, (err, trips) ->
                   callback err if err
                   callback null, trips
-          else
-            tripsearchClient.close (err) ->
-              callback err if err
-              tripSearchSorting db + "/tripsearch", userId, (err, trips) ->
-                callback err if err
-                callback null, trips
 
     module.exports = tripSearch

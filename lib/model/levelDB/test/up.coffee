@@ -403,4 +403,134 @@ describe 'Up trip methods', ->
       next()
 
   it 'Search trip after created three', (next) ->
-    next()
+    trip =
+        latStart: '48.856470'
+        lonStart: '2.286001'
+        latEnd: '48.865314'
+        lonEnd: '2.321514'
+        dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
+        numberOfPassenger: '2'
+        price: '13.93'
+        passenger_1: '0'
+        passenger_2: '0'
+      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+        return next err if err
+        trip =
+          latStart: '48.853611'
+          lonStart: '2.287546'
+          latEnd: '48.860359'
+          lonEnd: '2.352949'
+          dateTime: moment().add(1, 'h').format "DD-MM-YYYY H:mm"
+          numberOfPassenger: '1'
+          price: '13.93'
+          passenger_1: '1'
+        Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '1'}), Trip(trip), (err, response) ->
+          return next err if err
+          trip =
+            latStart: '48.857460'
+            lonStart: '2.291070'
+            latEnd: '48.867158'
+            lonEnd: '2.313901'
+            dateTime: moment().add(90, 'm').format "DD-MM-YYYY H:mm"
+            numberOfPassenger: '3'
+            price: '13.93'
+            passenger_1: '2'
+            passenger_2: '2'
+            passenger_3: '2'
+          Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '2'}), Trip(trip), (err, response) ->
+            return next err if err
+            tripCriteria =
+              latStart: '48.856470'
+              lonStart: '2.286001'
+              latEnd: '48.865314'
+              lonEnd: '2.321514'
+              dateTime: moment().add(25, 'm').format "DD-MM-YYYY H:mm"
+              numberOfPeople: '1'
+            Up("#{__dirname}/../../../../db/tmp").searchTrip User({id: '3'}), TripCriteria(tripCriteria), (err, response) ->
+              return next err if err
+              Object.keys(response).length.should.eql 2
+              response.result.should.eql true
+              Object.keys(response.data).length.should.eql 3
+              next()
+
+  it 'Join trip', (next) ->
+    trip =
+        latStart: '48.856470'
+        lonStart: '2.286001'
+        latEnd: '48.865314'
+        lonEnd: '2.321514'
+        dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
+        numberOfPassenger: '2'
+        price: '13.93'
+        passenger_1: '0'
+        passenger_2: '0'
+      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+        return next err if err
+        trip =
+          latStart: '48.853611'
+          lonStart: '2.287546'
+          latEnd: '48.860359'
+          lonEnd: '2.352949'
+          dateTime: moment().add(1, 'h').format "DD-MM-YYYY H:mm"
+          numberOfPassenger: '1'
+          price: '13.93'
+          passenger_1: '1'
+        Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '1'}), Trip(trip), (err, response) ->
+          return next err if err
+          trip =
+            latStart: '48.857460'
+            lonStart: '2.291070'
+            latEnd: '48.867158'
+            lonEnd: '2.313901'
+            dateTime: moment().add(90, 'm').format "DD-MM-YYYY H:mm"
+            numberOfPassenger: '3'
+            price: '13.93'
+            passenger_1: '2'
+            passenger_2: '2'
+            passenger_3: '2'
+          Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '2'}), Trip(trip), (err, response) ->
+            return next err if err
+            body =
+              id: '1'
+              numberOfPeople: '2'
+            Up("#{__dirname}/../../../../db/tmp").joinTrip User({id: '3'}), Trip(body), TripCriteria(body), (err, response) ->
+              return next err if err
+              Object.keys(response).length.should.eql 2
+              response.result.should.eql true
+              should.not.exists response.data
+              next()
+
+  it 'Join trip with an unexisting trip', (next) ->
+    body =
+      id: '1'
+      numberOfPeople: '2'
+    Up("#{__dirname}/../../../../db/tmp").joinTrip User({id: '0'}), Trip(body), TripCriteria(body), (err, response) ->
+      return next err if err
+      Object.keys(response).length.should.eql 2
+      response.result.should.eql false
+      response.data.should.eql "Le trajet n'existe plus"
+      next()
+
+  it 'Join trip with an unexisting trip', (next) ->
+    trip =
+        latStart: '48.856470'
+        lonStart: '2.286001'
+        latEnd: '48.865314'
+        lonEnd: '2.321514'
+        dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
+        numberOfPassenger: '3'
+        price: '13.93'
+        passenger_1: '0'
+        passenger_2: '0'
+        passenger_3: '0'
+      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+        return next err if err
+        body =
+          id: '0'
+          numberOfPeople: '2'
+        Up("#{__dirname}/../../../../db/tmp").joinTrip User({id: '1'}), Trip(body), TripCriteria(body), (err, response) ->
+          return next err if err
+          Object.keys(response).length.should.eql 2
+          response.result.should.eql false
+          response.data.should.eql "Il n'y a plus assez de places disponibles pour ce trajet"
+          next()

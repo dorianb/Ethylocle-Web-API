@@ -1,4 +1,4 @@
-# Appplication Host
+# Application host
 
     express = require 'express'
     path = require 'path'
@@ -9,8 +9,6 @@
     serveStatic = require 'serve-static'
     serveIndex = require 'serve-index'
     errorHandler = require 'errorhandler'
-
-    process.env.NODE_ENV = "production"
 
     app = express()
 
