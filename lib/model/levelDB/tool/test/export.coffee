@@ -1,16 +1,16 @@
-###rimraf = require 'rimraf'
+rimraf = require 'rimraf'
 should = require 'should'
 fs = require 'fs'
 exportStream = require '../export'
 importStream = require '../import'
-db = require '../../factory/model'
+Down = require '../../down'
 level = require 'level'
 
 describe 'Export', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../../../db/tmp/user", ->
-      rimraf "#{__dirname}/../../../db/tmp/stop", next
+    rimraf "#{__dirname}/../../../../../db/tmp/user", ->
+      rimraf "#{__dirname}/../../../../../db/tmp/stop", next
 
   it 'Export users to csv', (next) ->
     user1 =
@@ -28,7 +28,7 @@ describe 'Export', ->
       lastname: 'Biondi'
       firstname: 'Robin'
       password: '1234'
-    client = db "#{__dirname}/../../../db/tmp/user"
+    client = Down "#{__dirname}/../../../../../db/tmp/user"
     client.users.getMaxId (err, maxId) ->
       return next err if err
       user1.id = ++maxId
@@ -51,35 +51,35 @@ describe 'Export', ->
                     client.users.setByEmail user3.email, user3, (err) ->
                       return next err if err
                       client.close ->
-                        client = level "#{__dirname}/../../../db/tmp/user"
+                        client = level "#{__dirname}/../../../../../db/tmp/user"
                         client.createReadStream
                           gte: "users:"
                           lte: "users:\xff"
                         .pipe exportStream 'csv', objectMode: true
                         .on 'finish', () ->
                           this.iterator.should.eql 4
-                        .pipe fs.createWriteStream "#{__dirname}/../../../resource/users.csv"
+                        .pipe fs.createWriteStream "#{__dirname}/../../../../../resource/users.csv"
                         .on 'finish', () ->
                           client.close()
                           next()
 
   it 'Export stops to csv', (next) ->
     this.timeout 15000
-    client = db "#{__dirname}/../../../db/tmp/stop"
+    client = Down "#{__dirname}/../../../../../db/tmp/stop"
     fs
-    .createReadStream "#{__dirname}/../../../resource/ratp_stops_with_routes.csv"
+    .createReadStream "#{__dirname}/../../../../../resource/ratp_stops_with_routes.csv"
     .pipe importStream client, 'csv', 'stop'
     .on 'finish', ->
       this.iterator.should.eql 26621
       client.close ->
-        db = level "#{__dirname}/../../../db/tmp/stop"
+        db = level "#{__dirname}/../../../../../db/tmp/stop"
         db.createReadStream
           gte: "stops:"
           lte: "stops:\xff"
         .pipe exportStream 'csv', objectMode: true
         .on 'finish', () ->
           this.iterator.should.eql 26622
-        .pipe fs.createWriteStream "#{__dirname}/../../../resource/stops.csv"
+        .pipe fs.createWriteStream "#{__dirname}/../../../../../resource/stops.csv"
         .on 'finish', () ->
           db.close()
-          next()###
+          next()

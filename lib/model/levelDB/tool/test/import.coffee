@@ -1,19 +1,19 @@
-###rimraf = require 'rimraf'
+rimraf = require 'rimraf'
 should = require 'should'
 fs = require 'fs'
 importStream = require '../import'
-db = require '../../factory/model'
+Down = require '../../down'
 
 describe 'Import', ->
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../../../db/tmp/user", ->
-      rimraf "#{__dirname}/../../../db/tmp/stop", next
+    rimraf "#{__dirname}/../../../../../db/tmp/user", ->
+      rimraf "#{__dirname}/../../../../../db/tmp/stop", next
 
   it 'Import users from csv', (next) ->
-    client = db "#{__dirname}/../../../db/tmp/user"
+    client = Down "#{__dirname}/../../../../../db/tmp/user"
     fs
-    .createReadStream "#{__dirname}/../../../resource/user sample.csv"
+    .createReadStream "#{__dirname}/../../../../../resource/user sample.csv"
     .pipe importStream client, 'csv', 'user'
     .on 'finish', ->
       this.iterator.should.eql 3
@@ -87,9 +87,9 @@ describe 'Import', ->
                   next()
 
   it 'Import users from json', (next) ->
-    client = db "#{__dirname}/../../../db/tmp/user"
+    client = Down "#{__dirname}/../../../../../db/tmp/user"
     fs
-    .createReadStream "#{__dirname}/../../../resource/user sample.json"
+    .createReadStream "#{__dirname}/../../../../../resource/user sample.json"
     .pipe importStream client, 'json', 'user'
     .on 'finish', ->
       this.iterator.should.eql 3
@@ -164,9 +164,9 @@ describe 'Import', ->
 
   it 'Import stops from csv', (next) ->
     this.timeout 10000
-    client = db "#{__dirname}/../../../db/tmp/stop"
+    client = Down "#{__dirname}/../../../../../db/tmp/stop"
     fs
-    .createReadStream "#{__dirname}/../../../resource/ratp_stops_with_routes.csv"
+    .createReadStream "#{__dirname}/../../../../../resource/ratp_stops_with_routes.csv"
     .pipe importStream client, 'csv', 'stop'
     .on 'finish', ->
       this.iterator.should.eql 26621
@@ -203,4 +203,4 @@ describe 'Import', ->
               stop.line_type.should.eql 'BUS'
               stop.line_name.should.eql 'BUS N53'
               client.close()
-              next()###
+              next()

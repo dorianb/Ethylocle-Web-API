@@ -10,9 +10,6 @@
       this.data = {}
       this.iterator = 0
 
-      this.on 'finish', ->
-        #console.log "Export Finished"
-
     util.inherits ExportStream, stream.Transform
 
     ExportStream.prototype._transform = (data, encoding, done) ->

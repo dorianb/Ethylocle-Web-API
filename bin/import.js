@@ -5,27 +5,24 @@ var model = require('../lib/factory/model');
 
 if(argv['help'])
 {
-  console.log('import [--help] [--format {name}] [--type {name}] input\nIntroduction message\n--help          Print this message\n--format {name} One of csv(default) or json\n--type {name}    Type of data to import {user, stop}\ninput           Imported file');
+  console.log('import [--help] [--format {name}] [--type {name}] input\nIntroduction message\n--help          Print this message\n--format {name} One of csv or json\n--type {name}   Type of data to import {user, stop}\ninput           Input file path');
 }
 else if(!argv['_'][0])
 {
   console.log('Input argument is missing');
 }
-else if(argv['format'])
-  model().import(argv['format'], argv['_'][0], function(err, message){
-      if(err)
-      {
-        console.log(err.message);
-      }
-      else
-      {
-        console.log(message);
-      }
-    });
+else if(!argv['type'])
+{
+  console.log('Type argument is missing');
+}
+else if(!argv['format'])
+{
+  console.log('Format argument is missing');
 }
 else
 {
-  model().import('csv', argv['_'][0], function(err, message){
+  model().import(argv['format'], argv['type'], argv['_'][0], function(err, message)
+  {
     if(err)
     {
       console.log(err.message);

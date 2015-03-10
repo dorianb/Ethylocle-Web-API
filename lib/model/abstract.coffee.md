@@ -56,10 +56,10 @@
     Model.prototype.show = (type, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.import = (format, type, callback) ->
+    Model.prototype.import = (format, type, input, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.export = (format, type, callback) ->
+    Model.prototype.export = (format, type, output, callback) ->
       throw new Error "Abstract method !"
 
     module.exports = Model

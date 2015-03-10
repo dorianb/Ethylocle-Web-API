@@ -5,6 +5,8 @@
     TripSearch = require './tripSearch'
 
     show = require './tool/show'
+    importStream = require './tool/import'
+    exportStream = require './tool/export'
 
     User = require '../../entity/user'
     Trip = require '../../entity/trip'
@@ -12,6 +14,8 @@
 
     moment = require 'moment'
     geolib = require 'geolib'
+    fs = require 'fs'
+    level = require 'level'
 
     Up = (path="#{__dirname}/../../../db") ->
       return new Up path unless this instanceof Up
@@ -327,44 +331,45 @@
 
     Up.prototype.show = (type, callback) ->
       show this.path, type, callback
-      #argv['_'][0] + ": " + nbRows
 
-    Up.prototype.import = (format, type, callback) ->
-      #TO DO
-      ###
-      var path = __dirname + "/../db/" + argv['type']
-      if((argv['format'] == 'csv') || (argv['format'] == 'json'))
-      {
-        if(argv['_'][0] != null)
-        {
-          var client = db(path);
-          fs
-          .createReadStream(argv['_'][0])
-          .on('end', function(){
-            console.log('Import finished');
-          })
-          .pipe(importStream(client, argv['format'], argv['type'], {objectMode: true}));
-        }
-      }
-      else
-      {
-        console.log('This format is not supported');
-      }###
+    Up.prototype.import = (format, type, input, callback) ->
+      return callback null, "This format is not supported" unless format is 'csv' or format is 'json'
+      return callback null, "This type is not implemented yet" unless type is 'user' or type is 'stop'
+      client = Down this.path + "/" + type
+      fs
+      .createReadStream input
+      .on 'error', (err) ->
+        callback err
+      .pipe importStream client, format, type, objectMode: true
+      .on 'finish', () ->
+        client.close (error) ->
+          callback error if error
+          callback null, "Import finished"
 
-    Up.prototype.export = (format, type, callback) ->
-      #TO DO
-      ###
-      if((argv['format'] == 'csv') || (argv['format'] == 'json'))
-      {
-        exportStream(__dirname + "/../db/user", argv['format'], {objectMode: true})
-        .on('end', function(){
-          console.log('Export finished');
-        })
-        .pipe(fs.createWriteStream(argv['_'][0]));
-      }
-      else
-      {
-        console.log('This format is not supported');
-      }###
+    Up.prototype.export = (format, type, output, callback) ->
+      return callback null, "This format is not supported" unless format is 'csv'
+      return callback null, "This type is not implemented yet" unless type is 'user' or type is 'stop'
+      if type is 'user'
+        client = level this.path + "/" + type
+        client.createReadStream
+          gte: "users:"
+          lte: "users:\xff"
+        .pipe exportStream format, objectMode: true
+        .pipe fs.createWriteStream output
+        .on 'finish', () ->
+          client.close (error) ->
+            callback error if error
+            callback null, "Export finished"
+      else if type is 'stop'
+        client = level this.path + "/" + type
+        client.createReadStream
+          gte: "stops:"
+          lte: "stops:\xff"
+        .pipe exportStream format, objectMode: true
+        .pipe fs.createWriteStream output
+        .on 'finish', () ->
+          client.close (error) ->
+            callback error if error
+            callback null, "Export finished"
 
     module.exports = Up

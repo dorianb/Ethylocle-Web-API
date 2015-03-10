@@ -3,7 +3,8 @@
     level = require 'level'
     stream = require 'stream'
 
-    show = (source, type, callback) ->
+    show = (path, type, callback) ->
+      source = path + "/" + type
       if type is 'user'
         nbRows = 0
         user = {}
@@ -28,20 +29,21 @@
           user.id = id
           user[key] = data.value
         .on 'error', (err) ->
-          callback err, nbRows
+          callback err
         .on 'end', ->
-          source.close()
-          if user.id
-            counter = 1
-            length = Object.keys(user).length
-            chunk = ""
-            for k, v of user
-              chunk += k + ":" + v
-              chunk += ' ' unless length is counter
-              counter++
-            console.log chunk if chunk
-            nbRows++
-          callback null, nbRows
+          source.close (error) ->
+            callback error if error
+            if user.id
+              counter = 1
+              length = Object.keys(user).length
+              chunk = ""
+              for k, v of user
+                chunk += k + ":" + v
+                chunk += ' ' unless length is counter
+                counter++
+              console.log chunk if chunk
+              nbRows++
+            callback null, type + ": " + nbRows
       else if type is 'trip'
         nbRows = 0
         trip = {}
@@ -66,25 +68,26 @@
           trip.id = id
           trip[key] = data.value
         .on 'error', (err) ->
-          callback err, nbRows
+          callback err
         .on 'end', ->
-          source.close()
-          if trip.id
-            counter = 1
-            length = Object.keys(trip).length
-            chunk = ""
-            for k, v of trip
-              chunk += k + ":" + v
-              chunk += ' ' unless length is counter
-              counter++
-            console.log chunk if chunk
-            nbRows++
-          callback null, nbRows
+          source.close (error) ->
+            callback error if error
+            if trip.id
+              counter = 1
+              length = Object.keys(trip).length
+              chunk = ""
+              for k, v of trip
+                chunk += k + ":" + v
+                chunk += ' ' unless length is counter
+                counter++
+              console.log chunk if chunk
+              nbRows++
+            callback null, type + ": " + nbRows
       else if type is 'tripsearch'
-        callback null, 0
+        callback null, "This type is not implemented yet"
       else if type is 'stop'
-        callback null, 0
+        callback null, "This type is not implemented yet"
       else
-        callback message: "This type of data is not supported", null
+        callback null, "This type is not supported"
 
     module.exports = show
