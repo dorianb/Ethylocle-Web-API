@@ -17,66 +17,66 @@ describe 'Import', ->
     .pipe importStream client, 'csv', 'user'
     .on 'finish', ->
       this.iterator.should.eql 3
-      client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
+      client.users.getByEmail "dor@ethylocle.com", (err, user) ->
         return next err if err
         client.users.get user.id, (err, user) ->
           return next err if err
-          user.email.should.eql "dorian@ethylocle.com"
+          user.email.should.eql "dor@ethylocle.com"
           user.picture.should.eql "null"
           user.lastname.should.eql "Bagur"
           user.firstname.should.eql "Dorian"
-          user.birthDate.should.eql "07-08-1992"
+          user.birthDate.should.eql "08-09-1993"
           user.gender.should.eql "M"
           user.weight.should.eql "75.5"
-          user.address.should.eql "162 Boulevard du Général de Gaulle"
+          user.address.should.eql "null"
           user.zipCode.should.eql "78700"
           user.city.should.eql "Conflans-Sainte-Honorine"
           user.country.should.eql "France"
-          user.phone.should.eql "+330619768399"
+          user.phone.should.eql "+330686329855"
           user.password.should.eql "1234"
           user.latitude.should.eql "48.888"
           user.longitude.should.eql "70.55"
           user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
           user.bac.should.eql "0.56"
           user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-          client.users.getByEmail "maoqiao@ethylocle.com", (err, user) ->
+          client.users.getByEmail "mao@ethylocle.com", (err, user) ->
             return next err if err
             client.users.get user.id, (err, user) ->
               return next err if err
-              user.email.should.eql "maoqiao@ethylocle.com"
+              user.email.should.eql "mao@ethylocle.com"
               user.picture.should.eql "null"
-              user.lastname.should.eql "Zhou"
-              user.firstname.should.eql "Maoqiao"
-              user.birthDate.should.eql "07-08-1992"
+              user.lastname.should.eql "Zho"
+              user.firstname.should.eql "Mao"
+              user.birthDate.should.eql "08-09-1993"
               user.gender.should.eql "M"
               user.weight.should.eql "75.5"
               user.address.should.eql "null"
               user.zipCode.should.eql "75000"
               user.city.should.eql "Paris"
               user.country.should.eql "France"
-              user.phone.should.eql "+330619768399"
+              user.phone.should.eql "+330686329855"
               user.password.should.eql "1234"
               user.latitude.should.eql "48.888"
               user.longitude.should.eql "70.55"
               user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
               user.bac.should.eql "0.56"
               user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-              client.users.getByEmail "robin@ethylocle.com", (err, user) ->
+              client.users.getByEmail "rob@ethylocle.com", (err, user) ->
                 return next err if err
                 client.users.get user.id, (err, user) ->
                   return next err if err
-                  user.email.should.eql "robin@ethylocle.com"
+                  user.email.should.eql "rob@ethylocle.com"
                   user.picture.should.eql "null"
-                  user.lastname.should.eql "Biondi"
-                  user.firstname.should.eql "Robin"
-                  user.birthDate.should.eql "07-08-1992"
+                  user.lastname.should.eql "Bio"
+                  user.firstname.should.eql "Rob"
+                  user.birthDate.should.eql "08-09-1993"
                   user.gender.should.eql "M"
                   user.weight.should.eql "75.5"
                   user.address.should.eql "null"
                   user.zipCode.should.eql "75000"
                   user.city.should.eql "Paris"
                   user.country.should.eql "France"
-                  user.phone.should.eql "+330619768399"
+                  user.phone.should.eql "+330686329855"
                   user.password.should.eql "1234"
                   user.latitude.should.eql "48.888"
                   user.longitude.should.eql "70.55"
@@ -93,66 +93,66 @@ describe 'Import', ->
     .pipe importStream client, 'json', 'user'
     .on 'finish', ->
       this.iterator.should.eql 3
-      client.users.getByEmail "dorian@ethylocle.com", (err, user) ->
+      client.users.getByEmail "dor@ethylocle.com", (err, user) ->
         return next err if err
         client.users.get user.id, (err, user) ->
           return next err if err
-          user.email.should.eql "dorian@ethylocle.com"
+          user.email.should.eql "dor@ethylocle.com"
           user.picture.should.eql "null"
           user.lastname.should.eql "Bagur"
           user.firstname.should.eql "Dorian"
-          user.birthDate.should.eql "07-08-1992"
+          user.birthDate.should.eql "08-09-1993"
           user.gender.should.eql "M"
           user.weight.should.eql "75.5"
-          user.address.should.eql "162 Boulevard du Général de Gaulle"
+          user.address.should.eql "null"
           user.zipCode.should.eql "78700"
           user.city.should.eql "Conflans-Sainte-Honorine"
           user.country.should.eql "France"
-          user.phone.should.eql "+330619768399"
+          user.phone.should.eql "+330688963477"
           user.password.should.eql "1234"
           user.latitude.should.eql "48.888"
           user.longitude.should.eql "70.55"
           user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
           user.bac.should.eql "0.56"
           user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-          client.users.getByEmail "maoqiao@ethylocle.com", (err, user) ->
+          client.users.getByEmail "mao@ethylocle.com", (err, user) ->
             return next err if err
             client.users.get user.id, (err, user) ->
               return next err if err
-              user.email.should.eql "maoqiao@ethylocle.com"
+              user.email.should.eql "mao@ethylocle.com"
               user.picture.should.eql "null"
-              user.lastname.should.eql "Zhou"
-              user.firstname.should.eql "Maoqiao"
-              user.birthDate.should.eql "07-08-1992"
+              user.lastname.should.eql "Zho"
+              user.firstname.should.eql "Mao"
+              user.birthDate.should.eql "08-09-1993"
               user.gender.should.eql "M"
               user.weight.should.eql "75.5"
               user.address.should.eql "null"
               user.zipCode.should.eql "75000"
               user.city.should.eql "Paris"
               user.country.should.eql "France"
-              user.phone.should.eql "+330619768399"
+              user.phone.should.eql "+330688963477"
               user.password.should.eql "1234"
               user.latitude.should.eql "48.888"
               user.longitude.should.eql "70.55"
               user.lastKnownPositionDate.should.eql "15-01-2015 15:05:30"
               user.bac.should.eql "0.56"
               user.lastBacKnownDate.should.eql "15-01-2015 15:05:30"
-              client.users.getByEmail "robin@ethylocle.com", (err, user) ->
+              client.users.getByEmail "rob@ethylocle.com", (err, user) ->
                 return next err if err
                 client.users.get user.id, (err, user) ->
                   return next err if err
-                  user.email.should.eql "robin@ethylocle.com"
+                  user.email.should.eql "rob@ethylocle.com"
                   user.picture.should.eql "null"
-                  user.lastname.should.eql "Biondi"
-                  user.firstname.should.eql "Robin"
-                  user.birthDate.should.eql "07-08-1992"
+                  user.lastname.should.eql "Bio"
+                  user.firstname.should.eql "Rob"
+                  user.birthDate.should.eql "08-09-1993"
                   user.gender.should.eql "M"
                   user.weight.should.eql "75.5"
                   user.address.should.eql "null"
                   user.zipCode.should.eql "75000"
                   user.city.should.eql "Paris"
                   user.country.should.eql "France"
-                  user.phone.should.eql "+330619768399"
+                  user.phone.should.eql "+330688963477"
                   user.password.should.eql "1234"
                   user.latitude.should.eql "48.888"
                   user.longitude.should.eql "70.55"
