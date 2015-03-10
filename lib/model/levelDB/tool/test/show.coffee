@@ -48,13 +48,13 @@ describe 'Show', ->
                       return next err if err
                       client.close (err) ->
                         return next err if err
-                        show "#{__dirname}/../../../../../db/tmp/user", 'user', (err, message) ->
+                        show "#{__dirname}/../../../../../db/tmp", 'user', (err, message) ->
                           return next err if err
                           console.log message
                           next()
 
   it 'Show user database without user', (next) ->
-    show "#{__dirname}/../../../../../db/tmp/user", 'user', (err, message) ->
+    show "#{__dirname}/../../../../../db/tmp", 'user', (err, message) ->
       return next err if err
       console.log message
       next()
@@ -75,7 +75,7 @@ describe 'Show', ->
           return next err if err
           client.close (err) ->
             return next err if err
-            show "#{__dirname}/../../../../../db/tmp/user", 'user', (err, message) ->
+            show "#{__dirname}/../../../../../db/tmp", 'user', (err, message) ->
               return next err if err
               console.log message
               next()
