@@ -4,6 +4,8 @@
     Down = require './down'
     TripSearch = require './tripSearch'
 
+    show = require './tool/show'
+
     User = require '../../entity/user'
     Trip = require '../../entity/trip'
     TripCriteria = require '../../entity/tripCriteria'
@@ -320,5 +322,49 @@
         else
           client.close (error) ->
             callback null, {result: false, data: "Le trajet n'existe plus"}
+
+## Tool methods
+
+    Up.prototype.show = (type, callback) ->
+      show this.path, type, callback
+      #argv['_'][0] + ": " + nbRows
+
+    Up.prototype.import = (format, type, callback) ->
+      #TO DO
+      ###
+      var path = __dirname + "/../db/" + argv['type']
+      if((argv['format'] == 'csv') || (argv['format'] == 'json'))
+      {
+        if(argv['_'][0] != null)
+        {
+          var client = db(path);
+          fs
+          .createReadStream(argv['_'][0])
+          .on('end', function(){
+            console.log('Import finished');
+          })
+          .pipe(importStream(client, argv['format'], argv['type'], {objectMode: true}));
+        }
+      }
+      else
+      {
+        console.log('This format is not supported');
+      }###
+
+    Up.prototype.export = (format, type, callback) ->
+      #TO DO
+      ###
+      if((argv['format'] == 'csv') || (argv['format'] == 'json'))
+      {
+        exportStream(__dirname + "/../db/user", argv['format'], {objectMode: true})
+        .on('end', function(){
+          console.log('Export finished');
+        })
+        .pipe(fs.createWriteStream(argv['_'][0]));
+      }
+      else
+      {
+        console.log('This format is not supported');
+      }###
 
     module.exports = Up

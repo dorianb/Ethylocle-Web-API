@@ -1,8 +1,7 @@
 require('coffee-script/register')
 
 var argv = require('minimist')(process.argv.slice(2));
-var show = require('../lib/show');
-var db = require('../lib/db');
+var model = require('../lib/factory/model');
 
 if(argv['help'])
 {
@@ -10,15 +9,14 @@ if(argv['help'])
 }
 else if(argv['_'][0])
 {
-  var path = __dirname + "/../db/" + argv['_'][0]
-  show(path, argv['_'][0], function(err, nbRows) {
+  model().show(argv['_'][0], function(err, message) {
     if(err)
     {
-      console.log("Error at row " + nbRows + ": " + err.message);
+      console.log(err.message);
     }
     else
     {
-      console.log(argv['_'][0] + ": " + nbRows);
+      console.log(message);
     }
   });
 }

@@ -1,4 +1,4 @@
-rimraf = require 'rimraf'
+###rimraf = require 'rimraf'
 should = require 'should'
 show = require '../show'
 db = require '../../factory/model'
@@ -76,4 +76,4 @@ describe 'Show', ->
             show "#{__dirname}/../../../db/tmp/user", 'user', (err, nbRows) ->
               console.log err.message if err
               console.log "Users: " + nbRows
-              next()
+              next()###

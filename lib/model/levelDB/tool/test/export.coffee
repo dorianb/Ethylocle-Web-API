@@ -1,4 +1,4 @@
-rimraf = require 'rimraf'
+###rimraf = require 'rimraf'
 should = require 'should'
 fs = require 'fs'
 exportStream = require '../export'
@@ -82,4 +82,4 @@ describe 'Export', ->
         .pipe fs.createWriteStream "#{__dirname}/../../../resource/stops.csv"
         .on 'finish', () ->
           db.close()
-          next()
+          next()###

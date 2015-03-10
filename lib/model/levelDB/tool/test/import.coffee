@@ -1,4 +1,4 @@
-rimraf = require 'rimraf'
+###rimraf = require 'rimraf'
 should = require 'should'
 fs = require 'fs'
 importStream = require '../import'
@@ -203,4 +203,4 @@ describe 'Import', ->
               stop.line_type.should.eql 'BUS'
               stop.line_name.should.eql 'BUS N53'
               client.close()
-              next()
+              next()###

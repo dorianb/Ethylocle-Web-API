@@ -72,7 +72,8 @@
         #Pas de réduction pour une seule partie prenante
         return this.price if nbParty is 1
       else
-        #On gagne de l'argent lorsqu'on regroupe des personnes #Plus le nombre de parties sur un trajet est grand, plus on gagne de l'argent
+        #On gagne de l'argent lorsqu'on regroupe des personnes
+        #Plus le nombre de parties sur un trajet est grand, plus on gagne de l'argent
         return (this.price/nbParty/1.1).toFixed 2
 
     Trip.prototype.getPricePerPartyPlusOne = () ->

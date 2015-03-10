@@ -51,4 +51,15 @@
     Model.prototype.getTripById = (trp, callback) ->
       throw new Error "Abstract method !"
 
+## Tool methods
+
+    Model.prototype.show = (type, callback) ->
+      throw new Error "Abstract method !"
+
+    Model.prototype.import = (format, type, callback) ->
+      throw new Error "Abstract method !"
+
+    Model.prototype.export = (format, type, callback) ->
+      throw new Error "Abstract method !"
+
     module.exports = Model
