@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/dorianb/Web-application---Ethylocle.svg?branch=master)](https://travis-ci.org/dorianb/Web-application---Ethylocle)
 
-This application was realised with the express framework in CoffeeScript. The documentation is made in MarkDown.
+This application was coded in CoffeeScript and JavaScript with the express framework. The documentation is written in MarkDown.
 
 ## Functionalities
 * Manage account profile: sign in, sign up, update, delete, etc.
