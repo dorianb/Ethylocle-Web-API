@@ -64,7 +64,7 @@ describe 'Export', ->
                           next()
 
   it 'Export stops to csv', (next) ->
-    this.timeout 30000
+    this.timeout 20000
     client = Down "#{__dirname}/../../../../../db/tmp/stop"
     fs
     .createReadStream "#{__dirname}/../../../../../resource/ratp_stops_with_routes.csv"
