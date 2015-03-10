@@ -1,5 +1,8 @@
 node_modules/
 db/
 resource/*.*
+!resource/ratp_stops_with_routes.csv
+!resource/user sample.csv
+!resource/user sample.json
 resource/key/csr.pem
 README.pdf
