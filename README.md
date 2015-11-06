@@ -1,6 +1,6 @@
 # Ethylocle Web API
 
-[![Build Status](https://travis-ci.org/dorianb/Web-application---Ethylocle.svg?branch=master)](https://travis-ci.org/dorianb/Web-application---Ethylocle)
+[![Build Status](https://travis-ci.org/dorianb/Ethylocle-Web-API.svg?branch=master)](https://travis-ci.org/dorianb/Web-application---Ethylocle)
 
 This application was coded in CoffeeScript and JavaScript with the express framework. The documentation is written in MarkDown.
 
