@@ -63,7 +63,7 @@ node ./bin/export --format csv stops.csv
 
 ## Services documentation
 
-### User request
+### User services
 
 #### Sign in
 If the email and password are correct, a session cookie is returned to the client
@@ -137,7 +137,7 @@ Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
 
-### Trip request
+### Trip services
 
 #### Has trip
 Allows client to know if the user has a trip in progress
