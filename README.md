@@ -61,7 +61,7 @@ node ./bin/export --format csv users.csv
 node ./bin/export --format csv stops.csv
 ```
 
-## API documentation
+## Services documentation
 
 ### User request
 
