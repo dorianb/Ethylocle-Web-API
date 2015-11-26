@@ -403,6 +403,7 @@ describe 'Up levelDB Model', ->
         next()
 
     it 'Search trip after created three', (next) ->
+      this.timeout 3000
       trip =
           latStart: '48.856470'
           lonStart: '2.286001'

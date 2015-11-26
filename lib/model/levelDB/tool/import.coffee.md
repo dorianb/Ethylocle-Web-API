@@ -15,6 +15,7 @@
     util.inherits ImportStream, stream.Writable
 
     ImportStream.prototype._write = (chunk, encoding, done) ->
+      chunk = chunk.toString 'utf8'
       that = this
       if this.format is 'csv'
         if this.type is 'user'
@@ -53,7 +54,11 @@
               else
                 #console.log "Done " + that.iterator
                 done()
-            storeCSVUser 0
+            if err
+              console.log err.message
+              done()
+            else
+              storeCSVUser 0
         else if this.type is 'stop'
           parse chunk, delimiter: ';', (err, stops) ->
             storeCSVStop = (i) ->
@@ -110,7 +115,11 @@
               else
                 #console.log "Done " + that.iterator
                 done()
-            storeCSVStop 0
+            if err
+              console.log err.message
+              done()
+            else
+              storeCSVStop 0
       if this.format is 'json'
         if this.type is 'user'
           users = JSON.parse chunk
