@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/dorianb/Ethylocle-Web-API.svg?branch=master)](https://travis-ci.org/dorianb/Ethylocle-Web-API)
 
-This application is written in CoffeeScript and JavaScript using the express framework. The documentation is written in MarkDown.
+This web application is an API that I developed for my graduation project at ECE Paris.
 
 ## Functionalities
 * Manage account profile: sign in, sign up, update, delete, etc.
