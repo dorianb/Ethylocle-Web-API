@@ -21,7 +21,7 @@
     "level": "latest",
     "rimraf": "latest",
     "minimist": "latest",
-    "csv-parse": "latest",
+    "csv-parse": "^0.4.2",
     "abstract-leveldown": "latest",
     "geolib": "latest",
     "moment": "latest",
