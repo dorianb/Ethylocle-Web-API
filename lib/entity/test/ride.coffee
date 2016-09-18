@@ -1,9 +1,9 @@
 should = require 'should'
-Trip = require '../trip'
+Ride = require '../ride'
 
-describe 'Trip entity', ->
+describe 'Ride entity', ->
 
-  it 'Create trip', (next) ->
+  it 'Create ride', (next) ->
     data =
       id: '0'
       latStart: '48.853611'
@@ -14,23 +14,23 @@ describe 'Trip entity', ->
       price: '30'
       passenger_1: '0'
       passenger_2: '0'
-    trip = Trip data
-    trip.id.should.eql data.id
-    should.not.exists trip.addressStart
-    trip.latStart.should.eql data.latStart
-    trip.lonStart.should.eql data.lonStart
-    should.not.exists trip.addressEnd
-    trip.latEnd.should.eql data.latEnd
-    trip.lonEnd.should.eql data.lonEnd
-    trip.dateTime.should.eql data.dateTime
-    trip.price.should.eql data.price
-    trip.passenger_1.should.eql data.passenger_1
-    trip.passenger_2.should.eql data.passenger_2
-    should.not.exists trip.passenger_3
-    should.not.exists trip.passenger_4
+    ride = Ride data
+    ride.id.should.eql data.id
+    should.not.exists ride.addressStart
+    ride.latStart.should.eql data.latStart
+    ride.lonStart.should.eql data.lonStart
+    should.not.exists ride.addressEnd
+    ride.latEnd.should.eql data.latEnd
+    ride.lonEnd.should.eql data.lonEnd
+    ride.dateTime.should.eql data.dateTime
+    ride.price.should.eql data.price
+    ride.passenger_1.should.eql data.passenger_1
+    ride.passenger_2.should.eql data.passenger_2
+    should.not.exists ride.passenger_3
+    should.not.exists ride.passenger_4
     next()
 
-  it 'Get trip', (next) ->
+  it 'Get ride', (next) ->
     data =
       id: '0'
       latStart: '48.853611'
@@ -41,32 +41,32 @@ describe 'Trip entity', ->
       price: '30'
       passenger_1: '0'
       passenger_2: '0'
-    trip = Trip data
-    trip = trip.get()
-    trip.id.should.eql data.id
-    should.not.exists trip.addressStart
-    trip.latStart.should.eql data.latStart
-    trip.lonStart.should.eql data.lonStart
-    should.not.exists trip.addressEnd
-    trip.latEnd.should.eql data.latEnd
-    trip.lonEnd.should.eql data.lonEnd
-    trip.dateTime.should.eql data.dateTime
-    trip.price.should.eql data.price
-    trip.passenger_1.should.eql data.passenger_1
-    trip.passenger_2.should.eql data.passenger_2
-    should.not.exists trip.passenger_3
-    should.not.exists trip.passenger_4
+    ride = Ride data
+    ride = ride.get()
+    ride.id.should.eql data.id
+    should.not.exists ride.addressStart
+    ride.latStart.should.eql data.latStart
+    ride.lonStart.should.eql data.lonStart
+    should.not.exists ride.addressEnd
+    ride.latEnd.should.eql data.latEnd
+    ride.lonEnd.should.eql data.lonEnd
+    ride.dateTime.should.eql data.dateTime
+    ride.price.should.eql data.price
+    ride.passenger_1.should.eql data.passenger_1
+    ride.passenger_2.should.eql data.passenger_2
+    should.not.exists ride.passenger_3
+    should.not.exists ride.passenger_4
     next()
 
-  it 'Trip toString', (next) ->
+  it 'Ride toString', (next) ->
     data =
       id: '0'
       latStart: '48.853611'
       passenger_1: '0'
       passenger_2: '0'
-    trip = Trip data
-    string = trip.toString()
-    string.should.eql "Trip id:0 latStart:48.853611 passenger_1:0 passenger_2:0"
+    ride = Ride data
+    string = ride.toString()
+    string.should.eql "Ride id:0 latStart:48.853611 passenger_1:0 passenger_2:0"
     next()
 
   it 'Set price', (next) ->
@@ -77,13 +77,13 @@ describe 'Trip entity', ->
       lonEnd: '2.321514'
       dateTime: '22-01-2015 16:30'
       numberOfPassenger: '1'
-    trip = Trip data
-    trip.setPrice()
-    trip.price.should.eql '13.93'
+    ride = Ride data
+    ride.setPrice()
+    ride.price.should.eql '13.93'
     next()
 
   it 'Get price per party with 1 passenger', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -92,12 +92,12 @@ describe 'Trip entity', ->
       numberOfPassenger: '1'
       price: '13.93'
       passenger_1: '3'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql '13.93'
+    ride = Ride ride
+    ride.getPricePerParty().should.eql '13.93'
     next()
 
   it 'Get price per party with 2 passengers and 2 parties', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -107,12 +107,12 @@ describe 'Trip entity', ->
       price: '13.93'
       passenger_1: '3'
       passenger_2: '1'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql (13.93/2/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerParty().should.eql (13.93/2/1.1).toFixed 2
     next()
 
   it 'Get price per party with 2 passengers and 1 party', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -122,12 +122,12 @@ describe 'Trip entity', ->
       price: '13.93'
       passenger_1: '3'
       passenger_2: '3'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql '13.93'
+    ride = Ride ride
+    ride.getPricePerParty().should.eql '13.93'
     next()
 
   it 'Get price per party with 3 passengers and 2 parties', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -138,12 +138,12 @@ describe 'Trip entity', ->
       passenger_1: '3'
       passenger_2: '1'
       passenger_3: '1'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql (13.93/2/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerParty().should.eql (13.93/2/1.1).toFixed 2
     next()
 
   it 'Get price per party with 4 passengers and 2 parties', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -155,12 +155,12 @@ describe 'Trip entity', ->
       passenger_2: '1'
       passenger_3: '1'
       passenger_4: '1'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql (13.93/2/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerParty().should.eql (13.93/2/1.1).toFixed 2
     next()
 
   it 'Get price per party with 4 passengers and 3 parties', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -172,12 +172,12 @@ describe 'Trip entity', ->
       passenger_2: '1'
       passenger_3: '1'
       passenger_4: '2'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql (13.93/3/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerParty().should.eql (13.93/3/1.1).toFixed 2
     next()
 
   it 'Get price per party with 4 passengers and 3 parties', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -189,12 +189,12 @@ describe 'Trip entity', ->
       passenger_2: '1'
       passenger_3: '2'
       passenger_4: '2'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql (13.93/3/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerParty().should.eql (13.93/3/1.1).toFixed 2
     next()
 
   it 'Get price per party with 4 passengers and 4 parties', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -206,12 +206,12 @@ describe 'Trip entity', ->
       passenger_2: '1'
       passenger_3: '0'
       passenger_4: '2'
-    trip = Trip trip
-    trip.getPricePerParty().should.eql (13.93/4/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerParty().should.eql (13.93/4/1.1).toFixed 2
     next()
 
   it 'Get price per party plus one', (next) ->
-    trip =
+    ride =
       latStart: '48.856470'
       lonStart: '2.286001'
       latEnd: '48.865314'
@@ -220,11 +220,11 @@ describe 'Trip entity', ->
       numberOfPassenger: '1'
       price: '13.93'
       passenger_1: '3'
-    trip = Trip trip
-    trip.getPricePerPartyPlusOne().should.eql (13.93/2/1.1).toFixed 2
+    ride = Ride ride
+    ride.getPricePerPartyPlusOne().should.eql (13.93/2/1.1).toFixed 2
     next()
 
-  it 'Get private trip data', (next) ->
+  it 'Get private ride data', (next) ->
     data =
       id: '0'
       latStart: '48.856470'
@@ -235,25 +235,25 @@ describe 'Trip entity', ->
       numberOfPassenger: '1'
       price: '13.93'
       passenger_1: '3'
-    trip = Trip data
-    trip = trip.getPrivate()
-    trip.id.should.eql data.id
-    should.not.exists trip.addressStart
-    trip.latStart.should.eql data.latStart
-    trip.lonStart.should.eql data.lonStart
-    should.not.exists trip.addressEnd
-    trip.latEnd.should.eql data.latEnd
-    trip.lonEnd.should.eql data.lonEnd
-    trip.dateTime.should.eql data.dateTime
-    should.not.exists trip.price
-    trip.maxPrice.should.eql '13.93'
-    trip.passenger_1.should.eql data.passenger_1
-    should.not.exists trip.passenger_2
-    should.not.exists trip.passenger_3
-    should.not.exists trip.passenger_4
+    ride = Ride data
+    ride = ride.getPrivate()
+    ride.id.should.eql data.id
+    should.not.exists ride.addressStart
+    ride.latStart.should.eql data.latStart
+    ride.lonStart.should.eql data.lonStart
+    should.not.exists ride.addressEnd
+    ride.latEnd.should.eql data.latEnd
+    ride.lonEnd.should.eql data.lonEnd
+    ride.dateTime.should.eql data.dateTime
+    should.not.exists ride.price
+    ride.maxPrice.should.eql '13.93'
+    ride.passenger_1.should.eql data.passenger_1
+    should.not.exists ride.passenger_2
+    should.not.exists ride.passenger_3
+    should.not.exists ride.passenger_4
     next()
 
-  it 'Get public trip data', (next) ->
+  it 'Get public ride data', (next) ->
     data =
       id: '0'
       latStart: '48.856470'
@@ -264,20 +264,20 @@ describe 'Trip entity', ->
       numberOfPassenger: '1'
       price: '13.93'
       passenger_1: '3'
-    trip = Trip data
-    trip = trip.getPublic()
-    trip.id.should.eql data.id
-    should.not.exists trip.addressStart
-    trip.latStart.should.eql data.latStart
-    trip.lonStart.should.eql data.lonStart
-    should.not.exists trip.addressEnd
-    trip.latEnd.should.eql data.latEnd
-    trip.lonEnd.should.eql data.lonEnd
-    trip.dateTime.should.eql data.dateTime
-    should.not.exists trip.price
-    trip.maxPrice.should.eql (13.93/2/1.1).toFixed 2
-    should.not.exists trip.passenger_1
-    should.not.exists trip.passenger_2
-    should.not.exists trip.passenger_3
-    should.not.exists trip.passenger_4
+    ride = Ride data
+    ride = ride.getPublic()
+    ride.id.should.eql data.id
+    should.not.exists ride.addressStart
+    ride.latStart.should.eql data.latStart
+    ride.lonStart.should.eql data.lonStart
+    should.not.exists ride.addressEnd
+    ride.latEnd.should.eql data.latEnd
+    ride.lonEnd.should.eql data.lonEnd
+    ride.dateTime.should.eql data.dateTime
+    should.not.exists ride.price
+    ride.maxPrice.should.eql (13.93/2/1.1).toFixed 2
+    should.not.exists ride.passenger_1
+    should.not.exists ride.passenger_2
+    should.not.exists ride.passenger_3
+    should.not.exists ride.passenger_4
     next()

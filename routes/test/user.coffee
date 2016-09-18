@@ -26,7 +26,7 @@ GetOptionsWithHeaders = (path, body, cookie) ->
   headers =
     'Content-Type': 'application/json'
     'Content-Length': body.length
-    'Cookie': cookie
+    'Cookie': cookie || ""
   options =
     "host": "localhost"
     "port": port

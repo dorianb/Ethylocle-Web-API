@@ -44,46 +44,46 @@
               console.log chunk if chunk
               nbRows++
             callback null, type + ": " + nbRows
-      else if type is 'trip'
+      else if type is 'ride'
         nbRows = 0
-        trip = {}
+        ride = {}
         source = level source if typeof source is 'string'
         source.createReadStream
-          gte: "trips:"
-          lte: "trips:\xff"
+          gte: "rides:"
+          lte: "rides:\xff"
         .on 'data', (data) ->
           [_, id, key] = data.key.split ':'
-          if trip.id
-            unless trip.id is id
+          if ride.id
+            unless ride.id is id
               counter = 1
-              length = Object.keys(trip).length
+              length = Object.keys(ride).length
               chunk = ""
-              for k, v of trip
+              for k, v of ride
                 chunk += k + ":" + v
                 chunk += ' ' unless length is counter
-                delete trip[k]
+                delete ride[k]
                 counter++
               nbRows++
               console.log chunk
-          trip.id = id
-          trip[key] = data.value
+          ride.id = id
+          ride[key] = data.value
         .on 'error', (err) ->
           callback err
         .on 'end', ->
           source.close (error) ->
             callback error if error
-            if trip.id
+            if ride.id
               counter = 1
-              length = Object.keys(trip).length
+              length = Object.keys(ride).length
               chunk = ""
-              for k, v of trip
+              for k, v of ride
                 chunk += k + ":" + v
                 chunk += ' ' unless length is counter
                 counter++
               console.log chunk if chunk
               nbRows++
             callback null, type + ": " + nbRows
-      else if type is 'tripsearch'
+      else if type is 'ridesearch'
         callback null, "This type is not implemented yet"
       else if type is 'stop'
         callback null, "This type is not implemented yet"

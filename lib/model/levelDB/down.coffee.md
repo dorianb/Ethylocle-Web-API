@@ -76,12 +76,12 @@
             key: "usersEmailIndex:#{email}:#{k}"
           db.batch ops, (err) ->
             callback err
-      trips:
+      rides:
         getMaxId: (callback) ->
           maxId = '-1'
           db.createReadStream
-            gte: "trips:"
-            lte: "trips:\xff"
+            gte: "rides:"
+            lte: "rides:\xff"
           .on 'data', (data) ->
             [_, id, key] = data.key.split ':'
             maxId = id if +id > +maxId
@@ -90,118 +90,118 @@
           .on 'end', ->
             callback null, maxId
         get: (id, callback) ->
-          trip = {}
+          ride = {}
           db.createReadStream
-            gte: "trips:#{id}:"
-            lte: "trips:#{id}:\xff"
+            gte: "rides:#{id}:"
+            lte: "rides:#{id}:\xff"
           .on 'data', (data) ->
             [_, id, key] = data.key.split ':'
-            trip.id = id
-            trip[key] = data.value
+            ride.id = id
+            ride[key] = data.value
           .on 'error', (err) ->
             callback err, null
           .on 'end', ->
-            callback null, trip
-        set: (id, trip, callback) ->
-          ops = for k, v of trip
+            callback null, ride
+        set: (id, ride, callback) ->
+          ops = for k, v of ride
             continue if k is 'id'
             type: 'put'
-            key: "trips:#{id}:#{k}"
+            key: "rides:#{id}:#{k}"
             value: v
           db.batch ops, (err) ->
             callback err
-        del: (id, trip, callback) ->
-          ops = for k, v of trip
+        del: (id, ride, callback) ->
+          ops = for k, v of ride
             continue if k is 'id'
             type: 'del'
-            key: "trips:#{id}:#{k}"
+            key: "rides:#{id}:#{k}"
           db.batch ops, (err) ->
             callback err
-        getByPassengerTripInProgress: (userId, now, callback) ->
-          trip = {}
+        getByPassengerRideInProgress: (userId, now, callback) ->
+          ride = {}
           db.createReadStream
-            gte: "tripsPassengerIndex:#{userId}:"
-            lte: "tripsPassengerIndex:#{userId}:\xff"
+            gte: "ridesPassengerIndex:#{userId}:"
+            lte: "ridesPassengerIndex:#{userId}:\xff"
           .on 'data', (data) ->
-            [_, userId, tripId, key] = data.key.split ':'
+            [_, userId, rideId, key] = data.key.split ':'
             if moment(data.value, "DD-MM-YYYY H:mm") > now
-              trip.id = tripId
-              trip[key] = data.value
+              ride.id = rideId
+              ride[key] = data.value
           .on 'error', (err) ->
             callback err, null
           .on 'end', ->
-            callback null, trip
+            callback null, ride
         getByPassenger: (userId, callback) ->
-          trips = []
+          rides = []
           db.createReadStream
-            gte: "tripsPassengerIndex:#{userId}:"
-            lte: "tripsPassengerIndex:#{userId}:\xff"
+            gte: "ridesPassengerIndex:#{userId}:"
+            lte: "ridesPassengerIndex:#{userId}:\xff"
           .on 'data', (data) ->
-            [_, userId, tripId, key] = data.key.split ':'
-            trip = {}
-            trip.id = tripId
-            trip[key] = data.value
-            trips.push trip
+            [_, userId, rideId, key] = data.key.split ':'
+            ride = {}
+            ride.id = rideId
+            ride[key] = data.value
+            rides.push ride
           .on 'error', (err) ->
             callback err, null
           .on 'end', ->
-            callback null, trips
-        setByPassenger: (userId, trip, callback) ->
-          ops = for k, v of trip
+            callback null, rides
+        setByPassenger: (userId, ride, callback) ->
+          ops = for k, v of ride
               continue unless k is 'dateTime'
               type: 'put'
-              key: "tripsPassengerIndex:#{userId}:#{trip.id}:#{k}"
+              key: "ridesPassengerIndex:#{userId}:#{ride.id}:#{k}"
               value: v
           db.batch ops, (err) ->
             callback err
-        delByPassenger: (userId, trip, callback) ->
-          ops = for k, v of trip
+        delByPassenger: (userId, ride, callback) ->
+          ops = for k, v of ride
             continue unless k is 'dateTime'
             type: 'del'
-            key: "tripsPassengerIndex:#{userId}:#{trip.id}:#{k}"
+            key: "ridesPassengerIndex:#{userId}:#{ride.id}:#{k}"
           db.batch ops, (err) ->
             callback err
-      tripsearch:
-        get: (userId, distance, tripId, callback) ->
+      ridesearch:
+        get: (userId, distance, rideId, callback) ->
           result = {}
           db.createReadStream
-            gte: "tripsearch:#{userId}:#{distance}:#{tripId}"
-            lte: "tripsearch:#{userId}:#{distance}:#{tripId}"
+            gte: "ridesearch:#{userId}:#{distance}:#{rideId}"
+            lte: "ridesearch:#{userId}:#{distance}:#{rideId}"
           .on 'data', (data) ->
-            [_, userId, distance, tripId, key] = data.key.split ':'
+            [_, userId, distance, rideId, key] = data.key.split ':'
             result.userId = userId
             result.distance = distance
-            result.tripId = tripId
+            result.rideId = rideId
           .on 'error', (err) ->
             callback err, null
           .on 'end', ->
             callback null, result
-        set: (userId, distance, tripId, callback) ->
+        set: (userId, distance, rideId, callback) ->
           op = [
             type: 'put'
-            key: "tripsearch:#{userId}:#{distance}:#{tripId}"
-            value: tripId
+            key: "ridesearch:#{userId}:#{distance}:#{rideId}"
+            value: rideId
           ]
           db.batch op, (err) ->
             callback err
-        del: (userId, distance, tripId, callback) ->
+        del: (userId, distance, rideId, callback) ->
           op = [
             type: 'del'
-            key: "tripsearch:#{userId}:#{distance}:#{tripId}"
+            key: "ridesearch:#{userId}:#{distance}:#{rideId}"
           ]
           db.batch op, (err) ->
             callback err
         getByUser: (userId, callback) ->
           result = []
           db.createReadStream
-            gte: "tripsearch:#{userId}:"
-            lte: "tripsearch:#{userId}:\xff"
+            gte: "ridesearch:#{userId}:"
+            lte: "ridesearch:#{userId}:\xff"
           .on 'data', (data) ->
             row = {}
-            [_, userId, distance, tripId, key] = data.key.split ':'
+            [_, userId, distance, rideId, key] = data.key.split ':'
             row.userId = userId
             row.distance = distance
-            row.tripId = tripId
+            row.rideId = rideId
             result.push row
           .on 'error', (err) ->
             callback err, null

@@ -29,7 +29,7 @@
 
     app.use '/', require '../../routes/index'
     app.use '/usr', require '../../routes/user'
-    app.use '/trp', require '../../routes/trip'
+    app.use '/rd', require '../../routes/ride'
 
     app.use serveIndex "#{__dirname}/../../public"
     app.use errorHandler() if process.env.NODE_ENV is "development"

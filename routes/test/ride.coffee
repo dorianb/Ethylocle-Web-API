@@ -28,7 +28,7 @@ GetOptionsWithHeaders = (path, body, cookie) ->
   headers =
     'Content-Type': 'application/json'
     'Content-Length': body.length
-    'Cookie': cookie
+    'Cookie': cookie || ""
   options =
     "host": "localhost"
     "port": port
@@ -36,7 +36,7 @@ GetOptionsWithHeaders = (path, body, cookie) ->
     "method": "POST"
     "headers": headers
 
-describe 'Trip routes', ->
+describe 'Ride routes', ->
 
   before (next) ->
     server = https.createServer(options, app).listen port, (err, result) ->
@@ -48,8 +48,8 @@ describe 'Trip routes', ->
     next()
 
   beforeEach (next) ->
-    rimraf "#{__dirname}/../../db/tmp/tripsearch", ->
-      rimraf "#{__dirname}/../../db/tmp/trip", ->
+    rimraf "#{__dirname}/../../db/tmp/ridesearch", ->
+      rimraf "#{__dirname}/../../db/tmp/ride", ->
         rimraf "#{__dirname}/../../db/tmp/user", next
 
   it 'should exist', (next) ->
@@ -63,8 +63,8 @@ describe 'Trip routes', ->
       res.statusCode.should.eql 200
       next()
 
-  it 'Create trip without signed in', (next) ->
-    headers = defaultGetOptions '/trp/create'
+  it 'Create ride without signed in', (next) ->
+    headers = defaultGetOptions '/rd/create'
     https.get headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
@@ -78,7 +78,7 @@ describe 'Trip routes', ->
         res.data.should.eql "Authentification requise"
         next()
 
-  it 'Create trip (after signed up)', (next) ->
+  it 'Create ride (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -95,7 +95,7 @@ describe 'Trip routes', ->
           dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
           numberOfPeople: '2'
         bodyString = JSON.stringify criteria
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -113,7 +113,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Create trip with missing parameters (after signed up)', (next) ->
+  it 'Create ride with missing parameters (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -128,7 +128,7 @@ describe 'Trip routes', ->
           dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
           numberOfPeople: '2'
         bodyString = JSON.stringify criteria
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -146,7 +146,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Create trip with numberOfPeople < 1 (after signed up)', (next) ->
+  it 'Create ride with numberOfPeople < 1 (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -163,7 +163,7 @@ describe 'Trip routes', ->
           dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
           numberOfPeople: '0'
         bodyString = JSON.stringify criteria
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -181,7 +181,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Create trip with numberOfPeople > 2 (after signed up)', (next) ->
+  it 'Create ride with numberOfPeople > 2 (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -198,7 +198,7 @@ describe 'Trip routes', ->
           dateTime: moment().add(30, 'm').format "DD-MM-YYYY H:mm"
           numberOfPeople: '10'
         bodyString = JSON.stringify criteria
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -216,7 +216,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Create trip with date past (after signed up)', (next) ->
+  it 'Create ride with date past (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -233,7 +233,7 @@ describe 'Trip routes', ->
           dateTime: moment().add(-1, 'm').format "DD-MM-YYYY H:mm"
           numberOfPeople: '2'
         bodyString = JSON.stringify criteria
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -251,8 +251,8 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Has trip', (next) ->
-    headers = defaultGetOptions '/trp/has'
+  it 'Has ride', (next) ->
+    headers = defaultGetOptions '/rd/has'
     https.get headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
@@ -266,7 +266,7 @@ describe 'Trip routes', ->
         res.data.should.eql "Authentification requise"
         next()
 
-  it 'Has trip after created one (after signed up)', (next) ->
+  it 'Has ride after created one (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -284,13 +284,13 @@ describe 'Trip routes', ->
           numberOfPeople: '2'
         bodyString = JSON.stringify criteria
         cookie = res.headers['set-cookie']
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.on 'data', (data) ->
           res.on 'end', (err) ->
             return next err if err
             bodyString = ""
-            headers = GetOptionsWithHeaders '/trp/has', bodyString, cookie
+            headers = GetOptionsWithHeaders '/rd/has', bodyString, cookie
             req = https.request headers, (res) ->
               res.statusCode.should.eql 200
               body = ""
@@ -310,7 +310,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Has trip without created one (after signed up)', (next) ->
+  it 'Has ride without created one (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -318,7 +318,7 @@ describe 'Trip routes', ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = ""
-        headers = GetOptionsWithHeaders '/trp/has', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/has', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -336,8 +336,8 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Get trip', (next) ->
-    headers = defaultGetOptions '/trp/get'
+  it 'Get ride', (next) ->
+    headers = defaultGetOptions '/rd/get'
     https.get headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
@@ -351,7 +351,7 @@ describe 'Trip routes', ->
         res.data.should.eql "Authentification requise"
         next()
 
-  it 'Get trip after created one (after signed up)', (next) ->
+  it 'Get ride after created one (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -369,13 +369,13 @@ describe 'Trip routes', ->
           numberOfPeople: '2'
         bodyString = JSON.stringify criteria
         cookie = res.headers['set-cookie']
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.on 'data', (data) ->
           res.on 'end', (err) ->
             return next err if err
             bodyString = ""
-            headers = GetOptionsWithHeaders '/trp/get', bodyString, cookie
+            headers = GetOptionsWithHeaders '/rd/get', bodyString, cookie
             req = https.request headers, (res) ->
               res.statusCode.should.eql 200
               body = ""
@@ -409,7 +409,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Get trip without created one (after signed up)', (next) ->
+  it 'Get ride without created one (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -417,7 +417,7 @@ describe 'Trip routes', ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = ""
-        headers = GetOptionsWithHeaders '/trp/get', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/get', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -435,8 +435,8 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Get trip by id', (next) ->
-    headers = defaultGetOptions '/trp/getbyid'
+  it 'Get ride by id', (next) ->
+    headers = defaultGetOptions '/rd/getbyid'
     https.get headers, (res) ->
       res.statusCode.should.eql 200
       body = ""
@@ -450,7 +450,7 @@ describe 'Trip routes', ->
         res.data.should.eql "Authentification requise"
         next()
 
-  it 'Get trip by id after created one (after signed up)', (next) ->
+  it 'Get ride by id after created one (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -468,13 +468,13 @@ describe 'Trip routes', ->
           numberOfPeople: '2'
         bodyString = JSON.stringify criteria
         cookie = res.headers['set-cookie']
-        headers = GetOptionsWithHeaders '/trp/create', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/create', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.on 'data', (data) ->
           res.on 'end', (err) ->
             return next err if err
             bodyString = JSON.stringify id: "0"
-            headers = GetOptionsWithHeaders '/trp/getbyid', bodyString, cookie
+            headers = GetOptionsWithHeaders '/rd/getbyid', bodyString, cookie
             req = https.request headers, (res) ->
               res.statusCode.should.eql 200
               body = ""
@@ -504,7 +504,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Get trip by id without id (after signed up)', (next) ->
+  it 'Get ride by id without id (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -512,7 +512,7 @@ describe 'Trip routes', ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = ""
-        headers = GetOptionsWithHeaders '/trp/getbyid', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/getbyid', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""
@@ -530,7 +530,7 @@ describe 'Trip routes', ->
     req.write bodyString
     req.end()
 
-  it 'Get trip by id without created one (after signed up)', (next) ->
+  it 'Get ride by id without created one (after signed up)', (next) ->
     bodyString = JSON.stringify email: "dorian@ethylocle.com", password: "12345678"
     headers = GetOptionsWithHeaders '/usr/signup', bodyString
     req = https.request headers, (res) ->
@@ -538,7 +538,7 @@ describe 'Trip routes', ->
       res.on 'end', (err) ->
         return next err if err
         bodyString = JSON.stringify id: "0"
-        headers = GetOptionsWithHeaders '/trp/getbyid', bodyString, res.headers['set-cookie']
+        headers = GetOptionsWithHeaders '/rd/getbyid', bodyString, res.headers['set-cookie']
         req = https.request headers, (res) ->
           res.statusCode.should.eql 200
           body = ""

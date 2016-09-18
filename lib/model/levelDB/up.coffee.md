@@ -2,15 +2,15 @@
 
     AbstractModel = require '../abstract'
     Down = require './down'
-    TripSearch = require './tripSearch'
+    RideSearch = require './rideSearch'
 
     show = require './tool/show'
     importStream = require './tool/import'
     exportStream = require './tool/export'
 
     User = require '../../entity/user'
-    Trip = require '../../entity/trip'
-    TripCriteria = require '../../entity/tripCriteria'
+    Ride = require '../../entity/ride'
+    RideCriteria = require '../../entity/rideCriteria'
 
     moment = require 'moment'
     geolib = require 'geolib'
@@ -174,86 +174,86 @@
                   client.close () ->
                     callback null, {result: true, data: null}
 
-## Trip methods
+## Ride methods
 
-    Up.prototype.hasTrip = (usr, callback) ->
-      client = Down this.path + "/trip"
-      client.trips.getByPassengerTripInProgress usr.id, moment(), (err, trip) ->
+    Up.prototype.hasRide = (usr, callback) ->
+      client = Down this.path + "/ride"
+      client.rides.getByPassengerRideInProgress usr.id, moment(), (err, ride) ->
         if err
           client.close () ->
             callback err
-        else if trip.id
+        else if ride.id
           client.close () ->
             callback null, {result: true, data: null}
         else
           client.close () ->
             callback null, {result: false, data: "Aucun trajet en cours"}
 
-    Up.prototype.searchTrip = (usr, tripCriteria, callback) ->
+    Up.prototype.searchRide = (usr, rideCriteria, callback) ->
       that = this
-      TripSearch this.path, usr.id, tripCriteria.get(), (err, trips) ->
-        client = Down that.path + "/tripsearch"
-        client.tripsearch.getByUser usr.id, (err, result) ->
+      RideSearch this.path, usr.id, rideCriteria.get(), (err, rides) ->
+        client = Down that.path + "/ridesearch"
+        client.ridesearch.getByUser usr.id, (err, result) ->
           if err
             client.close (error) ->
               callback err
           else
-            delTripSearchByUser = (i) ->
+            delRideSearchByUser = (i) ->
               if i < result.length
-                client.tripsearch.del result[i].userId, result[i].distance, result[i].tripId, (err) ->
+                client.ridesearch.del result[i].userId, result[i].distance, result[i].rideId, (err) ->
                   if err
                     client.close (error) ->
                       callback err
                   else
-                    delTripSearchByUser i+1
+                    delRideSearchByUser i+1
               else
                 client.close (err) ->
                   callback err if err
-                  client = Down that.path + "/trip"
+                  client = Down that.path + "/ride"
                   data = []
-                  getTripDetails = (i) ->
-                    if i < trips.length
-                      client.trips.get trips[i], (err, trip) ->
+                  getRideDetails = (i) ->
+                    if i < rides.length
+                      client.rides.get rides[i], (err, ride) ->
                         if err
                           client.close (error) ->
                             callback err
                         else
-                          trip = Trip trip
-                          datum = trip.getPublic()
-                          datum.distanceToStart = geolib.getDistance({latitude: tripCriteria.latStart, longitude: tripCriteria.lonStart}, {latitude: trip.latStart, longitude: trip.lonStart})/1000
-                          datum.distanceToEnd = geolib.getDistance({latitude: tripCriteria.latEnd, longitude: tripCriteria.lonEnd}, {latitude: trip.latEnd, longitude: trip.lonEnd})/1000
+                          ride = Ride ride
+                          datum = ride.getPublic()
+                          datum.distanceToStart = geolib.getDistance({latitude: rideCriteria.latStart, longitude: rideCriteria.lonStart}, {latitude: ride.latStart, longitude: ride.lonStart})/1000
+                          datum.distanceToEnd = geolib.getDistance({latitude: rideCriteria.latEnd, longitude: rideCriteria.lonEnd}, {latitude: ride.latEnd, longitude: ride.lonEnd})/1000
                           data.push datum
-                          getTripDetails i+1
+                          getRideDetails i+1
                     else
                       client.close (error) ->
                         callback null, {result: true, data: data}
-                  getTripDetails 0
-            delTripSearchByUser 0
+                  getRideDetails 0
+            delRideSearchByUser 0
 
-    Up.prototype.joinTrip = (usr, trp, tripCriteria, callback) ->
-      client = Down this.path + "/trip"
-      client.trips.get trp.id, (err, trip) ->
+    Up.prototype.joinRide = (usr, rd, rideCriteria, callback) ->
+      client = Down this.path + "/ride"
+      client.rides.get rd.id, (err, ride) ->
         if err
           client.close (error) ->
             callback err
-        else if trip.id
-          if +tripCriteria.numberOfPeople <= 4 - +trip.numberOfPassenger
+        else if ride.id
+          if +rideCriteria.numberOfPeople <= 4 - +ride.numberOfPassenger
             data = {}
-            data.numberOfPassenger = +trip.numberOfPassenger + +tripCriteria.numberOfPeople
-            i = +trip.numberOfPassenger
+            data.numberOfPassenger = +ride.numberOfPassenger + +rideCriteria.numberOfPeople
+            i = +ride.numberOfPassenger
             while i < data.numberOfPassenger
               data["passenger_" + ++i] = usr.id
-            client.trips.set trip.id, data, (err) ->
+            client.rides.set ride.id, data, (err) ->
               if err
                 client.close (error) ->
                   callback err
               else
-                client.trips.get trip.id, (err, trip) ->
+                client.rides.get ride.id, (err, ride) ->
                   if err
                     client.close (error) ->
                       callback err
                   else
-                    client.trips.setByPassenger usr.id, trip, (err) ->
+                    client.rides.setByPassenger usr.id, ride, (err) ->
                       if err
                         client.close (error) ->
                           callback err
@@ -267,24 +267,24 @@
           client.close (error) ->
             callback null, {result: false, data: "Le trajet n'existe plus"}
 
-    Up.prototype.createTrip = (usr, trp, callback) ->
-      client = Down this.path + "/trip"
-      client.trips.getMaxId (err, maxId) ->
+    Up.prototype.createRide = (usr, rd, callback) ->
+      client = Down this.path + "/ride"
+      client.rides.getMaxId (err, maxId) ->
         if err
           client.close (error) ->
             callback err
         else
-          client.trips.set ++maxId, trp.get(), (err) ->
+          client.rides.set ++maxId, rd.get(), (err) ->
             if err
               client.close (error) ->
                 callback err
             else
-              client.trips.get maxId, (err, trip) ->
+              client.rides.get maxId, (err, ride) ->
                 if err
                   client.close (error) ->
                     callback err
                 else
-                  client.trips.setByPassenger usr.id, trip, (err) ->
+                  client.rides.setByPassenger usr.id, ride, (err) ->
                     if err
                       client.close (error) ->
                         callback err
@@ -292,36 +292,36 @@
                       client.close (error) ->
                         callback null, {result: true, data: null}
 
-    Up.prototype.getTrip = (usr, callback) ->
-      client = Down this.path + "/trip"
-      client.trips.getByPassengerTripInProgress usr.id, moment(), (err, trip) ->
+    Up.prototype.getRide = (usr, callback) ->
+      client = Down this.path + "/ride"
+      client.rides.getByPassengerRideInProgress usr.id, moment(), (err, ride) ->
         if err
           client.close (error) ->
             callback err
-        else if trip.id
-          client.trips.get trip.id, (err, trip) ->
+        else if ride.id
+          client.rides.get ride.id, (err, ride) ->
             if err
               client.close (error) ->
                 callback err
             else
               client.close (error) ->
-                trip = Trip trip
-                data = trip.getPrivate()
+                ride = Ride ride
+                data = ride.getPrivate()
                 callback null, {result: true, data: data}
         else
           client.close (error) ->
             callback null, {result: false, data: "Aucun trajet en cours"}
 
-    Up.prototype.getTripById = (trp, callback) ->
-      client = Down this.path + "/trip"
-      client.trips.get trp.id, (err, trip) ->
+    Up.prototype.getRideById = (rd, callback) ->
+      client = Down this.path + "/ride"
+      client.rides.get rd.id, (err, ride) ->
         if err
           client.close (error) ->
             callback err
-        else if trip.id
+        else if ride.id
           client.close (error) ->
-            trip = Trip trip
-            data = trip.getPublic()
+            ride = Ride ride
+            data = ride.getPublic()
             callback null, {result: true, data: data}
         else
           client.close (error) ->

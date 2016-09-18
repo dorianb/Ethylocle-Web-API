@@ -5,7 +5,7 @@ var model = require('../lib/factory/model');
 
 if(argv['help'])
 {
-  console.log('show [--help] name\nIntroduction message\n--help          Print this message\nname            Type of data to show {user, trip, tripsearch, stop}');
+  console.log('show [--help] name\nIntroduction message\n--help          Print this message\nname            Type of data to show {user, ride, ridesearch, stop}');
 }
 else if(argv['_'][0])
 {

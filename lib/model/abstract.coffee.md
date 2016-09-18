@@ -31,24 +31,24 @@
     Model.prototype.delete = (usr, callback) ->
       throw new Error "Abstract method !"
 
-## Trip methods
+## Ride methods
 
-    Model.prototype.hasTrip = (usr, callback) ->
+    Model.prototype.hasRide = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.searchTrip = (usr, tripCriteria, callback) ->
+    Model.prototype.searchRide = (usr, rideCriteria, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.joinTrip = (usr, trp, tripCriteria, callback) ->
+    Model.prototype.joinRide = (usr, rd, rideCriteria, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.createTrip = (usr, trp, callback) ->
+    Model.prototype.createRide = (usr, rd, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.getTrip = (usr, callback) ->
+    Model.prototype.getRide = (usr, callback) ->
       throw new Error "Abstract method !"
 
-    Model.prototype.getTripById = (trp, callback) ->
+    Model.prototype.getRideById = (rd, callback) ->
       throw new Error "Abstract method !"
 
 ## Tool methods

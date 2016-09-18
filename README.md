@@ -137,12 +137,12 @@ Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
 
-### Trip services
+### Ride services
 
-#### Has trip
-Allows client to know if the user has a trip in progress
+#### Has ride
+Allows client to know if the user has a ride in progress
 ```
-url: domain/trp/has
+url: domain/rd/has
 Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
@@ -150,7 +150,7 @@ Retour: { "result": bool, "data": null }
 #### Search rides
 Client can search rides available based on user's preference
 ```
-url: domain/trp/search
+url: domain/rd/search
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
 ```
@@ -158,7 +158,7 @@ Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", 
 #### Join ride
 User can join an existing ride by providing its id and the numberOfPeople. If the ride is no longer available, the user will be notified in this way.
 ```
-url: domain/trp/join
+url: domain/rd/join
 Paramètres: { "id", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
@@ -166,23 +166,23 @@ Retour: { "result": bool, "data": null }
 #### Create ride
 If the user doesn't want to join an existing ride, he can create his own one by providing the essential data requested
 ```
-url: domain/trp/create
+url: domain/rd/create
 Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
 
-#### Get trip
-Once a user has joined or created a trip, he can access all the trip data such as passengers id
+#### Get ride
+Once a user has joined or created a ride, he can access all the ride data such as passengers id
 ```
-url: domain/trp/get
+url: domain/rd/get
 Paramètres: {}
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3", "passenger_4" } }
 ```
 
-#### Get trip by id
-All users can access a part of the trip data by providing trip id
+#### Get ride by id
+All users can access a part of the ride data by providing ride id
 ```
-url: domain/trp/getbyid
+url: domain/rd/getbyid
 Paramètres: { "id" }
 Retour: { "result": bool, "data": { "id", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "maxPrice", "numberOfPassenger" } }
 ```
@@ -195,13 +195,13 @@ birthDate format: 'DD-MM-YYYY'
 User namespace index: "usersEmailIndex:#{email}:#{property}"
 property: "id"
 
-Trip namespace key: "trips:#{id}:#{property}"
+Ride namespace key: "rides:#{id}:#{property}"
 Properties: "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "price", "numberOfPassenger", "passenger_1", "passenger_2", "passenger_3" and "passenger_4"
 dateTime format: 'DD-MM-YYYY H:mm'
-Trip namespace index: "tripsPassengerIndex:#{userId}:#{id}:#{property}"
+Ride namespace index: "ridesPassengerIndex:#{userId}:#{id}:#{property}"
 property: "dateTime"
 
-Tripsearch namespace key: "tripsearch:#{userId}:#{distance}:#{tripId}"
+Ridesearch namespace key: "ridesearch:#{userId}:#{distance}:#{rideId}"
 
 Stop namespace key: "stops:#{id}:#{property}"
 Properties: "name", "desc", "lat", "lon", "lineType" and "lineName"

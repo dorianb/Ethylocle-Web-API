@@ -3,8 +3,8 @@ should = require 'should'
 Up = require '../up'
 
 User = require '../../../entity/user'
-Trip = require '../../../entity/trip'
-TripCriteria = require '../../../entity/tripCriteria'
+Ride = require '../../../entity/ride'
+RideCriteria = require '../../../entity/rideCriteria'
 
 moment = require 'moment'
 
@@ -243,13 +243,13 @@ describe 'Up levelDB Model', ->
             response.data.should.eql "L'utilisateur n'existe pas"
             next()
 
-  describe 'Up trip methods', ->
+  describe 'Up ride methods', ->
 
     beforeEach (next) ->
-      rimraf "#{__dirname}/../../../../db/tmp/trip", next
+      rimraf "#{__dirname}/../../../../db/tmp/ride", next
 
-    it 'Create trip', (next) ->
-      trip =
+    it 'Create ride', (next) ->
+      ride =
         latStart: '48.856470'
         lonStart: '2.286001'
         latEnd: '48.865314'
@@ -259,15 +259,15 @@ describe 'Up levelDB Model', ->
         price: '13.93'
         passenger_1: '0'
         passenger_2: '0'
-      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
         return next err if err
         Object.keys(response).length.should.eql 2
         response.result.should.eql true
         should.not.exists response.data
         next()
 
-    it 'Has trip after created one in 30 min', (next) ->
-      trip =
+    it 'Has ride after created one in 30 min', (next) ->
+      ride =
         latStart: '48.856470'
         lonStart: '2.286001'
         latEnd: '48.865314'
@@ -277,17 +277,17 @@ describe 'Up levelDB Model', ->
         price: '13.93'
         passenger_1: '0'
         passenger_2: '0'
-      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
         return next err if err
-        Up("#{__dirname}/../../../../db/tmp").hasTrip User({id: '0'}), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").hasRide User({id: '0'}), (err, response) ->
           return next err if err
           Object.keys(response).length.should.eql 2
           response.result.should.eql true
           should.not.exists response.data
           next()
 
-    it 'Has trip after created one in past', (next) ->
-      trip =
+    it 'Has ride after created one in past', (next) ->
+      ride =
         latStart: '48.856470'
         lonStart: '2.286001'
         latEnd: '48.865314'
@@ -297,17 +297,17 @@ describe 'Up levelDB Model', ->
         price: '13.93'
         passenger_1: '0'
         passenger_2: '0'
-      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
         return next err if err
-        Up("#{__dirname}/../../../../db/tmp").hasTrip User({id: '0'}), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").hasRide User({id: '0'}), (err, response) ->
           return next err if err
           Object.keys(response).length.should.eql 2
           response.result.should.eql false
           response.data.should.eql "Aucun trajet en cours"
           next()
 
-    it 'Get trip after created one in 30 min', (next) ->
-      trip =
+    it 'Get ride after created one in 30 min', (next) ->
+      ride =
         latStart: '48.856470'
         lonStart: '2.286001'
         latEnd: '48.865314'
@@ -317,27 +317,27 @@ describe 'Up levelDB Model', ->
         price: '13.93'
         passenger_1: '0'
         passenger_2: '0'
-      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
         return next err if err
-        Up("#{__dirname}/../../../../db/tmp").getTrip User({id: '0'}), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").getRide User({id: '0'}), (err, response) ->
           return next err if err
           Object.keys(response).length.should.eql 2
           response.result.should.eql true
           Object.keys(response.data).length.should.eql 10
           response.data.id.should.eql '0'
-          response.data.latStart.should.eql trip.latStart
-          response.data.lonStart.should.eql trip.lonStart
-          response.data.latEnd.should.eql trip.latEnd
-          response.data.lonEnd.should.eql trip.lonEnd
-          response.data.dateTime.should.eql trip.dateTime
-          response.data.numberOfPassenger.should.eql trip.numberOfPassenger
-          response.data.maxPrice.should.eql trip.price
-          response.data.passenger_1.should.eql trip.passenger_1
-          response.data.passenger_2.should.eql trip.passenger_2
+          response.data.latStart.should.eql ride.latStart
+          response.data.lonStart.should.eql ride.lonStart
+          response.data.latEnd.should.eql ride.latEnd
+          response.data.lonEnd.should.eql ride.lonEnd
+          response.data.dateTime.should.eql ride.dateTime
+          response.data.numberOfPassenger.should.eql ride.numberOfPassenger
+          response.data.maxPrice.should.eql ride.price
+          response.data.passenger_1.should.eql ride.passenger_1
+          response.data.passenger_2.should.eql ride.passenger_2
           next()
 
-    it 'Get trip after created one in past', (next) ->
-      trip =
+    it 'Get ride after created one in past', (next) ->
+      ride =
         latStart: '48.856470'
         lonStart: '2.286001'
         latEnd: '48.865314'
@@ -347,25 +347,25 @@ describe 'Up levelDB Model', ->
         price: '13.93'
         passenger_1: '0'
         passenger_2: '0'
-      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
         return next err if err
-        Up("#{__dirname}/../../../../db/tmp").getTrip User({id: '0'}), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").getRide User({id: '0'}), (err, response) ->
           return next err if err
           Object.keys(response).length.should.eql 2
           response.result.should.eql false
           response.data.should.eql "Aucun trajet en cours"
           next()
 
-    it 'Get trip without created one', (next) ->
-      Up("#{__dirname}/../../../../db/tmp").getTrip User({id: '0'}), (err, response) ->
+    it 'Get ride without created one', (next) ->
+      Up("#{__dirname}/../../../../db/tmp").getRide User({id: '0'}), (err, response) ->
         return next err if err
         Object.keys(response).length.should.eql 2
         response.result.should.eql false
         response.data.should.eql "Aucun trajet en cours"
         next()
 
-    it 'Get trip by id after created one', (next) ->
-      trip =
+    it 'Get ride by id after created one', (next) ->
+      ride =
         latStart: '48.856470'
         lonStart: '2.286001'
         latEnd: '48.865314'
@@ -375,36 +375,36 @@ describe 'Up levelDB Model', ->
         price: '13.93'
         passenger_1: '0'
         passenger_2: '0'
-      Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
         return next err if err
-        Up("#{__dirname}/../../../../db/tmp").getTripById Trip({id: 0}), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").getRideById Ride({id: 0}), (err, response) ->
           return next err if err
           Object.keys(response).length.should.eql 2
           response.result.should.eql true
           Object.keys(response.data).length.should.eql 8
           response.data.id.should.eql '0'
-          response.data.latStart.should.eql trip.latStart
-          response.data.lonStart.should.eql trip.lonStart
-          response.data.latEnd.should.eql trip.latEnd
-          response.data.lonEnd.should.eql trip.lonEnd
-          response.data.dateTime.should.eql trip.dateTime
-          response.data.numberOfPassenger.should.eql trip.numberOfPassenger
-          response.data.maxPrice.should.eql (trip.price/2/1.1).toFixed 2
+          response.data.latStart.should.eql ride.latStart
+          response.data.lonStart.should.eql ride.lonStart
+          response.data.latEnd.should.eql ride.latEnd
+          response.data.lonEnd.should.eql ride.lonEnd
+          response.data.dateTime.should.eql ride.dateTime
+          response.data.numberOfPassenger.should.eql ride.numberOfPassenger
+          response.data.maxPrice.should.eql (ride.price/2/1.1).toFixed 2
           should.not.exists response.data.passenger_1
           should.not.exists response.data.passenger_2
           next()
 
-    it 'Get trip by id without created one', (next) ->
-      Up("#{__dirname}/../../../../db/tmp").getTripById Trip({id: '0'}), (err, response) ->
+    it 'Get ride by id without created one', (next) ->
+      Up("#{__dirname}/../../../../db/tmp").getRideById Ride({id: '0'}), (err, response) ->
         return next err if err
         Object.keys(response).length.should.eql 2
         response.result.should.eql false
         response.data.should.eql "Le trajet n'existe plus"
         next()
 
-    it 'Search trip after created three', (next) ->
+    it 'Search ride after created three', (next) ->
       this.timeout 3000
-      trip =
+      ride =
           latStart: '48.856470'
           lonStart: '2.286001'
           latEnd: '48.865314'
@@ -414,9 +414,9 @@ describe 'Up levelDB Model', ->
           price: '13.93'
           passenger_1: '0'
           passenger_2: '0'
-        Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
           return next err if err
-          trip =
+          ride =
             latStart: '48.853611'
             lonStart: '2.287546'
             latEnd: '48.860359'
@@ -425,9 +425,9 @@ describe 'Up levelDB Model', ->
             numberOfPassenger: '1'
             price: '13.93'
             passenger_1: '1'
-          Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '1'}), Trip(trip), (err, response) ->
+          Up("#{__dirname}/../../../../db/tmp").createRide User({id: '1'}), Ride(ride), (err, response) ->
             return next err if err
-            trip =
+            ride =
               latStart: '48.857460'
               lonStart: '2.291070'
               latEnd: '48.867158'
@@ -438,24 +438,24 @@ describe 'Up levelDB Model', ->
               passenger_1: '2'
               passenger_2: '2'
               passenger_3: '2'
-            Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '2'}), Trip(trip), (err, response) ->
+            Up("#{__dirname}/../../../../db/tmp").createRide User({id: '2'}), Ride(ride), (err, response) ->
               return next err if err
-              tripCriteria =
+              rideCriteria =
                 latStart: '48.856470'
                 lonStart: '2.286001'
                 latEnd: '48.865314'
                 lonEnd: '2.321514'
                 dateTime: moment().add(25, 'm').format "DD-MM-YYYY H:mm"
                 numberOfPeople: '1'
-              Up("#{__dirname}/../../../../db/tmp").searchTrip User({id: '3'}), TripCriteria(tripCriteria), (err, response) ->
+              Up("#{__dirname}/../../../../db/tmp").searchRide User({id: '3'}), RideCriteria(rideCriteria), (err, response) ->
                 return next err if err
                 Object.keys(response).length.should.eql 2
                 response.result.should.eql true
                 Object.keys(response.data).length.should.eql 3
                 next()
 
-    it 'Join trip', (next) ->
-      trip =
+    it 'Join ride', (next) ->
+      ride =
           latStart: '48.856470'
           lonStart: '2.286001'
           latEnd: '48.865314'
@@ -465,9 +465,9 @@ describe 'Up levelDB Model', ->
           price: '13.93'
           passenger_1: '0'
           passenger_2: '0'
-        Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
           return next err if err
-          trip =
+          ride =
             latStart: '48.853611'
             lonStart: '2.287546'
             latEnd: '48.860359'
@@ -476,9 +476,9 @@ describe 'Up levelDB Model', ->
             numberOfPassenger: '1'
             price: '13.93'
             passenger_1: '1'
-          Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '1'}), Trip(trip), (err, response) ->
+          Up("#{__dirname}/../../../../db/tmp").createRide User({id: '1'}), Ride(ride), (err, response) ->
             return next err if err
-            trip =
+            ride =
               latStart: '48.857460'
               lonStart: '2.291070'
               latEnd: '48.867158'
@@ -489,31 +489,31 @@ describe 'Up levelDB Model', ->
               passenger_1: '2'
               passenger_2: '2'
               passenger_3: '2'
-            Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '2'}), Trip(trip), (err, response) ->
+            Up("#{__dirname}/../../../../db/tmp").createRide User({id: '2'}), Ride(ride), (err, response) ->
               return next err if err
               body =
                 id: '1'
                 numberOfPeople: '2'
-              Up("#{__dirname}/../../../../db/tmp").joinTrip User({id: '3'}), Trip(body), TripCriteria(body), (err, response) ->
+              Up("#{__dirname}/../../../../db/tmp").joinRide User({id: '3'}), Ride(body), RideCriteria(body), (err, response) ->
                 return next err if err
                 Object.keys(response).length.should.eql 2
                 response.result.should.eql true
                 should.not.exists response.data
                 next()
 
-    it 'Join trip with an unexisting trip', (next) ->
+    it 'Join ride with an unexisting ride', (next) ->
       body =
         id: '1'
         numberOfPeople: '2'
-      Up("#{__dirname}/../../../../db/tmp").joinTrip User({id: '0'}), Trip(body), TripCriteria(body), (err, response) ->
+      Up("#{__dirname}/../../../../db/tmp").joinRide User({id: '0'}), Ride(body), RideCriteria(body), (err, response) ->
         return next err if err
         Object.keys(response).length.should.eql 2
         response.result.should.eql false
         response.data.should.eql "Le trajet n'existe plus"
         next()
 
-    it 'Join trip with an overloaded trip', (next) ->
-      trip =
+    it 'Join ride with an overloaded ride', (next) ->
+      ride =
           latStart: '48.856470'
           lonStart: '2.286001'
           latEnd: '48.865314'
@@ -524,12 +524,12 @@ describe 'Up levelDB Model', ->
           passenger_1: '0'
           passenger_2: '0'
           passenger_3: '0'
-        Up("#{__dirname}/../../../../db/tmp").createTrip User({id: '0'}), Trip(trip), (err, response) ->
+        Up("#{__dirname}/../../../../db/tmp").createRide User({id: '0'}), Ride(ride), (err, response) ->
           return next err if err
           body =
             id: '0'
             numberOfPeople: '2'
-          Up("#{__dirname}/../../../../db/tmp").joinTrip User({id: '1'}), Trip(body), TripCriteria(body), (err, response) ->
+          Up("#{__dirname}/../../../../db/tmp").joinRide User({id: '1'}), Ride(body), RideCriteria(body), (err, response) ->
             return next err if err
             Object.keys(response).length.should.eql 2
             response.result.should.eql false
