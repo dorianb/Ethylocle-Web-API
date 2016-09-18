@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/dorianb/Ethylocle-Web-API.svg?branch=master)](https://travis-ci.org/dorianb/Ethylocle-Web-API)
 
-I developed this web API for my graduation project at ECE Paris.
+This web api displays two services for mobile application clients. It aims to help people sharing a taxi ride.
 
 ## Functionalities
 * Manage account profile: sign in, sign up, update, delete, etc.
-* Manage trip: create trip, get trips, join trip, get trip data, etc.
+* Manage ride: create ride, get rides, join ride, get ride data, etc.
 * Manage database: show, import, export, etc.
 
 ## Install
@@ -41,7 +41,7 @@ Several scripts are provided for managing database
 ### Show data
 ```
 node ./bin/show user
-node ./bin/show trip
+node ./bin/show ride
 ```
 Just pipe it with grep command to look at a particular entry !
 ```
@@ -130,7 +130,7 @@ Retour: { "result": bool, "data": ["id", "image", "lastName", "firstName", "birt
 ```
 
 #### Delete user
-Delete all user data in user database if he hasn't got a trip in progress
+Delete all user data in user database if he hasn't got a ride in progress
 ```
 url: domain/usr/delete
 Paramètres: {}
@@ -147,24 +147,24 @@ Paramètres: {}
 Retour: { "result": bool, "data": null }
 ```
 
-#### Search trips
-Client can search trips available based on user's preference
+#### Search rides
+Client can search rides available based on user's preference
 ```
 url: domain/trp/search
 Paramètres: { "latStart", "lonStart", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
 Retour: { "result": bool, "data": [ { "id", "distanceToStart", "distanceToEnd", "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPassenger", "maxPrice" }, ... ] }
 ```
 
-#### Join trip
-User can join an existing trip by providing its id and the numberOfPeople. If the trip is no longer available, the user will be notified in this way.
+#### Join ride
+User can join an existing ride by providing its id and the numberOfPeople. If the ride is no longer available, the user will be notified in this way.
 ```
 url: domain/trp/join
 Paramètres: { "id", "numberOfPeople" }
 Retour: { "result": bool, "data": null }
 ```
 
-#### Create trip
-If the user doesn't want to join an existing trip, he can create his own one by providing the essential data requested
+#### Create ride
+If the user doesn't want to join an existing ride, he can create his own one by providing the essential data requested
 ```
 url: domain/trp/create
 Paramètres: { "addressStart", "latStart", "lonStart", "addressEnd", "latEnd", "lonEnd", "dateTime", "numberOfPeople" }
